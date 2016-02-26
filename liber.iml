@@ -10,7 +10,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../(jarfiles)/weupnp-0.1.5-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/libraries/weupnp-0.1.5-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
