@@ -71,13 +71,11 @@ public class ContactProfileController implements Controller {
 				ContactUpdated cu = (ContactUpdated) info;
 				if(cu.get().liberaddress().equals(contact.liberaddress()))
 					updateContact();
-				return;
 			}
-			if(info instanceof ContactDeleted) {
+			else if(info instanceof ContactDeleted) {
 				ContactDeleted cd = (ContactDeleted) info;
 				if(cd.get().liberaddress().equals(contact.liberaddress()))
 					backToWork();
-				return;
 			}
 		}
 	}

@@ -50,4 +50,8 @@ public class Liberserver implements Recipient {
 		in.close();
 		return response;
 	}
+	@Override
+	public String toString() {
+		return address;
+	}
 }

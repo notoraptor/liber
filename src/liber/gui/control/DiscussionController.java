@@ -1,8 +1,6 @@
 package liber.gui.control;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,28 +38,24 @@ public class DiscussionController implements Controller {
 				ContactUpdated cu = (ContactUpdated)info;
 				if(cu.get().liberaddress().equals(contact.liberaddress()))
 					updateContact();
-				return;
 			}
-			if(info instanceof ContactDeleted) {
+			else if(info instanceof ContactDeleted) {
 				ContactDeleted cd = (ContactDeleted) info;
 				if(cd.get().liberaddress().equals(contact.liberaddress()))
 					GUI.current.back();
-				return;
 			}
-			if(info instanceof MessageReceived) {
+			else if(info instanceof MessageReceived) {
 				MessageReceived mr = (MessageReceived)info;
 				Parent root = new InMessageForm(mr.get()).root();
 				history.getChildren().add(root);
 				// TODO: Comment faire défiler correctement le scrollpane vers le bas quand un message est ajouté.
 				// TODO: Le code suivant semble fonctionner pour outmessage (ci-après) mais pas pour inmessage (ici).
-				return;
 			}
-			if(info instanceof MessageCreated) {
+			else if(info instanceof MessageCreated) {
 				MessageCreated mc = (MessageCreated)info;
 				addOutMessage(mc.get());
-				return;
 			}
-			if(info instanceof OutMessageUpdated) {
+			else if(info instanceof OutMessageUpdated) {
 				OutMessageUpdated omu = (OutMessageUpdated) info;
 				Node root = history.lookup("#" + omu.get().id());
 				if(root != null) {
@@ -72,7 +66,6 @@ public class DiscussionController implements Controller {
 						OutMessageController.setState(messageState, m);
 					}
 				}
-				return;
 			}
 		}
 	}
@@ -153,7 +146,7 @@ public class DiscussionController implements Controller {
 		GUI.current.back();
 	}
 	@FXML
-	void send(ActionEvent event) throws Exception {
+	void send(ActionEvent event) {
 		String content = message.getText();
 		if(content != null) {
 			content = content.trim();

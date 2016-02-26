@@ -5,8 +5,6 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import liber.data.OutMessage;
 
-import java.util.Date;
-
 public class OutMessageController implements Controller {
 	static public final String notSent = "\u274c";
 	static public final String locationWaiting = "- - -";

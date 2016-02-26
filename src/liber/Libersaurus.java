@@ -72,7 +72,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 	}
 	public File getDirectory() {
 		return directory;
-	};
+	}
 	private void reLogin() {
 		finalizeLogin();
 	}
@@ -490,7 +490,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 					}
 					if(updated) Notification.info(new ContactUpdated(contact));
 				}
-				Notification.good("Contact created.");
+				Notification.good("Contact créé.");
 			}
 		}
 	}

@@ -2,10 +2,8 @@ package liber.command;
 
 import liber.Libersaurus;
 import liber.notification.Notification;
-import liber.Utils;
 import liber.enumeration.CommandField;
 import liber.enumeration.Field;
-import liber.request.Request;
 import liber.request.Response;
 import liber.request.server.GetCaptchaImageForDeletionRequest;
 

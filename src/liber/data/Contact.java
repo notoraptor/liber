@@ -2,7 +2,6 @@ package liber.data;
 
 import liber.Internet;
 import liber.Libersaurus;
-import liber.Utils;
 import liber.card.textable.TextableInMessage;
 import liber.card.textable.TextableOutMessage;
 import liber.exception.InternetException;
@@ -18,7 +17,6 @@ import liber.request.server.PostMessageRequest;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 

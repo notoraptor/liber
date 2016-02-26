@@ -2,7 +2,6 @@ package liber;
 
 import liber.request.ReceivedRequest;
 import liber.request.Request;
-import liber.request.Response;
 
 import java.io.File;
 import java.io.IOException;
@@ -112,7 +111,10 @@ public class Utils {
 		if(!parent.isDirectory())
 			throw new IOException("Le chemin de travail parent ne mène pas à un dossier (" + parent.getAbsolutePath() + ").");
 		File file = new File(parent, ".libersaurus/");
-		if(!file.exists()) file.mkdir();
+		if(!file.exists()) {
+			if(!file.mkdir())
+				throw new IOException("Impossible de créer le dossier de travail (" + file.getAbsolutePath() + ").");
+		}
 		if(!file.exists())
 			throw new IOException("Le dossier de travail n'existe pas et est impossible à créer (" + file.getAbsolutePath() + ").");
 		if(!file.isDirectory())

@@ -2,7 +2,6 @@ package liber.command;
 
 import liber.Libersaurus;
 import liber.notification.Notification;
-import liber.Utils;
 import liber.enumeration.CommandField;
 import liber.enumeration.Field;
 import liber.request.Response;
@@ -50,11 +49,9 @@ public class ValidateCreationCommand extends CommandForLoaded {
 	}
 	@Override
 	public boolean checkCommandLine() {
-		if(!super.checkCommandLine()) return false;
+		if (!super.checkCommandLine()) return false;
 		String s = get(CommandField.captchaCode);
-		if(s == null || s.isEmpty())
-			return Notification.bad("Please enter the captcha code.");
-		return true;
+		return !(s == null || s.isEmpty()) || Notification.bad("Veuillez entrer le code CAPTCHA.");
 	}
 	@Override
 	public boolean analyzeCommandLine() {

@@ -8,16 +8,13 @@ import liber.request.server.GetServerPlaceRequest;
 
 import java.net.InetAddress;
 
-/**
- * Created by HPPC on 21/02/2016.
- */
 public class Address {
 	private InetAddress ip;
 	private int port;
 	public Address(Liberaddress liberaddress) throws AddressException {
 		try {
-			Response response = Request.sendRequest(new GetServerPlaceRequest(liberaddress));
-			if (response == null || response.bad()) throw new AddressException(response.status());
+			Response response = new GetServerPlaceRequest(liberaddress).justSend();
+			if (response.bad()) throw new AddressException(response.status());
 			String ipString = response.get(Field.ip);
 			String portString = response.get(Field.port);
 			if (ipString == null) {

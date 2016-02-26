@@ -13,7 +13,6 @@ import liber.notification.Info;
 import liber.notification.Informer;
 import liber.notification.info.OutlinkAccepted;
 import liber.notification.info.OutlinkDeleted;
-import org.omg.PortableInterceptor.INACTIVE;
 
 public class OutlinkController {
 	class OutlinkInformer implements Informer {

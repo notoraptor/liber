@@ -10,7 +10,7 @@ import liber.notification.Informer;
  * Created by HPPC on 21/02/2016.
  */
 public class GuiNotifier implements Notifier {
-	private Long pivot = new Long(0);
+	final private Long pivot = 0L;
 	private DefaultNotifier defaultNotifier;
 	private Informer informer;
 	public GuiNotifier() {

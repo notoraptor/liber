@@ -4,8 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import liber.data.InMessage;
 
-import java.util.Date;
-
 public class InMessageController implements Controller {
 
 	@FXML

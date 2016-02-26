@@ -21,7 +21,7 @@ public class Client extends Thread {
 	public void run() {
 		String s = client.getInetAddress().getHostAddress();
 		int p = client.getPort();
-		System.err.println("liber.Client accepted [" + s + ": " + p + "].");
+		System.err.println("Connexion entrante (" + s + ": " + p + ").");
 		try (
 				PrintWriter out = new PrintWriter(client.getOutputStream(), true);
 				BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()))

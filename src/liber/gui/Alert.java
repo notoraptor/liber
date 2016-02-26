@@ -20,9 +20,7 @@ public class Alert {
 		titleLabel.setText(title);
 		messageLabel.setText(message);
 		okButton.setText(buttonTitle);
-		okButton.setOnAction((event) -> {
-			dialogStage.close();
-		});
+		okButton.setOnAction((event) -> dialogStage.close());
 		dialogStage.setScene(new Scene(root));
 		dialogStage.setTitle(title);
 		dialogStage.show();

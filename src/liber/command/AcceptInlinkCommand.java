@@ -13,10 +13,9 @@ public class AcceptInlinkCommand extends CommandForOnline {
 		return new CommandField[]{CommandField.userLiberaddress};
 	}
 	@Override public boolean checkCommandLine() {
-		if(!super.checkCommandLine()) return false;
+		if (!super.checkCommandLine()) return false;
 		String s = get(CommandField.userLiberaddress);
-		if(s == null || s.isEmpty()) return Notification.bad("No user liberaddress specified to accept inlink.");
-		return true;
+		return !(s == null || s.isEmpty()) || Notification.bad("No user liberaddress specified to accept inlink.");
 	}
 	@Override
 	public void execute() {

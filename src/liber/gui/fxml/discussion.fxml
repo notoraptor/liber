@@ -96,9 +96,7 @@
    </bottom>
    <center>
       <ScrollPane fx:id="scrollPane" fitToWidth="true" vvalue="1.0" BorderPane.alignment="CENTER">
-         <content>
-            <VBox fx:id="history" />
-         </content>
+         <VBox fx:id="history"/>
       </ScrollPane>
    </center>
    <padding>

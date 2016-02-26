@@ -14,10 +14,9 @@ public class DeleteContactCommand extends CommandForOnline {
 	}
 	@Override
 	public boolean checkCommandLine() {
-		if(!super.checkCommandLine()) return false;
+		if (!super.checkCommandLine()) return false;
 		String s = get(CommandField.contactLiberaddress);
-		if(s == null || s.isEmpty()) return Notification.bad("Aucun contact spécifié pour la suppression de contact.");
-		return true;
+		return !(s == null || s.isEmpty()) || Notification.bad("Aucun contact spécifié pour la suppression de contact.");
 	}
 	@Override
 	public void execute() {

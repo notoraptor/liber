@@ -14,12 +14,11 @@ public class NewMessageCommand extends CommandForOnline {
 	}
 	@Override
 	public boolean checkCommandLine() {
-		if(!super.checkCommandLine()) return false;
+		if (!super.checkCommandLine()) return false;
 		String s = get(CommandField.contact);
-		if(s == null || s.isEmpty()) return Notification.bad("Contact missing for message sending.");
+		if (s == null || s.isEmpty()) return Notification.bad("Contact missing for message sending.");
 		s = get(CommandField.message);
-		if(s == null || s.isEmpty()) return Notification.bad("Content missing for message sending.");
-		return true;
+		return !(s == null || s.isEmpty()) || Notification.bad("Content missing for message sending.");
 	}
 	@Override
 	public void execute() {

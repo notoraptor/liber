@@ -19,15 +19,6 @@ public class DeleteAccountCommand extends CommandForLoaded {
 	}
 	@Override
 	public void execute() {
-		Response response = Libersaurus.current.features().deleteAccount();
-		/*
-		if (response != null) {
-			Command validation = new ValidateDeletionCommand(response);
-			if (validation.check()) {
-				validation.getCommandLine(scanner());
-				validation.execute();
-			}
-		}
-		*/
+		Libersaurus.current.features().deleteAccount();
 	}
 }

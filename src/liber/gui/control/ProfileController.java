@@ -69,7 +69,7 @@ public class ProfileController {
 				FileInputStream fis = new FileInputStream(file);
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				byte[] buffer = new byte[1024];
-				int read = 0;
+				int read;
 				do {
 					read = fis.read(buffer);
 					if(read != -1) baos.write(buffer, 0, read);

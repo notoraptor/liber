@@ -1,7 +1,5 @@
 package liber.gui;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -48,9 +46,7 @@ public class Question {
 		detailsLabel.setText(question);
 		cancelButton.setText(negativeLabel);
 		okButton.setText(positiveLabel);
-		cancelButton.setOnAction((event) -> {
-			dialogStage.close();
-		});
+		cancelButton.setOnAction((event) -> dialogStage.close());
 		okButton.setOnAction(event -> {
 			dialogStage.close();
 			if(action != null) {

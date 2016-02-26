@@ -70,12 +70,8 @@ abstract public class Request {
 	final public String recipientServerAddress() {
 		return  recipient.serverAddress();
 	}
-	final private Response send() throws RecipientException, RequestException {
-		/*
-		System.out.println("<REQUEST>");
-		System.out.println(this);
-		System.out.println("</REQUEST>");
-		*/
+	private Response send() throws RecipientException, RequestException {
+		System.err.println("Envoi d'une requête à " + recipient);
 		Response response;
 		try {
 			response = recipient.receive(this);

@@ -49,4 +49,8 @@ public class Location implements Recipient {
 		}
 		return response;
 	}
+	@Override
+	public String toString() {
+		return user.liberaddress() + " (" + user.ip() + ":" + user.port() + ")";
+	}
 }

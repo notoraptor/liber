@@ -24,14 +24,8 @@ public class CreateAccountCommand extends CommandForOffline {
 	}
 	@Override
 	public void execute() {
-		Response response = Libersaurus.current.features().createAccount(
-				get(CommandField.liberserver), get(CommandField.username), get(CommandField.password)
+		Libersaurus.current.features().createAccount(
+			get(CommandField.liberserver), get(CommandField.username), get(CommandField.password)
 		);
-		/*
-		if (response != null) {
-			Notification.good("Account created.");
-			// Please then use "validateCreation" command to validate the account
-		}
-		*/
 	}
 }
