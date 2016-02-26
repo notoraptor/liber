@@ -1,8 +1,9 @@
 package liber.enumeration;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public enum Field {
 	author,
 	captcha, captchaImage, imageType,

@@ -49,8 +49,7 @@ public class GUI extends Application {
 				history.pop();
 			}
 		}
-		WorkForm workForm = (form == null ? new WorkForm() : (WorkForm)form);
-		return workForm;
+		return (form == null ? new WorkForm() : (WorkForm)form);
 	}
 	public void fullBack() throws Exception {
 		Form form = null;

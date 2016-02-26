@@ -5,8 +5,9 @@ import liber.enumeration.ContactData;
 import java.util.Base64;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class UserInfo {
 	private String firstname;
 	private String lastname;

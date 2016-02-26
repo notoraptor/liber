@@ -7,8 +7,9 @@ import liber.request.ReceivedRequest;
 import liber.request.Response;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class GetMessageHashReceivedRequest extends ReceivedRequest {
 	private String messageHash;
 	@Override

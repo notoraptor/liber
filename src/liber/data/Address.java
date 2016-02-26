@@ -2,7 +2,6 @@ package liber.data;
 
 import liber.enumeration.Field;
 import liber.exception.AddressException;
-import liber.request.Request;
 import liber.request.Response;
 import liber.request.server.GetServerPlaceRequest;
 

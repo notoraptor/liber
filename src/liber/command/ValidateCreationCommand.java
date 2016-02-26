@@ -10,8 +10,9 @@ import liber.request.server.GetCaptchaImageForCreationRequest;
 import java.io.IOException;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class ValidateCreationCommand extends CommandForLoaded {
 	private String captchaImage;
 	private String imageType;

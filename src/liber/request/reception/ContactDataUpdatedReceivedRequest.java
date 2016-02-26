@@ -6,8 +6,9 @@ import liber.enumeration.Field;
 import liber.request.ReceivedRequest;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class ContactDataUpdatedReceivedRequest extends ReceivedRequest {
 	@Override
 	public Field[] needed() {

@@ -9,8 +9,9 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public abstract class RequestToLiberserver extends Request {
 	public RequestToLiberserver(Liberaddress senderAddress, Liberserver liberserver) {
 		super(senderAddress, liberserver);

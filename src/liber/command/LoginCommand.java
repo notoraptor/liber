@@ -5,8 +5,9 @@ import liber.enumeration.CommandField;
 import liber.notification.Notification;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class LoginCommand extends CommandForOffline {
 	@Override
 	public CommandField[] fields() {

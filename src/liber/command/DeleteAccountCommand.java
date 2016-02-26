@@ -2,11 +2,11 @@ package liber.command;
 
 import liber.Libersaurus;
 import liber.notification.Notification;
-import liber.request.Response;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class DeleteAccountCommand extends CommandForLoaded {
 	@Override
 	public boolean check() {

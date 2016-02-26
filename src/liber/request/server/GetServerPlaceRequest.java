@@ -7,8 +7,9 @@ import liber.recipient.Liberserver;
 import liber.request.RequestFromCandidateToLiberserver;
 
 /**
- * Created by HPPC on 21/02/2016.
- */ // liber.RequestFromCandidateToLiberserver
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/ // liber.RequestFromCandidateToLiberserver
 public class GetServerPlaceRequest extends RequestFromCandidateToLiberserver {
 	public GetServerPlaceRequest(Liberserver liberserver, String username) {
 		super(liberserver);

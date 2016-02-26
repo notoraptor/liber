@@ -1,7 +1,8 @@
 package liber.exception;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class OfflineLocationException extends Exception {
 }

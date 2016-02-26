@@ -9,8 +9,9 @@ import liber.Libersaurus;
 import java.io.ByteArrayInputStream;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class ValidateCreationForm extends Form {
 	private boolean fromConnexion;
 	public ValidateCreationForm() {

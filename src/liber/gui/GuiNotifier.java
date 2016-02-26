@@ -7,8 +7,9 @@ import liber.notification.Info;
 import liber.notification.Informer;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class GuiNotifier implements Notifier {
 	final private Long pivot = 0L;
 	private DefaultNotifier defaultNotifier;

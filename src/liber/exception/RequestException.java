@@ -4,8 +4,9 @@ import liber.enumeration.ErrorCode;
 import liber.enumeration.Field;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class RequestException extends Exception {
 	static final public RequestException ERROR_OUTLINK_UNKNOWN = new RequestException(ErrorCode.ERROR_OUTLINK_UNKNOWN);
 	static final public RequestException ERROR_SECRET = new RequestException(ErrorCode.ERROR_SECRET);

@@ -5,8 +5,9 @@ import liber.gui.control.Controller;
 import liber.gui.form.Form;
 
 /**
- * Created by HPPC on 24/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 24/02/2016
+ **/
 public class ContactProfileForm extends Form {
 	private Contact contact;
 	public ContactProfileForm(Contact contact) {

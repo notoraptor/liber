@@ -6,8 +6,9 @@ import java.net.InetAddress;
 import java.util.Random;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class User extends BasicUser {
 	private Address address;
 	private String secret;

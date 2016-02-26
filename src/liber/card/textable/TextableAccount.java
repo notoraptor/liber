@@ -9,8 +9,9 @@ import liber.enumeration.AccountState;
 import java.util.HashMap;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class TextableAccount extends Textable<Account> {
 	static private String liberaddress = "liberaddress";
 	static private String state = "state";

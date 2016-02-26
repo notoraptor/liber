@@ -4,8 +4,9 @@ import liber.data.InMessage;
 import liber.gui.control.Controller;
 
 /**
- * Created by HPPC on 24/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 24/02/2016
+ **/
 public class InMessageForm extends Form {
 	private InMessage message;
 	public InMessageForm(InMessage theMessage) {

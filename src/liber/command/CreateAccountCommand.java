@@ -3,7 +3,6 @@ package liber.command;
 import liber.Libersaurus;
 import liber.enumeration.CommandField;
 import liber.notification.Notification;
-import liber.request.Response;
 
 public class CreateAccountCommand extends CommandForOffline {
 	@Override

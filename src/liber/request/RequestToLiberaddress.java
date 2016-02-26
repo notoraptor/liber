@@ -9,8 +9,9 @@ import liber.request.Request;
 import java.util.Map;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public abstract class RequestToLiberaddress extends Request {
 	public RequestToLiberaddress(User recipient) {
 		super(Libersaurus.current.account().liberaddress(), new Location(recipient));

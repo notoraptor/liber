@@ -4,8 +4,9 @@ import liber.enumeration.Field;
 import liber.request.RequestFromAccountToLiberserver;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class DeleteAccountRequest extends RequestFromAccountToLiberserver {
 	@Override
 	public Field[] goodFields() {

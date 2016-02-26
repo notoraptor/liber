@@ -1,8 +1,9 @@
 package liber.exception;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class LibercardException extends Exception {
 	public LibercardException(Exception cause) {
 		super(cause);

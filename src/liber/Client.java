@@ -10,8 +10,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class Client extends Thread {
 	private Socket client;
 	public Client(Socket clientSocket) {

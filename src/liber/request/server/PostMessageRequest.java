@@ -6,8 +6,9 @@ import liber.enumeration.Field;
 import liber.request.RequestFromUserToLiberserver;
 
 /**
- * Created by HPPC on 21/02/2016.
- */ // liber.RequestFromUserToLiberserver
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/ // liber.RequestFromUserToLiberserver
 public class PostMessageRequest extends RequestFromUserToLiberserver {
 	public PostMessageRequest(Liberaddress recipient, long microtime, String content) {
 		super(recipient.liberserver());

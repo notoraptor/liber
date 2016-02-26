@@ -4,8 +4,9 @@ import liber.Libersaurus;
 import liber.request.ReceivedRequest;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class NowOfflineReceivedRequest extends ReceivedRequest {
 	@Override
 	public void manage() {

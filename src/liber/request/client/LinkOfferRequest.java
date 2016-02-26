@@ -5,8 +5,9 @@ import liber.enumeration.Field;
 import liber.request.RequestToLiberaddress;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class LinkOfferRequest extends RequestToLiberaddress {
 	public LinkOfferRequest(OutMessage outlink) {
 		super(outlink.recipient());

@@ -6,8 +6,9 @@ import liber.exception.HashException;
 import java.util.Base64;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class MessageContent {
 	private String base64content;
 	public MessageContent(String content, boolean isEncoded) {

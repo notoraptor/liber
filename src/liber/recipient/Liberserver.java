@@ -12,8 +12,9 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class Liberserver implements Recipient {
 	static public final String end = "/server.php";
 	private String address;

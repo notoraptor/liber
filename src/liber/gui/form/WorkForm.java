@@ -10,8 +10,9 @@ import liber.data.Account;
 import java.io.ByteArrayInputStream;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class WorkForm extends Form {
 	static public final int CONTACTS = 0;
 	static public final int INLINKS = 1;

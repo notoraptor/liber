@@ -4,8 +4,9 @@ import liber.Libersaurus;
 import liber.notification.Notification;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public abstract class CommandForLoaded extends Command {
 	public CommandForLoaded() {
 		super();

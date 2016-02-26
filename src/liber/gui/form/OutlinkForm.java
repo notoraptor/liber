@@ -5,8 +5,9 @@ import javafx.scene.control.Label;
 import liber.data.OutMessage;
 
 /**
- * Created by HPPC on 23/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 23/02/2016
+ **/
 public class OutlinkForm extends Form {
 	private OutMessage outlink;
 	public OutlinkForm(OutMessage theOutlink) {

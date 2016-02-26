@@ -5,8 +5,9 @@ import javafx.scene.Parent;
 import liber.gui.control.Controller;
 
 /**
- * Created by HPPC on 21/02/2016.
- */
+ liber
+ ${PACKAGE_NAME} - 21/02/2016
+ **/
 public class Form {
 	private String filename;
 	private String title;
