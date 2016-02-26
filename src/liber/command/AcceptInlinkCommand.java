@@ -1,0 +1,25 @@
+package liber.command;
+
+import liber.Libersaurus;
+import liber.enumeration.CommandField;
+import liber.notification.Notification;
+
+/**
+ * Created by HPPC on 21/02/2016.
+ */
+public class AcceptInlinkCommand extends CommandForOnline {
+	@Override
+	public CommandField[] fields() {
+		return new CommandField[]{CommandField.userLiberaddress};
+	}
+	@Override public boolean checkCommandLine() {
+		if(!super.checkCommandLine()) return false;
+		String s = get(CommandField.userLiberaddress);
+		if(s == null || s.isEmpty()) return Notification.bad("No user liberaddress specified to accept inlink.");
+		return true;
+	}
+	@Override
+	public void execute() {
+		Libersaurus.current.features().acceptInlink(get(CommandField.userLiberaddress));
+	}
+}
