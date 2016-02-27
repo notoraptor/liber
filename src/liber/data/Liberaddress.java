@@ -15,6 +15,13 @@ public class Liberaddress {
 	private String username;
 	private String liberaddress;
 	public Liberaddress(String liberserver, String username) throws UsernameException, RecipientAddressException {
+		// Suppression des "/" en fin d'adresse.
+		int last = liberserver.length()-1;
+		int first;
+		for(first = last; first >= 0 && liberserver.charAt(first) == '/'; --first);
+		++first;
+		if(last - first + 1 > 0)
+			liberserver = liberserver.substring(0, first);
 		if (!Utils.usernameIsValid(username)) throw new UsernameException(username);
 		if (!Utils.urlIsValid(liberserver)) liberserver = "http://" + liberserver;
 		if (liberserver.endsWith(Liberserver.end))

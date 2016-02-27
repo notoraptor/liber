@@ -40,19 +40,17 @@
                         <BorderPane BorderPane.alignment="CENTER">
                            <center>
                               <VBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
-                                 <children>
-                                    <Label fx:id="appellation" text="Appellation">
-                                       <font>
-                                          <Font name="System Bold" size="16.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="liberaddress" text="Liber-adresse">
-                                       <font>
-                                          <Font name="System Bold Italic" size="12.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="status" text="Statut" />
-                                 </children>
+                                 <Label fx:id="appellation" text="Appellation">
+                                    <font>
+                                       <Font name="System Bold" size="16.0"/>
+                                    </font>
+                                 </Label>
+                                 <Label fx:id="liberaddress" text="Liber-adresse">
+                                    <font>
+                                       <Font name="System Bold Italic" size="12.0"/>
+                                    </font>
+                                 </Label>
+                                 <Label fx:id="status" text="Statut"/>
                               </VBox>
                            </center>
                            <right>

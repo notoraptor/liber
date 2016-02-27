@@ -12,86 +12,89 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="liber.gui.control.WorkController">
-   <children>
-      <BorderPane maxHeight="80.0">
-         <left>
-            <Label fx:id="thumbnail" text="😉" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets right="10.0" />
-               </BorderPane.margin>
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Label>
-         </left>
-         <center>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-               <children>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+      prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="liber.gui.control.WorkController">
+    <BorderPane maxHeight="80.0">
+        <left>
+          <Label fx:id="thumbnail" text="😉" BorderPane.alignment="CENTER">
+              <BorderPane.margin>
+                  <Insets right="10.0"/>
+              </BorderPane.margin>
+              <font>
+                  <Font size="30.0"/>
+              </font>
+          </Label>
+        </left>
+        <center>
+          <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+              <children>
                   <Label fx:id="appellation" maxWidth="1.7976931348623157E308" text="Label">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
+                      <font>
+                          <Font name="System Bold" size="20.0"/>
+                      </font>
                   </Label>
                   <Label fx:id="info" maxWidth="1.7976931348623157E308" text="Label">
-                     <font>
-                        <Font name="System Bold Italic" size="12.0" />
-                     </font>
+                      <font>
+                          <Font name="System Bold Italic" size="12.0"/>
+                      </font>
                   </Label>
-               </children>
-            </VBox>
-         </center>
-         <padding>
-            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-         </padding>
-         <right>
-            <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menu" text="☰" BorderPane.alignment="CENTER">
-               <font>
-                  <Font size="20.0" />
-               </font>
-               <contextMenu>
+              </children>
+          </VBox>
+        </center>
+        <padding>
+          <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
+        </padding>
+        <right>
+          <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menu" text="☰" BorderPane.alignment="CENTER">
+              <font>
+                  <Font size="20.0"/>
+              </font>
+              <contextMenu>
                   <ContextMenu fx:id="contextMenu">
-                    <items>
-                      <MenuItem mnemonicParsing="false" onAction="#newContact" text="Nouveau contact" />
-                        <MenuItem mnemonicParsing="false" onAction="#loadProfile" text="Modifier le profil" />
-                        <MenuItem mnemonicParsing="false" onAction="#logout" text="Se déconnecter" />
-                        <MenuItem mnemonicParsing="false" onAction="#deleteAccount" text="Supprimer le compte" />
-                    </items>
+                      <items>
+                          <MenuItem mnemonicParsing="false" onAction="#newContact" text="Nouveau contact"/>
+                          <MenuItem mnemonicParsing="false" onAction="#loadProfile" text="Modifier le profil"/>
+                          <MenuItem mnemonicParsing="false" onAction="#logout" text="Se déconnecter"/>
+                          <MenuItem mnemonicParsing="false" onAction="#deleteAccount" text="Supprimer le compte"/>
+                      </items>
                   </ContextMenu>
-               </contextMenu>
-            </Button>
-         </right>
-      </BorderPane>
-      <TabPane fx:id="tabs" maxHeight="1.7976931348623157E308" prefHeight="580.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
+              </contextMenu>
+          </Button>
+        </right>
+    </BorderPane>
+    <TabPane fx:id="tabs" maxHeight="1.7976931348623157E308" prefHeight="580.0" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
           <Tab fx:id="contactsTab" text="Contacts">
-               <content>
+              <content>
                   <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                     <content>
-                        <VBox fx:id="contactsContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
-                     </content>
+                      <content>
+                          <VBox fx:id="contactsContent" maxHeight="1.7976931348623157E308"
+                                maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0"/>
+                      </content>
                   </ScrollPane>
-               </content>
+              </content>
           </Tab>
           <Tab fx:id="inlinksTab" text="Demandes reçues">
-               <content>
+              <content>
                   <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                     <content>
-                        <VBox fx:id="inlinksContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
-                     </content>
+                      <content>
+                          <VBox fx:id="inlinksContent" maxHeight="1.7976931348623157E308"
+                                maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0"/>
+                      </content>
                   </ScrollPane>
-               </content>
+              </content>
           </Tab>
-            <Tab fx:id="outlinksTab" text="Demandes envoyées">
-               <content>
+          <Tab fx:id="outlinksTab" text="Demandes envoyées">
+              <content>
                   <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                     <content>
-                        <VBox fx:id="outlinksContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
-                     </content>
+                      <content>
+                          <VBox fx:id="outlinksContent" maxHeight="1.7976931348623157E308"
+                                maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0"/>
+                      </content>
                   </ScrollPane>
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
-   </children>
+              </content>
+          </Tab>
+      </tabs>
+    </TabPane>
 </VBox>

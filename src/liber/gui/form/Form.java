@@ -4,10 +4,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import liber.gui.control.Controller;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class Form {
 	private String filename;
 	private String title;

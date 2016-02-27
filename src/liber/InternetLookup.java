@@ -12,11 +12,14 @@ public class InternetLookup extends Thread {
 	}
 	@Override
 	public void run() {
+		System.err.println("Internet lookup thread running.");
 		if(!Internet.isConnected()) {
 			while (active && !Internet.checkConnexion(distant)) {
 				try {
-					Thread.sleep(500);
+					Thread.sleep(300);
 				} catch(InterruptedException e) {
+					System.err.println("Internet lookup thread interrupted.");
+					dependant = null;
 					break;
 				}
 			}
@@ -24,6 +27,7 @@ public class InternetLookup extends Thread {
 		if(dependant != null) {
 			new Thread(() -> dependant.setInternetState(Internet.isConnected())).start();
 		}
+		System.err.println("Internet lookup thread terminated.");
 	}
 	public void cancel() {
 		active = false;

@@ -10,10 +10,6 @@ import liber.gui.control.ProfileController;
 
 import java.io.ByteArrayInputStream;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class ProfileForm extends Form {
 	public ProfileForm() {
 		super("Profile of " + Libersaurus.current.account().appellation());

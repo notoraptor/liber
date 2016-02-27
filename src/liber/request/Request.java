@@ -34,13 +34,17 @@ abstract public class Request {
 	}
 	static public Response sendRequest(Request request, String message) {
 		Response response = null;
+		System.err.println("Internet?" + Internet.isConnected());
 		if(Internet.isConnected()) {
 			try {
 				response = request.send();
 			} catch(RecipientException e) {
+				System.err.println("Check internet connexion.");
 				if(Internet.checkConnexion(request.recipientAddress())) {
+					System.err.println("Seems connected.");
 					if(message != null) Notification.bad(message);
 				} else {
+					System.err.println("Not connected.");
 					Libersaurus.current.lookupInternet(request.recipientServerAddress());
 					if(message != null) Notification.bad(message);
 				}

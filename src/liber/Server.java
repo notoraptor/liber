@@ -44,14 +44,16 @@ public class Server extends Thread implements Closeable {
 	}
 	@Override
 	synchronized public void close() throws IOException {
-		try {
-			makePrivate();
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
 		runServer = false;
 		server.close();
 		System.err.println("Server " + (isRunning() ? "not " : "") + "closed.");
+		try {
+			makePrivate();
+		} catch (Exception e) {
+			// System.err.println("Erreur pendant la fermeture du compte: " + e.getMessage());
+			// e.printStackTrace();
+			throw new IOException(e);
+		}
 	}
 	public int publicPort() {
 		return publicPort;

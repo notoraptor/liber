@@ -9,48 +9,48 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="liber.gui.control.OutMessageController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints vgrow="SOMETIMES" />
-  </rowConstraints>
-   <children>
-      <BorderPane style="-fx-background-color: white;">
-         <top>
-            <BorderPane style="-fx-background-color: rgb(240,240,240);" BorderPane.alignment="CENTER">
-               <right>
+<GridPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.65"
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="liber.gui.control.OutMessageController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <BorderPane style="-fx-background-color: white;">
+        <top>
+          <BorderPane style="-fx-background-color: rgb(240,240,240);" BorderPane.alignment="CENTER">
+              <right>
                   <Label fx:id="timestamp" text="Horodatage" BorderPane.alignment="CENTER">
-                     <font>
-                        <Font name="System Bold Italic" size="11.0" />
-                     </font>
+                      <font>
+                          <Font name="System Bold Italic" size="11.0"/>
+                      </font>
                   </Label>
-               </right>
-               <effect>
-                  <DropShadow />
-               </effect>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-               <left>
-                  <Label fx:id="messageState" text="état" BorderPane.alignment="CENTER" />
-               </left>
-            </BorderPane>
-         </top>
-         <center>
-            <Label fx:id="content" text="lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum " textAlignment="RIGHT" wrapText="true" BorderPane.alignment="CENTER_RIGHT">
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </Label>
-         </center>
-         <GridPane.margin>
-            <Insets bottom="15.0" left="60.0" right="5.0" top="5.0" />
-         </GridPane.margin>
-         <effect>
-            <DropShadow />
-         </effect>
-      </BorderPane>
-   </children>
+              </right>
+              <effect>
+                  <DropShadow/>
+              </effect>
+              <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+              </padding>
+              <left>
+                  <Label fx:id="messageState" text="état" BorderPane.alignment="CENTER"/>
+              </left>
+          </BorderPane>
+        </top>
+        <center>
+          <Label fx:id="content" text="lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum "
+                 textAlignment="RIGHT" wrapText="true" BorderPane.alignment="CENTER_RIGHT">
+              <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+              </padding>
+          </Label>
+        </center>
+        <GridPane.margin>
+          <Insets bottom="15.0" left="60.0" right="5.0" top="5.0"/>
+        </GridPane.margin>
+        <effect>
+          <DropShadow/>
+        </effect>
+    </BorderPane>
 </GridPane>

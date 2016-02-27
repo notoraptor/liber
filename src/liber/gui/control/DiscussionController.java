@@ -119,9 +119,7 @@ public class DiscussionController implements Controller {
 	public void load(Object resource) throws Exception {
 		if(resource instanceof Contact) {
 			GUI.current.notifier().setInformer(new DiscussionInformer());
-			history.getChildren().addListener((ListChangeListener<? super Node>) (changed) -> {
-				messageListModified = true;
-			});
+			history.getChildren().addListener((ListChangeListener<? super Node>) (changed) -> messageListModified = true);
 			scrollPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
 				if (messageListModified) {
 					messageListModified = false;

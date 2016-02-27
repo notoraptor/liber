@@ -18,30 +18,29 @@
       </Label>
    </left>
    <center>
-      <VBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
-         <children>
-            <Label fx:id="username" maxWidth="1.7976931348623157E308" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Pseudonyme">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-            </Label>
-            <Label fx:id="liberaddress" maxWidth="1.7976931348623157E308" text="Liber-adresse">
-               <padding>
-                  <Insets top="2.0" />
-               </padding>
-               <font>
-                  <Font name="System Bold Italic" size="12.0" />
-               </font>
-            </Label>
-            <Label fx:id="invitation" maxWidth="1.7976931348623157E308" text="Invitation">
-               <padding>
-                  <Insets top="2.0" />
-               </padding>
-            </Label>
-         </children>
-         <padding>
-            <Insets left="10.0" />
-         </padding>
-      </VBox>
+       <VBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+           <padding>
+               <Insets left="10.0"/>
+           </padding>
+           <Label fx:id="username" maxWidth="1.7976931348623157E308" style="-fx-font-size: 15; -fx-font-weight: bold;"
+                  text="Pseudonyme">
+              <font>
+                  <Font name="System Bold" size="15.0"/>
+              </font>
+           </Label>
+           <Label fx:id="liberaddress" maxWidth="1.7976931348623157E308" text="Liber-adresse">
+              <padding>
+                  <Insets top="2.0"/>
+              </padding>
+              <font>
+                  <Font name="System Bold Italic" size="12.0"/>
+              </font>
+           </Label>
+           <Label fx:id="invitation" maxWidth="1.7976931348623157E308" text="Invitation">
+              <padding>
+                  <Insets top="2.0"/>
+              </padding>
+           </Label>
+       </VBox>
    </center>
 </BorderPane>

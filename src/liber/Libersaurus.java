@@ -36,19 +36,28 @@ public class Libersaurus implements Closeable, InternetDependant {
 		current = this;
 	}
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		if(online())
 			features().logout();
-		else if(loaded()) try {
+		if(loaded()) try {
 			libercard.save();
 			libercard = null;
 			password = null;
 		} catch (Exception e) {
-			throw new IOException(e);
+			//throw new IOException(e);
+			System.err.println("Impossible de sauvegarder correctement la liber-carte à la sortie du programme.");
 		}
-		server.close();
 		if(internetLookup != null) {
 			internetLookup.cancel();
+			internetLookup.interrupt();
+		}
+		try {
+			server.close();
+		} catch (IOException e) {
+			System.err.println("Impossible de fermer correctement le serveur local à la sortie du programme.");
+			System.err.println("Il se peut que le port d'écoute (privé: " + server.privatePort() +
+					", public: " + server.publicPort() + ") soit toujours ouvert.");
+			System.err.println("Veuillez vérifier les serveurs virtuels (NAT/virtual servers) de votre routeur.");
 		}
 	}
 	public void lookupInternet(String address) {
@@ -357,7 +366,8 @@ public class Libersaurus implements Closeable, InternetDependant {
 		if (contact == null) throw RequestException.ERROR_CONTACT;
 		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET;
 		OutMessage message = contact.getOutMessage(microtime);
-		if (message == null || !message.isConfirmationWaiting()) throw RequestException.ERROR_NO_MESSAGE;
+		if (message == null || (!message.isConfirmationWaiting() && !message.isLiberserverWaiting()))
+			throw RequestException.ERROR_NO_MESSAGE;
 		message.setSent();
 		Notification.info(new OutMessageUpdated(message));
 	}
@@ -400,16 +410,19 @@ public class Libersaurus implements Closeable, InternetDependant {
 		for (Contact contact : contacts())
 			contact.transferLocationWaitingMessagesToServers();
 		// Se déconnecter effectivement.
-		Response response = Request.sendRequest(new LogoutRequest());
-		if (response != null) if (response.good()) {
-			//Notification.good("Logout successful.");
-			try {
-				finalizeLogout();
-			} catch (Exception e) {
-				Notification.bad("Unable to close correctly account locally.");
+		try {
+			Response response = new LogoutRequest().justSend();
+			if (response.good()) {
+				try {
+					finalizeLogout();
+				} catch (Exception e) {
+					Notification.bad("Une erreur est survenur pendant la fermeture locale du compte.");
+				}
+			} else {
+				Notification.bad("Impossible de se déconnecter correctement (" + response.status() + ").");
 			}
-		} else {
-			Notification.bad("Unable to logout (" + response.status() + ").");
+		} catch (Exception e) {
+			Notification.bad("Impossible de notifier la déconnexion à votre liber-serveur.");
 		}
 	}
 	public void delete() throws LibercardException {
@@ -446,7 +459,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 			Notification.bad("Cette liber-adresse n'est pas parmi vos contacts.");
 		else {
 			Response response = Request.sendRequest(new LinkDeletedRequest(contact));
-			if (response != null) if (response.bad()) {
+			if (response == null || response.bad()) {
 				Notification.bad("Impossible d'informer le contact que vous avez supprimé la relation.\n" +
 						"Le contact est toujours parmi vos relations.");
 			} else {

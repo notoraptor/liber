@@ -30,7 +30,6 @@ public class ValidateDeletionController {
 		ValidateDeletionCommand command = new ValidateDeletionCommand();
 		command.put(CommandField.captchaCode, captchaLabel.getText().trim());
 		if(command.run()) {
-			Notification.good("Le compte a été effectivement supprimé.");
 			GUI.current.fullBack();
 		} else {
 			byte[] data = Libersaurus.current.features().getCaptchaImageForDeletion();
