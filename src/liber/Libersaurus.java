@@ -60,6 +60,14 @@ public class Libersaurus implements Closeable, InternetDependant {
 			System.err.println("Veuillez vérifier les serveurs virtuels (NAT/virtual servers) de votre routeur.");
 		}
 	}
+	/* TODO: Gestion perfectible de la fermeture du programmee lorsqu'il n'y a pas de connexion internet.
+	REMARQUE: si la connexion Internet n'est pas disponible à la fermeture du programme,
+	le port d'écoute créé reste ouvert, et semble définitivement perdu.
+	SOLUTION POSSIBLE:
+	1) Mémoriser les ports laissés dans un état incertain à la sortie du programme.
+	2) À la prochaine ouverture du programme, tenter d'utiliser les ports précédemment laissés,
+	ou supprimer la cartographie de ces ports puis utiliser de nouveaux ports.
+	*/
 	public void lookupInternet(String address) {
 		assert internetLookup == null;
 		internetLookup = new InternetLookup(address, this);
