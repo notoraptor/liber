@@ -23,16 +23,22 @@ import java.util.HashSet;
 public class Libersaurus implements Closeable, InternetDependant {
 	static public Libersaurus current;
 	private File directory;
-	private Features features;
+	private Configuration configuration;
 	private Server server;
-	private InternetLookup internetLookup;
+	private Features features;
 	private Libercard libercard;
 	private String password;
+	private InternetLookup internetLookup;
 	public Libersaurus() throws Exception {
-		server = new Server();
-		server.start();
 		directory = Utils.workingDirectory();
-		features = new Features();
+		configuration = new Configuration(directory);
+		server = new Server(configuration.getPrivatePort(), configuration.getPublicPort());
+		server.start();
+		configuration.setPorts(server.privatePort(), server.publicPort());
+		libercard = null;
+		password = null;
+		internetLookup = null;
+		features = new Features(this);
 		current = this;
 	}
 	@Override
@@ -58,6 +64,11 @@ public class Libersaurus implements Closeable, InternetDependant {
 			System.err.println("Il se peut que le port d'écoute (privé: " + server.privatePort() +
 					", public: " + server.publicPort() + ") soit toujours ouvert.");
 			System.err.println("Veuillez vérifier les serveurs virtuels (NAT/virtual servers) de votre routeur.");
+		}
+		try {
+			configuration.save();
+		} catch (Exception e) {
+			System.err.println("Impossible de sauvegarder la configuration de Libersaurus (" + e.getMessage() + ").");
 		}
 	}
 	/* TODO: Gestion perfectible de la fermeture du programmee lorsqu'il n'y a pas de connexion internet.

@@ -34,7 +34,7 @@ abstract public class Request {
 	}
 	static public Response sendRequest(Request request, String message) {
 		Response response = null;
-		System.err.println("Internet?" + Internet.isConnected());
+		System.err.println("Internet? " + Internet.isConnected());
 		if(Internet.isConnected()) {
 			try {
 				response = request.send();

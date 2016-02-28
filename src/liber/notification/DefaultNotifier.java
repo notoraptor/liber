@@ -9,8 +9,8 @@ public class DefaultNotifier implements Notifier {
 	}
 	@Override
 	public void bad(String notification) {
-		System.out.print("(*");
-		System.out.print(notification);
-		System.out.println("*)");
+		System.err.print("(*");
+		System.err.print(notification);
+		System.err.println("*)");
 	}
 }

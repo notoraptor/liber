@@ -12,18 +12,35 @@ import java.net.Socket;
 // TODO (?): LES CLASSES DE CE FICHIER SONT INCOMPLÈTES.
 public class Server extends Thread implements Closeable {
 	static private String protocol = "TCP";
-	private ServerSocket server;
-	private String privateIP;
-	private String publicIP;
-	private int privatePort;
-	private int publicPort;
-	private boolean runServer;
-	private GatewayDevice d;
+	private ServerSocket server; // Server
+	private String privateIP; // discoverDeviceAndIPs
+	private String publicIP; // discoverDeviceAndIPs
+	private int privatePort; // Server
+	private int publicPort; // makePublic
+	private boolean runServer = true;
+	private GatewayDevice device; // discoverDeviceAndIPs
 	public Server() throws Exception {
 		server = new ServerSocket(0);
 		privatePort = server.getLocalPort();
-		runServer = true;
 		makePublic();
+		System.out.println("PRIVATE: " + privateIP + ":" + privatePort);
+		System.out.println("PUBLIC:  " + publicIP + ":" + publicPort);
+	}
+	public Server(int thePrivatePort, int thePublicPort) throws Exception {
+		// server
+		if(thePrivatePort <= 0) {
+			server = new ServerSocket(0);
+		} else try {
+			server = new ServerSocket(thePrivatePort);
+		} catch(Exception e) {
+			server = new ServerSocket(0);
+		}
+		privatePort = server.getLocalPort();
+		// makePublic
+		if(thePublicPort < 0)
+			makePublic();
+		else
+			makePublic(thePublicPort);
 		System.out.println("PRIVATE: " + privateIP + ":" + privatePort);
 		System.out.println("PUBLIC:  " + publicIP + ":" + publicPort);
 	}
@@ -46,7 +63,7 @@ public class Server extends Thread implements Closeable {
 	synchronized public void close() throws IOException {
 		runServer = false;
 		server.close();
-		System.err.println("Server " + (isRunning() ? "not " : "") + "closed.");
+		System.err.println("Server " + (isRunning() ? "encore ouvert" : "fermé") + ".");
 		try {
 			makePrivate();
 		} catch (Exception e) {
@@ -71,29 +88,54 @@ public class Server extends Thread implements Closeable {
 		return runServer && server.isClosed();
 	}
 	private void makePublic() throws Exception {
+		discoverDeviceAndIPs();
+		tryPortMapping();
+		System.out.println("Mapping successful.");
+	}
+	private void makePublic(int thePublicPort) throws Exception {
+		discoverDeviceAndIPs();
+		PortMappingEntry portMapping = new PortMappingEntry();
+		if(device.getSpecificPortMappingEntry(thePublicPort, protocol, portMapping)) {
+			if(portMapping.getInternalPort() == this.privatePort) {
+				this.publicPort = thePublicPort;
+				System.out.println("Port mapping of previous session re-used.");
+			} else {
+				tryPortMapping(portMapping);
+			}
+		} else if(device.addPortMapping(thePublicPort, this.privatePort, this.privateIP, protocol, "libersaurus")) {
+			this.publicPort = thePublicPort;
+			System.out.println("Port mapping of previous session re-allocated.");
+		} else {
+			tryPortMapping(portMapping);
+		}
+		System.out.println("Mapping successful.");
+	}
+	private void makePrivate() throws Exception {
+		device.deletePortMapping(this.publicPort, protocol);
+	}
+	private void discoverDeviceAndIPs() throws Exception {
 		GatewayDiscover discover = new GatewayDiscover();
 		discover.discover();
-		d = discover.getValidGateway();
-		if (d == null)
+		device = discover.getValidGateway();
+		if (device == null)
 			throw new Exception("No valid gateway device found.");
-		this.privateIP = d.getLocalAddress().getHostAddress();
-		this.publicIP = d.getExternalIPAddress();
-		PortMappingEntry portMapping = new PortMappingEntry();
+		this.privateIP = device.getLocalAddress().getHostAddress();
+		this.publicIP = device.getExternalIPAddress();
+	}
+	private void tryPortMapping(PortMappingEntry portMapping) throws Exception {
 		int maxOffset = 100;
 		int portOffset;
 		for (portOffset = 0; portOffset <= maxOffset; ++portOffset) {
 			this.publicPort = 10_000 + this.privatePort + portOffset;
-			if (!d.getSpecificPortMappingEntry(this.publicPort, "TCP", portMapping)
-					&& d.addPortMapping(this.publicPort, this.privatePort, this.privateIP, protocol, "libersaurus")
-					) {
+			if (device.getSpecificPortMappingEntry(this.publicPort, protocol, portMapping))
+				continue;
+			if(device.addPortMapping(this.publicPort, this.privatePort, this.privateIP, protocol, "libersaurus"))
 				break;
-			}
 		}
 		if (portOffset > maxOffset)
 			throw new Exception("Port mapping attempt failed");
-		System.out.println("Mapping successful.");
 	}
-	private void makePrivate() throws Exception {
-		d.deletePortMapping(this.publicPort, protocol);
+	private void tryPortMapping() throws Exception {
+		tryPortMapping(new PortMappingEntry());
 	}
 }

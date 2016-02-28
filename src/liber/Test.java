@@ -50,9 +50,7 @@ public class Test {
 	}
 	static public void main(String[] args) {
 		init();
-		try (
-				Libersaurus instance = new Libersaurus()
-		) {
+		try (Libersaurus instance = new Libersaurus()) {
 			Scanner scanner = new Scanner(System.in);
 			printCommands();
 			System.out.print("[Votre commande]: ");
@@ -64,11 +62,8 @@ public class Test {
 				}
 				if (line.equals("end") || line.equals("exit")) {
 					Command command = new LogoutCommand();
-					//Notification.silence();
-					//Notification.speak();
-					if (command.check() && command.getCommandLine(scanner)) {
+					if (command.check() && command.getCommandLine(scanner))
 						command.execute();
-					}
 					break;
 				}
 				Command command = Command.getInstance(line);

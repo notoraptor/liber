@@ -20,20 +20,26 @@ import java.io.IOException;
 import java.util.Base64;
 
 /**
- * TODO - FUTURES FONCTIONNALITÉS.
- * Actuellement, le service de poste ne prend en charge que les messages de discussion.
- * À l'avenir, il faudrait gérer tous les messages échangés entre contacts,
- * aussi bien les messages de discussion que les messages d'entretien de la relation.
- * Deux possibilités:
- * * Généraliser le service de poste pour tous les messages du protocole.
- * * Mettre en place un système de "liste de tâches" dans laquelle seraient temporairement entreposées
- * * * les opérations qui n'ont pu être réalisées à cause de l'échec de l'envoi de messages.
- * * * Ce système permettrait de relancer automatiquement la tâche dès que faisable
- * * * (lorsque le contact concerné serait en ligne). Il suffirait d'entreposer les tâches
- * * * sous la forme de commandes à exécuter plus tard.
- **/
+* TODO - FUTURES FONCTIONNALITÉS.
+* Actuellement, le service de poste ne prend en charge que les messages de discussion.
+* À l'avenir, il faudrait gérer tous les messages échangés entre contacts,
+* aussi bien les messages de discussion que les messages d'entretien de la relation.
+* Deux possibilités:
+* * Généraliser le service de poste pour tous les messages du protocole.
+* * Mettre en place un système de "liste de tâches" dans laquelle seraient temporairement entreposées
+* * * les opérations qui n'ont pu être réalisées à cause de l'échec de l'envoi de messages.
+* * * Ce système permettrait de relancer automatiquement la tâche dès que faisable
+* * * (lorsque le contact concerné serait en ligne). Il suffirait d'entreposer les tâches
+* * * sous la forme de commandes à exécuter plus tard.
+**/
+
+// NOTE: Classe encapsulée (on n'utilise plus Libersaurus.current dans ce fichier).
 
 public class Features {
+	private Libersaurus liber;
+	public Features(Libersaurus libersaurus) {
+		liber = libersaurus;
+	}
 	public Response createAccount(String liberserver, String username, String password) {
 		Response response = null;
 		Liberaddress liberaddress = Liberaddress.build(liberserver, username);
@@ -44,7 +50,7 @@ public class Features {
 				Notification.bad("Aviez-vous déjà créé ce compte ? Si oui, essayez de vous connecter (avec la commande \"login\").");
 				response = null;
 			} else {
-				Libersaurus.current.create(liberaddress, password);
+				liber.create(liberaddress, password);
 				Notification.good("Compte créé.");
 			}
 		} catch(Exception e) {
@@ -57,7 +63,7 @@ public class Features {
 			Response response = new CaptchaForCreationRequest(captcha).justSend();
 			if (response.bad()) Notification.bad("Mauvais code CAPTCHA (" + response.status() + ").");
 			else {
-				Libersaurus.current.account().confirm();
+				liber.account().confirm();
 				Notification.good("Compte validé.");
 			}
 		} catch(Exception e) {
@@ -69,7 +75,7 @@ public class Features {
 				new DeleteAccountRequest(), "Impossible de supprimer le compte. Êtes-vous connecté à Internet ?");
 		if (response != null) {
 			if (response.good()) {
-				Libersaurus.current.account().setToDelete();
+				liber.account().setToDelete();
 				// Notification.good("Deletion request sent.");
 			} else {
 				Notification.bad("Impossible de supprimer le compte (" + response.status() + ").");
@@ -83,7 +89,7 @@ public class Features {
 			Response response = new CaptchaForDeletionRequest(captcha).justSend();
 			if (response.bad()) Notification.bad("Mauvais code CAPTCHA (" + response.status() + ").");
 			else try {
-				Libersaurus.current.delete();
+				liber.delete();
 				Notification.good("Compte supprimé.");
 			} catch (LibercardException e) {
 				Notification.bad("Impossible de supprimer la libercarte de ce compte.");
@@ -97,15 +103,15 @@ public class Features {
 		if (liberaddress != null) try {
 			Response response = new LoginRequest(liberaddress, password).justSend();
 			if (response != null) if (response.good()) {
-				Libersaurus.current.login(liberaddress, password);
+				liber.login(liberaddress, password);
 			} else switch (response.status()) {
 				case "ERROR_ACCOUNT_TO_DELETE":
 					Notification.good("liber.Account must be deleted."); // " Use \"validateDeletion\" command.");
-					Libersaurus.current.loginToDelete(liberaddress, password);
+					liber.loginToDelete(liberaddress, password);
 					break;
 				case "ERROR_ACCOUNT_TO_CONFIRM":
 					Notification.good("liber.Account must be confirmed."); // " Use \"validateCreation\" command."
-					Libersaurus.current.loginToConfirm(liberaddress, password);
+					liber.loginToConfirm(liberaddress, password);
 					break;
 				default:
 					Notification.bad("Unable to login\n(" + response.status() + ").");
@@ -119,39 +125,39 @@ public class Features {
 		}
 	}
 	public void logout() {
-		Libersaurus.current.logout();
+		liber.logout();
 	}
 	public void newContact(String liberaddress, String message) {
 		Liberaddress recipient = Liberaddress.build(liberaddress);
-		if (recipient != null) Libersaurus.current.createOutlink(recipient, message);
+		if (recipient != null) liber.createOutlink(recipient, message);
 	}
 	public void cancelOutLink(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) Libersaurus.current.cancelOutlink(liberaddress);
+		if (liberaddress != null) liber.cancelOutlink(liberaddress);
 	}
 	public void deleteContact(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) Libersaurus.current.deleteContact(liberaddress);
+		if (liberaddress != null) liber.deleteContact(liberaddress);
 	}
 	public void clearHistory(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) Libersaurus.current.clearHistory(liberaddress);
+		if (liberaddress != null) liber.clearHistory(liberaddress);
 	}
 	public void acceptInlink(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) Libersaurus.current.acceptInlink(liberaddress);
+		if (liberaddress != null) liber.acceptInlink(liberaddress);
 	}
 	public void refuseInlink(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) Libersaurus.current.refuseInlink(liberaddress);
+		if (liberaddress != null) liber.refuseInlink(liberaddress);
 	}
 	public void newMessage(String theLiberaddress, String message) {
 		Liberaddress liberaddress = Liberaddress.build(theLiberaddress);
-		if (liberaddress != null) Libersaurus.current.newMessage(liberaddress, message);
+		if (liberaddress != null) liber.newMessage(liberaddress, message);
 	}
 	public void updateInfo(ContactData data, String value) {
-		Libersaurus.current.updateInfo(data, value);
-		for (Contact contact : Libersaurus.current.contacts()) {
+		liber.updateInfo(data, value);
+		for (Contact contact : liber.contacts()) {
 			try {
 				new ContactDataUpdatedRequest(contact, data, value).justSend();
 			} catch (Exception ignored) {}
@@ -159,8 +165,8 @@ public class Features {
 		Notification.good(data + " updated.");
 	}
 	public void deleteInfo(ContactData data) {
-		Libersaurus.current.deleteInfo(data);
-		for (Contact contact : Libersaurus.current.contacts()) {
+		liber.deleteInfo(data);
+		for (Contact contact : liber.contacts()) {
 			try {
 				new ContactDataDeletedRequest(contact, data).justSend();
 			} catch (Exception ignored) {

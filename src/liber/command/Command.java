@@ -14,10 +14,9 @@ public abstract class Command {
 		parameters = new HashMap<>();
 	}
 	static public Command getInstance(String commandName) {
-		commandName =
+		commandName = "liber.command." +
 				Character.toUpperCase(commandName.charAt(0))
-						+ commandName.substring(1, commandName.length())
-						+ "liber.Command";
+						+ commandName.substring(1, commandName.length()) + "Command";
 		Command command = null;
 		if (Utils.classExtends(commandName, Command.class))
 			command = (Command) Utils.instanciate(commandName);

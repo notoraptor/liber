@@ -23,11 +23,16 @@ public class GUI extends Application {
 	public Stage stage() {
 		return stage;
 	}
-	public void load(Form form) throws Exception {
-		notifier.reset();
-		Scene scene = new Scene(form.root(), 325, 500);
+	private void loadFirst(Form form) throws Exception {
+		Scene scene = new Scene(form.root());
 		stage.setTitle(form.title());
 		stage.setScene(scene);
+		history.push(form);
+	}
+	public void load(Form form) throws Exception {
+		notifier.reset();
+		stage.setTitle(form.title());
+		stage.getScene().setRoot(form.root());
 		history.push(form);
 	}
 	public void back() throws Exception {
@@ -73,8 +78,10 @@ public class GUI extends Application {
 		notifier = new GuiNotifier();
 		history = new LinkedList<>();
 		stage = primaryStage;
+		stage.setMinWidth(325);
+		stage.setMinHeight(500);
 		Notification.setManager(notifier);
-		load(new HomeForm());
+		loadFirst(new HomeForm());
 		stage.show();
 	}
 }
