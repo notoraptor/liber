@@ -1,8 +1,8 @@
 package liber.gui;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 import liber.Libersaurus;
 import liber.gui.form.Form;
@@ -30,7 +30,8 @@ public class GUI extends Application {
 		history.push(form);
 	}
 	public void load(Form form) throws Exception {
-		notifier.reset();
+		notifier.setInformer(null);
+		notifier.setCurrentContact(null);
 		stage.setTitle(form.title());
 		stage.getScene().setRoot(form.root());
 		history.push(form);
@@ -38,6 +39,11 @@ public class GUI extends Application {
 	public void back() throws Exception {
 		if(!history.isEmpty()) history.pop();
 		if(!history.isEmpty()) load(history.pop());
+	}
+	public void fullBack() throws Exception {
+		Form form = null;
+		while (!history.isEmpty()) form = history.pop();
+		if(form != null) load(form);
 	}
 	public Form getBack() {
 		Form form = null;
@@ -56,11 +62,6 @@ public class GUI extends Application {
 			}
 		}
 		return (form == null ? new WorkForm() : (WorkForm)form);
-	}
-	public void fullBack() throws Exception {
-		Form form = null;
-		while (!history.isEmpty()) form = history.pop();
-		if(form != null) load(form);
 	}
 	public static void main(String[] args) {
 		try (

@@ -46,24 +46,27 @@ public class DiscussionController implements Controller {
 			}
 			else if(info instanceof MessageReceived) {
 				MessageReceived mr = (MessageReceived)info;
-				Parent root = new InMessageForm(mr.get()).root();
-				history.getChildren().add(root);
-				// TODO: Comment faire défiler correctement le scrollpane vers le bas quand un message est ajouté.
-				// TODO: Le code suivant semble fonctionner pour outmessage (ci-après) mais pas pour inmessage (ici).
+				if(mr.get().liberaddress().equals(contact.liberaddress())) {
+					Parent root = new InMessageForm(mr.get()).root();
+					history.getChildren().add(root);
+				}
 			}
 			else if(info instanceof MessageCreated) {
 				MessageCreated mc = (MessageCreated)info;
-				addOutMessage(mc.get());
+				if(mc.get().liberaddress().equals(contact.liberaddress()))
+					addOutMessage(mc.get());
 			}
 			else if(info instanceof OutMessageUpdated) {
 				OutMessageUpdated omu = (OutMessageUpdated) info;
-				Node root = history.lookup("#" + omu.get().id());
-				if(root != null) {
-					Label messageState = (Label) root.lookup("#messageState");
-					if(messageState == null) System.err.println("<<<< erreur >>>>");
-					else {
-						OutMessage m = omu.get();
-						OutMessageController.setState(messageState, m);
+				if(omu.get().liberaddress().equals(contact.liberaddress())) {
+					Node root = history.lookup("#" + omu.get().id());
+					if (root != null) {
+						Label messageState = (Label) root.lookup("#messageState");
+						if (messageState == null) System.err.println("<<<< erreur >>>>");
+						else {
+							OutMessage m = omu.get();
+							OutMessageController.setState(messageState, m);
+						}
 					}
 				}
 			}
@@ -87,58 +90,6 @@ public class DiscussionController implements Controller {
 	@FXML
 	private VBox history;
 
-	private Contact contact;
-	private boolean messageListModified;
-	private void updateContact() {
-		liberaddress.setText(contact.liberaddress().toString());
-		appellation.setText(contact.appellation());
-		status.setText(contact.info().status());
-		if(contact.online()) {
-			online.setText(DiscussionController.onlineString);
-			online.setTextFill(Color.GREEN);
-		} else {
-			online.setText(DiscussionController.offlineString);
-			online.setTextFill(Color.RED);
-		}
-		if(contact.info().hasPhoto()) {
-			photo.setText(null);
-			photo.setGraphic(ProfileController.instanciateImageView(
-					new Image(new ByteArrayInputStream(contact.info().photoBytes())), 40
-			));
-		} else {
-			photo.setText(WorkController.noUserPhotoString);
-		}
-	}
-	private void addOutMessage(OutMessage om) throws Exception {
-		Parent root = new OutMessageForm(om).root();
-		root.setId(om.id().toString());
-		history.getChildren().add(root);
-	}
-
-	@Override
-	public void load(Object resource) throws Exception {
-		if(resource instanceof Contact) {
-			GUI.current.notifier().setInformer(new DiscussionInformer());
-			history.getChildren().addListener((ListChangeListener<? super Node>) (changed) -> messageListModified = true);
-			scrollPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
-				if (messageListModified) {
-					messageListModified = false;
-					Platform.runLater(() -> scrollPane.setVvalue(scrollPane.getVmax()));
-				}
-			});
-			contact = (Contact)resource;
-			liberaddress.setText(contact.liberaddress().toString());
-			updateContact();
-			for(Message message: contact.messages()) {
-				if(message instanceof InMessage) {
-					Parent root = new InMessageForm((InMessage)message).root();
-					history.getChildren().add(root);
-				} else {
-					addOutMessage((OutMessage)message);
-				}
-			}
-		}
-	}
 	@FXML
 	void cancel(ActionEvent event) throws Exception {
 		GUI.current.back();
@@ -171,4 +122,56 @@ public class DiscussionController implements Controller {
 		// TODO ...
 	}
 
+	private Contact contact;
+	private boolean messageListModified;
+	private void updateContact() {
+		liberaddress.setText(contact.liberaddress().toString());
+		appellation.setText(contact.appellation());
+		status.setText(contact.info().status());
+		if(contact.online()) {
+			online.setText(DiscussionController.onlineString);
+			online.setTextFill(Color.GREEN);
+		} else {
+			online.setText(DiscussionController.offlineString);
+			online.setTextFill(Color.RED);
+		}
+		if(contact.info().hasPhoto()) {
+			photo.setText(null);
+			photo.setGraphic(ProfileController.instanciateImageView(
+					new Image(new ByteArrayInputStream(contact.info().photoBytes())), 40
+			));
+		} else {
+			photo.setText(WorkController.noUserPhotoString);
+		}
+	}
+	private void addOutMessage(OutMessage om) throws Exception {
+		Parent root = new OutMessageForm(om).root();
+		root.setId(om.id().toString());
+		history.getChildren().add(root);
+	}
+	@Override
+	public void load(Object resource) throws Exception {
+		if(resource instanceof Contact) {
+			contact = (Contact)resource;
+			GUI.current.notifier().setInformer(new DiscussionInformer());
+			GUI.current.notifier().setCurrentContact(contact);
+			history.getChildren().addListener((ListChangeListener<? super Node>) (changed) -> messageListModified = true);
+			scrollPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
+				if (messageListModified) {
+					messageListModified = false;
+					Platform.runLater(() -> scrollPane.setVvalue(scrollPane.getVmax()));
+				}
+			});
+			liberaddress.setText(contact.liberaddress().toString());
+			updateContact();
+			for(Message message: contact.messages()) {
+				if(message instanceof InMessage) {
+					Parent root = new InMessageForm((InMessage)message).root();
+					history.getChildren().add(root);
+				} else {
+					addOutMessage((OutMessage)message);
+				}
+			}
+		}
+	}
 }

@@ -80,13 +80,11 @@ public class ContactProfileController implements Controller {
 		}
 	}
 	private Contact contact;
-
 	private void backToWork() throws Exception {
 		WorkForm form = GUI.current.findWorkForm();
 		form.setTabIndex(WorkForm.CONTACTS);
 		GUI.current.load(form);
 	}
-
 	private void updateContact() {
 		appellation.setText(contact.appellation());
 		status.setText(contact.info().status());
@@ -99,12 +97,12 @@ public class ContactProfileController implements Controller {
 			photo.setText(WorkController.noUserPhotoString);
 		}
 	}
-
 	@Override
 	public void load(Object resource) throws Exception {
 		if(resource instanceof Contact) {
-			GUI.current.notifier().setInformer(new ContactProfileInformer());
 			contact = (Contact) resource;
+			GUI.current.notifier().setInformer(new ContactProfileInformer());
+			GUI.current.notifier().setCurrentContact(contact);
 			title.setText("Profil de " + contact.username());
 			liberaddress.setText(contact.liberaddress().toString());
 			updateContact();

@@ -34,7 +34,6 @@ import java.util.Base64;
 **/
 
 // NOTE: Classe encapsulée (on n'utilise plus Libersaurus.current dans ce fichier).
-
 public class Features {
 	private Libersaurus liber;
 	public Features(Libersaurus libersaurus) {

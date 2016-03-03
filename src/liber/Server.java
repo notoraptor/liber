@@ -6,8 +6,10 @@ import org.bitlet.weupnp.PortMappingEntry;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
 
 // TODO (?): LES CLASSES DE CE FICHIER SONT INCOMPLÈTES.
 public class Server extends Thread implements Closeable {
@@ -22,6 +24,7 @@ public class Server extends Thread implements Closeable {
 	public Server() throws Exception {
 		server = new ServerSocket(0);
 		privatePort = server.getLocalPort();
+		System.err.println("private port = " + privatePort);
 		makePublic();
 		System.out.println("PRIVATE: " + privateIP + ":" + privatePort);
 		System.out.println("PUBLIC:  " + publicIP + ":" + publicPort);
@@ -52,7 +55,7 @@ public class Server extends Thread implements Closeable {
 				Client client = new Client(clientSocket);
 				client.start();
 			} catch (Exception e) {
-				if (!e.getMessage().equals("socket closed")) {
+				if (!e.getMessage().toLowerCase().equals("socket closed")) {
 					System.err.println("Unable to accept client and/or init client handling.");
 					e.printStackTrace(System.err);
 				}
@@ -115,7 +118,8 @@ public class Server extends Thread implements Closeable {
 	}
 	private void discoverDeviceAndIPs() throws Exception {
 		GatewayDiscover discover = new GatewayDiscover();
-		discover.discover();
+		Map<InetAddress, GatewayDevice> devices = discover.discover();
+		System.err.println(devices.size() + " upnp devices.");
 		device = discover.getValidGateway();
 		if (device == null)
 			throw new Exception("No valid gateway device found.");

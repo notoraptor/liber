@@ -12,6 +12,7 @@ import liber.request.Response;
 import liber.request.client.*;
 import liber.request.server.GetNextPostedMessageRequest;
 import liber.request.server.LogoutRequest;
+import liber.request.server.PostMessageRequest;
 import liber.request.server.PostedMessageReceivedRequest;
 
 import java.io.Closeable;
@@ -19,6 +20,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+
+/* TODO GÉNÉRAL
+TODO Contacts ignorés
+	(dans un 4ème onglet de la page de travail).
+	(pas de notifications sonores pour ces contacts).
+TODO Distinction messages lus / non lus (complexe à mettre en place).
+	Créer une nouvelle classe dans l'historique des contacts: messages non lus (HasMap<> unread ...).
+	Message reçu lu ssi:
+		Affiché au moins une fois à l'écran sur la page de discussion (visible dans le scrollpane).
+TODO Gestion de l'affichage de la discussion.
+	À la place du système actuel, il vaut peut-être mieux mettre à jour totalement la discussion à chaque nouveau message.
+	Se rappeler que les observable lists sont peut-être utilisables pour bien le faire.
+TODO Paramètres du programme.
+	Activer/Désactiver toutes les notifications sonores.
+	Activer/Désactiver l'utilisation des boîtes aux lettres (ne pas envoyer de messages en attente sur les serveurs).
+*/
 
 public class Libersaurus implements Closeable, InternetDependant {
 	static public Libersaurus current;
@@ -71,14 +88,6 @@ public class Libersaurus implements Closeable, InternetDependant {
 			System.err.println("Impossible de sauvegarder la configuration de Libersaurus (" + e.getMessage() + ").");
 		}
 	}
-	/* TODO: Gestion perfectible de la fermeture du programmee lorsqu'il n'y a pas de connexion internet.
-	REMARQUE: si la connexion Internet n'est pas disponible à la fermeture du programme,
-	le port d'écoute créé reste ouvert, et semble définitivement perdu.
-	SOLUTION POSSIBLE:
-	1) Mémoriser les ports laissés dans un état incertain à la sortie du programme.
-	2) À la prochaine ouverture du programme, tenter d'utiliser les ports précédemment laissés,
-	ou supprimer la cartographie de ces ports puis utiliser de nouveaux ports.
-	*/
 	public void lookupInternet(String address) {
 		assert internetLookup == null;
 		internetLookup = new InternetLookup(address, this);
@@ -365,8 +374,6 @@ public class Libersaurus implements Closeable, InternetDependant {
 		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET;
 		InMessage message = new InMessage(contact, microtime, content);
 		contact.addMessage(message);
-		//Notification.good("liber.Message received from contact " + contact.appellation() + ".");
-		Notification.info(new MessageReceived(message));
 	}
 	public String getMessageHash(Liberaddress sender, String secret, long microtime) throws RequestException {
 		Contact contact = libercard.contacts.get(sender);
@@ -510,7 +517,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 				Contact contact = message.sender();
 				libercard.inlinks.remove(message);
 				libercard.contacts.add(contact);
-				contact.addMessage(message);
+				contact.addMessage(message, false);
 				response = Request.sendRequest(new NowOnlineRequest(contact));
 				if(response != null && response.good()) {
 					contact.setOnline();
@@ -550,16 +557,17 @@ public class Libersaurus implements Closeable, InternetDependant {
 		contact.addMessage(message);
 		if (canSendMessage) {
 			Response response = Request.sendRequest(new MessageRequest(message));
-			if(response != null) if(response.good()) {
+			if(response == null)
+				System.err.println("Le message n'a pas pu être envoyé maintenant. Il sera envoyé plus tard.");
+			else if(response.good()) {
 				message.setSent();
 			} else {
-				System.err.println(
-					"Error while sending message directly (" + response.status() + "). Message will be sent later.");
+				System.err.println("Impossible d'envoyer directement le message (" +
+					response.status() + "). Le message sera envoyé plus tard.");
 			}
 		} else {
 			System.err.println("Contact has not yet received last sent messages. This message will be sent later.");
 		}
-		Notification.info(new MessageCreated(message));
 	}
 	public void updateInfo(ContactData data, String value) {
 		libercard.account.update(data, value);

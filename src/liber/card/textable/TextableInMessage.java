@@ -42,7 +42,7 @@ public class TextableInMessage extends Textable<InMessage> {
 			boolean al = Boolean.parseBoolean(map.get(acknowledgeLater));
 			message.setAcknowledgeLater(al);
 		}
-		contact.addMessage(message);
+		contact.addMessage(message, false);
 		return message;
 	}
 }

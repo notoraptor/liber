@@ -7,6 +7,8 @@ import liber.card.textable.TextableOutMessage;
 import liber.exception.InternetException;
 import liber.notification.Notification;
 import liber.exception.AddressException;
+import liber.notification.info.MessageCreated;
+import liber.notification.info.MessageReceived;
 import liber.request.Request;
 import liber.request.Response;
 import liber.request.client.MessageAcknowledgmentRequest;
@@ -68,10 +70,14 @@ public class Contact extends User implements KnownUser {
 	public void setOffline() {
 		online = false;
 	}
-	public void addMessage(InMessage message) {
+	public void addMessage(InMessage message, boolean inform) {
 		history.put(message.id(), message);
 		if(message.toBeAcknowledged())
 			acknowledgeLater.add(message.id());
+		if(inform) Notification.info(new MessageReceived(message));
+	}
+	public void addMessage(InMessage message) {
+		addMessage(message, true);
 	}
 	public void addMessage(OutMessage message) {
 		MessageID id = message.id();
@@ -94,6 +100,7 @@ public class Contact extends User implements KnownUser {
 				break;
 			default:break;
 		}
+		Notification.info(new MessageCreated(message));
 	}
 	public void updateOutMessage(OutMessage message) {
 		if (message.recipient() == this) {
@@ -127,6 +134,16 @@ public class Contact extends User implements KnownUser {
 	}
 	public OutMessage getOutMessage(long microtime) {
 		return (OutMessage) history.get(MessageID.forOut(microtime));
+	}
+	public OutMessage getLastOutMessage() {
+		OutMessage message = null;
+		for (Message m : history.descendingMap().values()) {
+			if (m instanceof OutMessage) {
+				message = (OutMessage) m;
+				break;
+			}
+		}
+		return message;
 	}
 	public void clearHistory() {
 		locationWaiting.clear();

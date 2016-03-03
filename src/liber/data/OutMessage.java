@@ -4,10 +4,6 @@ import liber.enumeration.MessageState;
 import liber.notification.Notification;
 import liber.notification.info.OutMessageUpdated;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class OutMessage extends Message {
 	private long microtime;
 	private MessageState state;

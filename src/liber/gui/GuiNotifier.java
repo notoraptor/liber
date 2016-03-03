@@ -1,30 +1,37 @@
 package liber.gui;
 
 import javafx.application.Platform;
+import javafx.scene.media.AudioClip;
+import liber.data.Contact;
 import liber.notification.DefaultNotifier;
 import liber.notification.Notifier;
 import liber.notification.Info;
 import liber.notification.Informer;
+import liber.notification.info.MessageReceived;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class GuiNotifier implements Notifier {
-	final private Long pivot = 0L;
+	final private Long synchronizer;
 	private DefaultNotifier defaultNotifier;
 	private Informer informer;
+	private Contact currentContact;
+	private AudioClip hiddenRing;
+	private AudioClip visibleRing;
 	public GuiNotifier() {
+		synchronizer = 0L;
 		defaultNotifier = new DefaultNotifier();
+		informer = null;
+		currentContact = null;
+		hiddenRing = new AudioClip(getClass().getResource("/liber/songs/hidden.mp3").toString());
+		visibleRing = new AudioClip(getClass().getResource("/liber/songs/visible.mp3").toString());
 	}
 	public void setInformer(Informer im) {
-		synchronized (pivot) {
+		synchronized (synchronizer) {
 			informer = im;
 		}
 	}
-	public void reset() {
-		synchronized (pivot) {
-			informer = null;
+	public void setCurrentContact(Contact contact) {
+		synchronized (synchronizer) {
+			currentContact = contact;
 		}
 	}
 	@Override
@@ -51,8 +58,18 @@ public class GuiNotifier implements Notifier {
 	}
 	@Override
 	public void info(Info info) {
+		if(info instanceof MessageReceived) {
+			MessageReceived mr = (MessageReceived) info;
+			synchronized (synchronizer) {
+				if (currentContact != null && mr.get().liberaddress().equals(currentContact.liberaddress())) {
+					visibleRing.play();
+				} else {
+					hiddenRing.play();
+				}
+			}
+		}
 		Platform.runLater(() -> {
-			synchronized (pivot) {
+			synchronized (synchronizer) {
 				if (informer != null) try {
 					informer.inform(info);
 				} catch (Exception e) {
