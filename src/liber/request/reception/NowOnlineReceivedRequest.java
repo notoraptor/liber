@@ -8,10 +8,6 @@ import liber.exception.RequestException;
 import liber.request.ReceivedRequest;
 import liber.request.Response;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class NowOnlineReceivedRequest extends ReceivedRequest {
 	@Override
 	public Field[] needed() {

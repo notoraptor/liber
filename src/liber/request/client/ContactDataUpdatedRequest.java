@@ -5,10 +5,6 @@ import liber.enumeration.ContactData;
 import liber.enumeration.Field;
 import liber.request.RequestToLiberaddress;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/ // liber.RequestToLiberaddress.
 public class ContactDataUpdatedRequest extends RequestToLiberaddress {
 	public ContactDataUpdatedRequest(Contact contact, ContactData data, String value) {
 		super(contact);

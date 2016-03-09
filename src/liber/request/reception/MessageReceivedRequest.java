@@ -5,10 +5,6 @@ import liber.enumeration.Field;
 import liber.exception.RequestException;
 import liber.request.ReceivedRequest;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class MessageReceivedRequest extends ReceivedRequest {
 	@Override
 	public Field[] needed() {
@@ -21,7 +17,7 @@ public class MessageReceivedRequest extends ReceivedRequest {
 			String message = get(Field.message);
 			Libersaurus.current.addMessage(sender(), secret(), microtime, message);
 		} catch (NumberFormatException e) {
-			throw RequestException.ERROR_MICROTIME_FORMAT;
+			throw RequestException.ERROR_MICROTIME_FORMAT();
 		}
 	}
 }

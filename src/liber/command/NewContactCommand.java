@@ -4,10 +4,6 @@ import liber.Libersaurus;
 import liber.enumeration.CommandField;
 import liber.notification.Notification;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class NewContactCommand extends CommandForOnline {
 	@Override
 	public CommandField[] fields() {

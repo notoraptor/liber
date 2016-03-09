@@ -19,7 +19,7 @@ public class Configuration {
 	public Configuration(File directory) throws Exception {
 		loaded = false;
 		file = new File(directory, filename);
-		configuration = new EnumMap<Config, String>(Config.class);
+		configuration = new EnumMap<>(Config.class);
 		load();
 	}
 	private void load() throws Exception {

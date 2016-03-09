@@ -56,7 +56,6 @@ public class Libercard {
 		return Utils.hash(liberaddress.toString()) + ".libercard";
 	}
 	public void save() throws Exception {
-		// TODO: Faut-il sauvegarder la carte même lorsque le compte n'est pas confirmé ? À priori oui.
 		File directory = new File(Libersaurus.current.getDirectory(), lcfoldername);
 		if (!directory.exists()) {
 			if (!directory.mkdir())

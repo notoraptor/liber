@@ -3,10 +3,6 @@ package liber.request.client;
 import liber.data.User;
 import liber.request.RequestToLiberaddress;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class LinkAcceptedRequest extends RequestToLiberaddress {
 	public LinkAcceptedRequest(User user) {
 		super(user);

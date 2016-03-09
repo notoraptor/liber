@@ -19,21 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
-/**
-* TODO - FUTURES FONCTIONNALITÉS.
-* Actuellement, le service de poste ne prend en charge que les messages de discussion.
-* À l'avenir, il faudrait gérer tous les messages échangés entre contacts,
-* aussi bien les messages de discussion que les messages d'entretien de la relation.
-* Deux possibilités:
-* * Généraliser le service de poste pour tous les messages du protocole.
-* * Mettre en place un système de "liste de tâches" dans laquelle seraient temporairement entreposées
-* * * les opérations qui n'ont pu être réalisées à cause de l'échec de l'envoi de messages.
-* * * Ce système permettrait de relancer automatiquement la tâche dès que faisable
-* * * (lorsque le contact concerné serait en ligne). Il suffirait d'entreposer les tâches
-* * * sous la forme de commandes à exécuter plus tard.
-**/
-
-// NOTE: Classe encapsulée (on n'utilise plus Libersaurus.current dans ce fichier).
+// NOTE: Classe bien encapsulée (on n'utilise plus Libersaurus.current dans ce fichier).
 public class Features {
 	private Libersaurus liber;
 	public Features(Libersaurus libersaurus) {

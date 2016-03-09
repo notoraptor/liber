@@ -4,7 +4,6 @@ import org.bitlet.weupnp.GatewayDevice;
 import org.bitlet.weupnp.GatewayDiscover;
 import org.bitlet.weupnp.PortMappingEntry;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -12,7 +11,7 @@ import java.net.Socket;
 import java.util.Map;
 
 // TODO (?): LES CLASSES DE CE FICHIER SONT INCOMPLÈTES.
-public class Server extends Thread implements Closeable {
+public class Server extends ServerInterface {
 	static private String protocol = "TCP";
 	private ServerSocket server; // Server
 	private String privateIP; // discoverDeviceAndIPs
@@ -75,18 +74,23 @@ public class Server extends Thread implements Closeable {
 			throw new IOException(e);
 		}
 	}
+	@Override
 	public int publicPort() {
 		return publicPort;
 	}
+	@Override
 	public int privatePort() {
 		return privatePort;
 	}
+	@Override
 	public String publicIP() {
 		return publicIP;
 	}
+	@Override
 	public String privateIP() {
 		return privateIP;
 	}
+	@Override
 	synchronized public boolean isRunning() {
 		return runServer && server.isClosed();
 	}

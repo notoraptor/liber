@@ -9,10 +9,6 @@ import liber.request.server.GetCaptchaImageForCreationRequest;
 
 import java.io.IOException;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class ValidateCreationCommand extends CommandForLoaded {
 	private String captchaImage;
 	private String imageType;

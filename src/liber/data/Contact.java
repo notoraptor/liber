@@ -22,12 +22,11 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-// TODO: Vérifier tous les HashSet dans ce code.
-
-/* TODO IMPORTANT: À PROPOS DES IDENTIFIANTS DES MESSAGES D'UN CONTACT.
-	* Théoriquement, deux InMessage (ou OutMessage) pour un même contact ne peuvent pas avoir le même horodatage,
-	* donc, ils ne peuvent avoir le même liber.MessageID.
-	* */
+/*
+* TODO IMPORTANT: À PROPOS DES IDENTIFIANTS DES MESSAGES D'UN CONTACT.
+* Théoriquement, deux InMessage (ou OutMessage) pour un même contact ne peuvent pas avoir le même horodatage,
+* donc, ils ne peuvent avoir le même MessageID.
+*/
 public class Contact extends User implements KnownUser {
 	private boolean online;
 	private UserInfo info;
@@ -154,7 +153,7 @@ public class Contact extends User implements KnownUser {
 		history.clear();
 	}
 	public void checkLiberserverWaitingMessages() throws InternetException {
-		HashSet<MessageID> copy = new HashSet<>(liberserverWaiting);
+		TreeSet<MessageID> copy = new TreeSet<>(liberserverWaiting);
 		for (MessageID id : copy) {
 			OutMessage message = (OutMessage) history.get(id);
 			Response response = Request.sendRequest(new CheckPostedMessageRequest(message));
@@ -243,7 +242,7 @@ public class Contact extends User implements KnownUser {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return "Discussion-(" + username() + ")-(" + sdf.format(date) + ").history";
 	}
-	// TODO:Il faut sauver l'historique dans un format lisible pour un humain (préférer HTML).
+	// TODO: Il faut sauver l'historique dans un format lisible pour un humain (préférer HTML).
 	public void saveHistory() {
 		try {
 			File directory = new File(Libersaurus.current.getDirectory(), "histories");
@@ -265,8 +264,8 @@ public class Contact extends User implements KnownUser {
 			}
 			writer.close();
 			Notification.good("L'historique de vos échanges avec " +
-					appellation() + " a été sauvegardé dans le fichier: " + filename.getAbsolutePath() + "\n" +
-					"Vous pouvez récupérer ou supprimer ce fichier selon vos besoins.");
+				appellation() + " a été sauvegardé dans le fichier: " + filename.getAbsolutePath() + "\n" +
+				"Vous pouvez récupérer ou supprimer ce fichier selon vos besoins.");
 		} catch (Exception e) {
 			Notification.bad("Impossible de sauvegarder l'historique de vos échanges avec " + appellation() + ".");
 			e.printStackTrace();

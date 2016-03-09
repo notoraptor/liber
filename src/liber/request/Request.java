@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 abstract public class Request {
+	static private long count = 0;
 	private HashMap<Field, String> parameters;
 	private String request;
 	private String sender;
@@ -37,7 +38,7 @@ abstract public class Request {
 		System.err.println("Internet? " + Internet.isConnected());
 		if(Internet.isConnected()) {
 			try {
-				response = request.send();
+				response = request.justSend();
 			} catch(RecipientException e) {
 				System.err.println("Check internet connexion.");
 				if(Internet.checkConnexion(request.recipientAddress())) {
@@ -75,7 +76,7 @@ abstract public class Request {
 		return  recipient.serverAddress();
 	}
 	private Response send() throws RecipientException, RequestException {
-		System.err.println("Envoi d'une requête à " + recipient);
+		System.err.println("Tentative: requête " + (++count) + " envoyée à " + recipient);
 		Response response;
 		try {
 			response = recipient.receive(this);

@@ -5,10 +5,6 @@ import liber.data.OutMessage;
 import liber.enumeration.Field;
 import liber.request.RequestFromUserToLiberserver;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class CheckPostedMessageRequest extends RequestFromUserToLiberserver {
 	public CheckPostedMessageRequest(Liberaddress recipient, long microtime) {
 		super(recipient.liberserver());

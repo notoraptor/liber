@@ -7,10 +7,6 @@ import liber.data.OutMessage;
 
 import java.util.HashMap;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class TextableOutlink extends Textable<OutMessage> {
 	static private String liberaddress = "liberaddress";
 	static private String secret = "secret";

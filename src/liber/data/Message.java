@@ -5,10 +5,6 @@ import liber.exception.HashException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public abstract class Message {
 	private Contact protagonist;
 	private MessageContent content;

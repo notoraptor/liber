@@ -3,10 +3,6 @@ package liber.command;
 import liber.Libersaurus;
 import liber.notification.Notification;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public abstract class CommandForOffline extends Command {
 	public CommandForOffline() {
 		super();

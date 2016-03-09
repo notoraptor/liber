@@ -4,10 +4,6 @@ import liber.enumeration.Field;
 
 import java.util.HashMap;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class ReceivedContent {
 	private HashMap<String, String> content;
 	public ReceivedContent() {

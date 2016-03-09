@@ -3,19 +3,34 @@ package liber.request;
 import liber.Libersaurus;
 import liber.data.User;
 import liber.enumeration.Field;
+import liber.exception.RecipientException;
+import liber.exception.RequestException;
+import liber.recipient.Liberserver;
 import liber.recipient.Location;
 import liber.request.Request;
+import liber.request.server.PostLaterRequest;
 
 import java.util.Map;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public abstract class RequestToLiberaddress extends Request {
+	private User user;
 	public RequestToLiberaddress(User recipient) {
 		super(Libersaurus.current.account().liberaddress(), new Location(recipient));
 		add(Field.secret, recipient.secret());
+		user = recipient;
+	}
+	public Liberserver recipientLiberserver() {
+		return user.liberserver();
+	}
+	public String recipientUsername() {
+		return user.username();
+	}
+	@Override
+	public Response justSend() throws RecipientException, RequestException {
+		if(user.addressIsDistant()) {
+			return new PostLaterRequest(this).justSend();
+		}
+		return super.justSend();
 	}
 	@Override
 	public String toString() {

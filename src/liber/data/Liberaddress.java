@@ -6,10 +6,6 @@ import liber.exception.RecipientAddressException;
 import liber.exception.UsernameException;
 import liber.recipient.Liberserver;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class Liberaddress {
 	private Liberserver liberserver;
 	private String username;

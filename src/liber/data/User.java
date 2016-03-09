@@ -5,10 +5,6 @@ import liber.exception.AddressException;
 import java.net.InetAddress;
 import java.util.Random;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class User extends BasicUser {
 	private Address address;
 	private String secret;
@@ -37,6 +33,9 @@ public class User extends BasicUser {
 	}
 	public boolean hasAddress() {
 		return address.has();
+	}
+	public boolean addressIsDistant() {
+		return address.isDistant();
 	}
 	public void updateAddress() throws AddressException {
 		address = new Address(liberaddress());

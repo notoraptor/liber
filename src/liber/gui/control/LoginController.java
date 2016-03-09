@@ -14,24 +14,24 @@ import liber.gui.form.WorkForm;
 
 public class LoginController {
 
-    @FXML
-    private TextField liberaddressField;
+	@FXML
+	private TextField liberaddressField;
 
-    @FXML
-    private PasswordField passwordField;
+	@FXML
+	private PasswordField passwordField;
 
-    @FXML
-    void cancel(ActionEvent event) throws Exception {
-        GUI.current.back();
-    }
+	@FXML
+	void cancel(ActionEvent event) throws Exception {
+		GUI.current.back();
+	}
 
-    @FXML
-    void login(ActionEvent event) throws Exception {
-        LoginCommand command = new LoginCommand();
-        command.put(CommandField.liberaddress, liberaddressField.getText().trim());
-        command.put(CommandField.password, passwordField.getText().trim());
-        passwordField.clear();
-        if(command.run()) {
+	@FXML
+	void login(ActionEvent event) throws Exception {
+		LoginCommand command = new LoginCommand();
+		command.put(CommandField.liberaddress, liberaddressField.getText().trim());
+		command.put(CommandField.password, passwordField.getText().trim());
+		passwordField.clear();
+		if(command.run()) {
 			if(Libersaurus.current.account().toConfirm()) {
 				GUI.current.load(new ValidateCreationForm(true));
 			} else if(Libersaurus.current.account().toDelete()) {
@@ -40,6 +40,6 @@ public class LoginController {
 				GUI.current.load(new WorkForm());
 			}
 		}
-    }
+	}
 
 }

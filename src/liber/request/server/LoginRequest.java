@@ -5,10 +5,6 @@ import liber.data.Liberaddress;
 import liber.enumeration.Field;
 import liber.request.RequestFromCandidateToLiberserver;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class LoginRequest extends RequestFromCandidateToLiberserver {
 	public LoginRequest(Liberaddress liberaddress, String password) {
 		super(liberaddress.liberserver());

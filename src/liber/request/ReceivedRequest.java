@@ -29,19 +29,19 @@ public abstract class ReceivedRequest {
 					content.put(pieces[0].trim(), pieces[1].trim());
 			}
 		} catch (IOException e) {
-			throw RequestException.ERROR_READING_STREAM;
+			throw RequestException.ERROR_READING_STREAM();
 		}
 		if (content.isEmpty())
-			throw RequestException.REQUEST_ERROR_NO_REQUEST;
+			throw RequestException.REQUEST_ERROR_NO_REQUEST();
 		String requestName = content.get(Field.request);
 		if (requestName == null || requestName.length() < 2)
-			throw RequestException.REQUEST_ERROR_NAME_MISSING;
+			throw RequestException.REQUEST_ERROR_NAME_MISSING();
 		String requestClassname = "liber.request.reception."
 						+ Character.toUpperCase(requestName.charAt(0))
 						+ requestName.substring(1, requestName.length())
 						+ "ReceivedRequest";
 		if (!(Utils.classExtends(requestClassname, ReceivedRequest.class)))
-			throw RequestException.REQUEST_ERROR_UNKNOWN_REQUEST;
+			throw RequestException.REQUEST_ERROR_UNKNOWN_REQUEST();
 		ReceivedRequest request = (ReceivedRequest) Utils.instanciate(requestClassname);
 		assert request != null;
 		request.loadFrom(content);
@@ -56,34 +56,34 @@ public abstract class ReceivedRequest {
 		String secret = content.secret();
 		// Les champs ne doivent pas être nuls.
 		if (request == null)
-			throw RequestException.REQUEST_ERROR_NAME_MISSING;
+			throw RequestException.REQUEST_ERROR_NAME_MISSING();
 		if (sender == null || sender.isEmpty())
-			throw RequestException.REQUEST_ERROR_SENDER_MISSING;
+			throw RequestException.REQUEST_ERROR_SENDER_MISSING();
 		if (recipient == null || sender.isEmpty())
-			throw RequestException.REQUEST_ERROR_RECIPIENT_MISSING;
+			throw RequestException.REQUEST_ERROR_RECIPIENT_MISSING();
 		if (secret == null || secret.isEmpty())
-			throw RequestException.REQUEST_ERROR_SECRET_MISSING;
+			throw RequestException.REQUEST_ERROR_SECRET_MISSING();
 		// Le nom de la requête doit correspondre au nom de la classe courante.
 		if (!request.equals(Utils.getRequestName(this)))
-			throw RequestException.REQUEST_ERROR_NAME;
+			throw RequestException.REQUEST_ERROR_NAME();
 		// La liberadresse de l'expéditeur doit être valide.
 		try {
 			this.sender = new Liberaddress(sender);
 		} catch (Exception e) {
-			throw RequestException.REQUEST_ERROR_SENDER;
+			throw RequestException.REQUEST_ERROR_SENDER();
 		}
 		// La liberadresse du destinataire doit être valide.
 		try {
 			this.recipient = new Liberaddress(recipient);
 		} catch (Exception e) {
-			throw RequestException.REQUEST_ERROR_RECIPIENT;
+			throw RequestException.REQUEST_ERROR_RECIPIENT();
 		}
 		// Le destinataire de la requête doit être le compte courant.
 		if (!this.recipient.equals(Libersaurus.current.account().liberaddress()))
-			throw RequestException.REQUEST_ERROR_RECIPIENT;
+			throw RequestException.REQUEST_ERROR_RECIPIENT();
 		// L'expéditeur et le destinataire doivent être différents.
 		if (this.sender.equals(this.recipient()))
-			throw RequestException.REQUEST_ERROR_SENDER_IS_RECIPIENT;
+			throw RequestException.REQUEST_ERROR_SENDER_IS_RECIPIENT();
 		// Les champs obligatoires doivent être présents.
 		Field[] needed = needed();
 		if (needed != null) for (Field field : needed)

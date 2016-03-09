@@ -9,10 +9,6 @@ import liber.request.server.GetCaptchaImageForDeletionRequest;
 
 import java.io.IOException;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class ValidateDeletionCommand extends CommandForLoaded {
 	private String captchaImage;
 	private String imageType;

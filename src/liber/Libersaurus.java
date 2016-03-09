@@ -7,17 +7,13 @@ import liber.enumeration.Field;
 import liber.exception.*;
 import liber.notification.Notification;
 import liber.notification.info.*;
+import liber.request.ReceivedRequest;
 import liber.request.Request;
 import liber.request.Response;
 import liber.request.client.*;
-import liber.request.server.GetNextPostedMessageRequest;
-import liber.request.server.LogoutRequest;
-import liber.request.server.PostMessageRequest;
-import liber.request.server.PostedMessageReceivedRequest;
+import liber.request.server.*;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -38,10 +34,13 @@ TODO Paramètres du programme.
 */
 
 public class Libersaurus implements Closeable, InternetDependant {
+	static private final String fatalMessage = "Impossible de communiquer avec votre liber-serveur.\n" +
+			"Êtes-vous connecté à Internet?\n" +
+			"La procédure de connexion reprendra automatiquement lorsqu'une connexion à Internet sera détectée.";
 	static public Libersaurus current;
 	private File directory;
 	private Configuration configuration;
-	private Server server;
+	private ServerInterface server;
 	private Features features;
 	private Libercard libercard;
 	private String password;
@@ -49,23 +48,35 @@ public class Libersaurus implements Closeable, InternetDependant {
 	public Libersaurus() throws Exception {
 		directory = Utils.workingDirectory();
 		configuration = new Configuration(directory);
-		server = new Server(configuration.getPrivatePort(), configuration.getPublicPort());
+		try {
+			System.err.println("Création d'un serveur local joignable.");
+			server = new Server(configuration.getPrivatePort(), configuration.getPublicPort());
+			configuration.setPorts(server.privatePort(), server.publicPort());
+		} catch (Exception e) {
+			System.err.println("Impossible de créer un serveur local joignable: " + e);
+			System.err.println("Utilisation du liber-serveur (dès que possible) comme serveur distant.");
+			server = new DistantServer(this);
+		}
 		server.start();
-		configuration.setPorts(server.privatePort(), server.publicPort());
 		libercard = null;
 		password = null;
 		internetLookup = null;
 		features = new Features(this);
 		current = this;
 	}
+	private void clearLibercard() throws Exception {
+		if(libercard != null) {
+			libercard.save();
+			libercard = null;
+			password = null;
+		}
+	}
 	@Override
 	public void close() {
 		if(online())
 			features().logout();
-		if(loaded()) try {
-			libercard.save();
-			libercard = null;
-			password = null;
+		try {
+			clearLibercard();
 		} catch (Exception e) {
 			//throw new IOException(e);
 			System.err.println("Impossible de sauvegarder correctement la liber-carte à la sortie du programme.");
@@ -127,9 +138,8 @@ public class Libersaurus implements Closeable, InternetDependant {
 		}
 	}
 	private void finalizeLogin() {
-		String fatalMessage = "Impossible de communiquer avec votre liber-serveur.\n" +
-				"Êtes-vous connecté à Internet?\n" +
-				"La procédure de connexion reprendra automatiquement lorsqu'une connexion à Internet sera détectée.";
+		// Récupérer les requêtes en attente pour ce compte sur son liber-serveur.
+		if(!(server instanceof DistantServer)) while(getNextPosted());
 		// Vérifier si les messages envoyés sur les serveurs des contacts ont été reçus par ces derniers.
 		for (Contact contact : contacts()) try {
 			contact.checkLiberserverWaitingMessages();
@@ -152,7 +162,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 			String sender = response.get(Field.sender);
 			String microtimeString = response.get(Field.microtime);
 			String content = response.get(Field.message);
-			if (Request.sendRequest(new PostedMessageReceivedRequest(sender, microtimeString), fatalMessage) == null)
+			if (Request.sendRequest(new NextPostedMessageReceivedRequest(), fatalMessage) == null)
 				return;
 			try {
 				long microtime = Long.parseLong(microtimeString);
@@ -227,15 +237,11 @@ public class Libersaurus implements Closeable, InternetDependant {
 			} catch (Exception ignored) {} // Le contact est peut-être déconnecté.
 		}
 		//Notification.good("Connexion réussie.");
-		// TODO: Pour débuggage: afficher les informations de la libercarte.
+		// debug: afficher les informations de la libercarte.
 		printLibercard();
 	}
 	private void finalizeLogout() throws Exception {
-		if (libercard != null) {
-			libercard.save();
-			libercard = null;
-			password = null;
-		}
+		clearLibercard();
 	}
 	private void printLibercard() {
 		libercard.print();
@@ -288,6 +294,27 @@ public class Libersaurus implements Closeable, InternetDependant {
 	public Collection<OutMessage> outlinks() {
 		return libercard.outlinks.invitations();
 	}
+	// Autre ...
+	public boolean getNextPosted() {
+		Response response = null;
+		synchronized (this) {
+			if(online()) {
+				try {
+					response = new GetNextPostedRequest().justSend();
+					if (response.good()) {
+						new NextPostedReceivedRequest().justSend();
+						//String sender = response.get(Field.sender);
+						String body = Utils.decode(response.get(Field.body));
+						BufferedReader in = new BufferedReader(new StringReader(body));
+						ReceivedRequest receivedRequest = ReceivedRequest.parse(in);
+						receivedRequest.respond();
+						in.close();
+					}
+				} catch (Throwable ignored) {}
+			}
+		}
+		return response != null;
+	}
 	// Gestion du compte.
 	public void setContactOffline(Liberaddress sender, String secret) {
 		Contact contact = libercard.contacts.get(sender);
@@ -304,7 +331,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 			contact.update(info);
 			//Notification.good("liber.Contact " + contact.appellation() + " is connected.");
 			Notification.info(new ContactUpdated(contact));
-		} else throw RequestException.ERROR_CONTACT;
+		} else throw RequestException.ERROR_CONTACT();
 	}
 	public void updateContactData(Liberaddress sender, String secret, ContactData dataType, String dataValue) {
 		Contact contact = libercard.contacts.get(sender);
@@ -344,9 +371,9 @@ public class Libersaurus implements Closeable, InternetDependant {
 	}
 	public void validateContact(Liberaddress sender, String secret) throws RequestException {
 		OutMessage invitation = libercard.outlinks.get(sender);
-		if (invitation == null) throw RequestException.ERROR_OUTLINK_UNKNOWN;
+		if (invitation == null) throw RequestException.ERROR_OUTLINK_UNKNOWN();
 		Contact contact = invitation.recipient();
-		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET;
+		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET();
 		libercard.outlinks.remove(invitation);
 		libercard.contacts.add(contact);
 		contact.addMessage(invitation);
@@ -355,9 +382,9 @@ public class Libersaurus implements Closeable, InternetDependant {
 		Notification.info(new OutlinkAccepted(invitation));
 	}
 	public void addInlink(Liberaddress sender, String secret, long microtime, String invitation) throws RequestException {
-		if (libercard.contacts.has(sender)) throw RequestException.ERROR_INLINK;
-		if (libercard.inlinks.has(sender)) throw RequestException.ERROR_INLINK;
-		if (libercard.outlinks.has(sender)) throw RequestException.ERROR_INLINK;
+		if (libercard.contacts.has(sender)) throw RequestException.ERROR_INLINK();
+		if (libercard.inlinks.has(sender)) throw RequestException.ERROR_INLINK();
+		if (libercard.outlinks.has(sender)) throw RequestException.ERROR_INLINK();
 		try {
 			Contact contact = new Contact(sender, secret);
 			InMessage inlink = new InMessage(contact, microtime, invitation);
@@ -365,42 +392,42 @@ public class Libersaurus implements Closeable, InternetDependant {
 			Notification.good("Vous avez reçu une demande de contact de la part de " + contact.appellation() + ".");
 			Notification.info(new LinkOfferReceived(inlink));
 		} catch (AddressException e) {
-			throw RequestException.ERROR_USER_ADDRESS;
+			throw RequestException.ERROR_USER_ADDRESS();
 		}
 	}
 	public void addMessage(Liberaddress sender, String secret, long microtime, String content) throws RequestException {
 		Contact contact = libercard.contacts.get(sender);
-		if (contact == null) throw RequestException.ERROR_CONTACT;
-		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET;
+		if (contact == null) throw RequestException.ERROR_CONTACT();
+		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET();
 		InMessage message = new InMessage(contact, microtime, content);
 		contact.addMessage(message);
 	}
 	public String getMessageHash(Liberaddress sender, String secret, long microtime) throws RequestException {
 		Contact contact = libercard.contacts.get(sender);
-		if (contact == null) throw RequestException.ERROR_CONTACT;
-		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET;
+		if (contact == null) throw RequestException.ERROR_CONTACT();
+		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET();
 		OutMessage message = contact.getOutMessage(microtime);
-		if (message == null) throw RequestException.ERROR_NO_MESSAGE;
+		if (message == null) throw RequestException.ERROR_NO_MESSAGE();
 		try {
 			return message.getHash();
 		} catch (HashException e) {
-			throw RequestException.ERROR_HASH;
+			throw RequestException.ERROR_HASH();
 		}
 	}
 	public void aknowledgeMessage(Liberaddress sender, String secret, long microtime) throws RequestException {
 		Contact contact = libercard.contacts.get(sender);
-		if (contact == null) throw RequestException.ERROR_CONTACT;
-		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET;
+		if (contact == null) throw RequestException.ERROR_CONTACT();
+		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET();
 		OutMessage message = contact.getOutMessage(microtime);
 		if (message == null || (!message.isConfirmationWaiting() && !message.isLiberserverWaiting()))
-			throw RequestException.ERROR_NO_MESSAGE;
+			throw RequestException.ERROR_NO_MESSAGE();
 		message.setSent();
 		Notification.info(new OutMessageUpdated(message));
 	}
 	public void checkContactDeletion(Liberaddress sender, String secret) throws RequestException {
 		Contact contact = libercard.contacts.get(sender);
-		if (contact == null) throw RequestException.ERROR_CONTACT;
-		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET;
+		if (contact == null) throw RequestException.ERROR_CONTACT();
+		if (!contact.secretIs(secret)) throw RequestException.ERROR_SECRET();
 		libercard.deleteContact(contact);
 		Notification.contactDeleted(contact);
 		Notification.info(new ContactDeleted(contact));
@@ -426,29 +453,34 @@ public class Libersaurus implements Closeable, InternetDependant {
 	}
 	public void logout() {
 		// TODO: à retravailler (ordre des différentes opérations, opérations supplémentaires, etc.).
-		// Notifier tous les contacts de la déconnexion (ignorer les erreurs ici).
-		for (Contact contact : contacts()) {
-			try {
-				new NowOfflineRequest(contact).justSend();
-			} catch (Exception ignored) {}
-		}
-		// Transférer les messages en attente vers leurs liber-serveurs respectifs.
-		for (Contact contact : contacts())
-			contact.transferLocationWaitingMessagesToServers();
-		// Se déconnecter effectivement.
-		try {
-			Response response = new LogoutRequest().justSend();
-			if (response.good()) {
-				try {
-					finalizeLogout();
-				} catch (Exception e) {
-					Notification.bad("Une erreur est survenur pendant la fermeture locale du compte.");
+		synchronized (this) {
+			if(online()) {
+				// Notifier tous les contacts de la déconnexion (ignorer les erreurs ici).
+				for (Contact contact : contacts()) {
+					try {
+						new NowOfflineRequest(contact).justSend();
+					} catch (Exception ignored) {
+					}
 				}
-			} else {
-				Notification.bad("Impossible de se déconnecter correctement (" + response.status() + ").");
+				// Transférer les messages en attente vers leurs liber-serveurs respectifs.
+				for (Contact contact : contacts())
+					contact.transferLocationWaitingMessagesToServers();
 			}
-		} catch (Exception e) {
-			Notification.bad("Impossible de notifier la déconnexion à votre liber-serveur.");
+			// Se déconnecter effectivement.
+			try {
+				Response response = new LogoutRequest().justSend();
+				if (response.good()) {
+					try {
+						finalizeLogout();
+					} catch (Exception e) {
+						Notification.bad("Une erreur est survenur pendant la fermeture locale du compte.");
+					}
+				} else {
+					Notification.bad("Impossible de se déconnecter correctement (" + response.status() + ").");
+				}
+			} catch (Exception e) {
+				Notification.bad("Impossible de notifier la déconnexion à votre liber-serveur.");
+			}
 		}
 	}
 	public void delete() throws LibercardException {

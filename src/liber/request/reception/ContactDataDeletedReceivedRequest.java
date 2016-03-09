@@ -5,10 +5,6 @@ import liber.enumeration.ContactData;
 import liber.enumeration.Field;
 import liber.request.ReceivedRequest;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class ContactDataDeletedReceivedRequest extends ReceivedRequest {
 	@Override
 	public Field[] needed() {

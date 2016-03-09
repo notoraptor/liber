@@ -3,35 +3,67 @@ package liber.exception;
 import liber.enumeration.ErrorCode;
 import liber.enumeration.Field;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class RequestException extends Exception {
-	static final public RequestException ERROR_OUTLINK_UNKNOWN = new RequestException(ErrorCode.ERROR_OUTLINK_UNKNOWN);
-	static final public RequestException ERROR_SECRET = new RequestException(ErrorCode.ERROR_SECRET);
-	static final public RequestException ERROR_INVITATION = new RequestException(ErrorCode.ERROR_INVITATION);
-	static final public RequestException ERROR_LINK_IMPOSSIBLE = new RequestException(ErrorCode.ERROR_LINK_IMPOSSIBLE);
-	static final public RequestException ERROR_READING_STREAM = new RequestException(ErrorCode.ERROR_READING_STREAM);
-	static final public RequestException REQUEST_FORMAT_ERROR = new RequestException(ErrorCode.REQUEST_FORMAT_ERROR);
-	static final public RequestException REQUEST_ERROR_NO_REQUEST = new RequestException(ErrorCode.REQUEST_ERROR_NO_REQUEST);
-	static final public RequestException REQUEST_ERROR_NAME = new RequestException(ErrorCode.REQUEST_ERROR_NAME);
-	static final public RequestException REQUEST_ERROR_RECIPIENT = new RequestException(ErrorCode.REQUEST_ERROR_RECIPIENT);
-	static final public RequestException REQUEST_ERROR_SENDER = new RequestException(ErrorCode.REQUEST_ERROR_SENDER);
-	static final public RequestException REQUEST_ERROR_NAME_MISSING = new RequestException(ErrorCode.REQUEST_ERROR_NAME_MISSING);
-	static final public RequestException REQUEST_ERROR_SENDER_MISSING = new RequestException(ErrorCode.REQUEST_ERROR_SENDER_MISSING);
-	static final public RequestException REQUEST_ERROR_RECIPIENT_MISSING = new RequestException(ErrorCode.REQUEST_ERROR_RECIPIENT_MISSING);
-	static final public RequestException REQUEST_ERROR_SECRET_MISSING = new RequestException(ErrorCode.REQUEST_ERROR_SECRET_MISSING);
-	static final public RequestException RESPONSE_FORMAT_ERROR = new RequestException(ErrorCode.RESPONSE_FORMAT_ERROR);
-	static final public RequestException RESPONSE_ERROR_MISSING_STATUS = new RequestException(ErrorCode.RESPONSE_ERROR_MISSING_STATUS);
-	static final public RequestException REQUEST_ERROR_UNKNOWN_REQUEST = new RequestException(ErrorCode.REQUEST_ERROR_UNKNOWN_REQUEST);
-	public static final RequestException ERROR_INLINK = new RequestException(ErrorCode.ERROR_INLINK);
-	public static final RequestException ERROR_USER_ADDRESS = new RequestException(ErrorCode.ERROR_USER_ADDRESS);
-	public static final RequestException ERROR_CONTACT = new RequestException(ErrorCode.ERROR_CONTACT);
-	public static final RequestException ERROR_MICROTIME_FORMAT = new RequestException(ErrorCode.ERROR_MICROTIME_FORMAT);
-	public static final RequestException ERROR_NO_MESSAGE = new RequestException(ErrorCode.ERROR_NO_MESSAGE);
-	public static final RequestException ERROR_HASH = new RequestException(ErrorCode.ERROR_HASH);
-	public static final RequestException REQUEST_ERROR_SENDER_IS_RECIPIENT = new RequestException(ErrorCode.REQUEST_ERROR_SENDER_IS_RECIPIENT);
+	static public RequestException ERROR_OUTLINK_UNKNOWN() {
+		return new RequestException(ErrorCode.ERROR_OUTLINK_UNKNOWN);
+	}
+	static public RequestException ERROR_SECRET() {
+		return new RequestException(ErrorCode.ERROR_SECRET);
+	}
+	static public RequestException ERROR_READING_STREAM() {
+		return new RequestException(ErrorCode.ERROR_READING_STREAM);
+	}
+	static public RequestException REQUEST_ERROR_NO_REQUEST() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_NO_REQUEST);
+	}
+	static public RequestException REQUEST_ERROR_NAME() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_NAME);
+	}
+	static public RequestException REQUEST_ERROR_RECIPIENT() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_RECIPIENT);
+	}
+	static public RequestException REQUEST_ERROR_SENDER() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_SENDER);
+	}
+	static public RequestException REQUEST_ERROR_NAME_MISSING() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_NAME_MISSING);
+	}
+	static public RequestException REQUEST_ERROR_SENDER_MISSING() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_SENDER_MISSING);
+	}
+	static public RequestException REQUEST_ERROR_RECIPIENT_MISSING() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_RECIPIENT_MISSING);
+	}
+	static public RequestException REQUEST_ERROR_SECRET_MISSING() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_SECRET_MISSING);
+	}
+	static public RequestException RESPONSE_ERROR_MISSING_STATUS() {
+		return new RequestException(ErrorCode.RESPONSE_ERROR_MISSING_STATUS);
+	}
+	static public RequestException REQUEST_ERROR_UNKNOWN_REQUEST() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_UNKNOWN_REQUEST);
+	}
+	public static RequestException ERROR_INLINK() {
+		return new RequestException(ErrorCode.ERROR_INLINK);
+	}
+	public static RequestException ERROR_USER_ADDRESS() {
+		return new RequestException(ErrorCode.ERROR_USER_ADDRESS);
+	}
+	public static RequestException ERROR_CONTACT() {
+		return new RequestException(ErrorCode.ERROR_CONTACT);
+	}
+	public static RequestException ERROR_MICROTIME_FORMAT() {
+		return new RequestException(ErrorCode.ERROR_MICROTIME_FORMAT);
+	}
+	public static RequestException ERROR_NO_MESSAGE() {
+		return new RequestException(ErrorCode.ERROR_NO_MESSAGE);
+	}
+	public static RequestException ERROR_HASH() {
+		return new RequestException(ErrorCode.ERROR_HASH);
+	}
+	public static RequestException REQUEST_ERROR_SENDER_IS_RECIPIENT() {
+		return new RequestException(ErrorCode.REQUEST_ERROR_SENDER_IS_RECIPIENT);
+	}
 	private ErrorCode errorCode;
 	public RequestException(ErrorCode error_code) {
 		this(error_code, null);
@@ -48,9 +80,6 @@ public class RequestException extends Exception {
 	}
 	static public RequestException RESPONSE_ERROR_BAD_FIELD_MISSING(Field field) {
 		return new RequestException(ErrorCode.RESPONSE_ERROR_BAD_FIELD_MISSING, field.toString());
-	}
-	static public RequestException RESPONSE_STATUS(String status) {
-		return new RequestException(ErrorCode.RESPONSE_STATUS, status);
 	}
 	public ErrorCode errorCode() {
 		return errorCode;

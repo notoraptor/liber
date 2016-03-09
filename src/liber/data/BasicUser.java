@@ -2,10 +2,6 @@ package liber.data;
 
 import liber.recipient.Liberserver;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 abstract class BasicUser {
 	static private int lastId = 0;
 	static private int nextId() {

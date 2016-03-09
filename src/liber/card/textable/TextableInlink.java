@@ -7,10 +7,6 @@ import liber.data.Liberaddress;
 
 import java.util.HashMap;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class TextableInlink extends Textable<InMessage> {
 	static private String liberaddress = "liberaddress";
 	static private String secret = "secret";

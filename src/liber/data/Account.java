@@ -2,10 +2,6 @@ package liber.data;
 
 import liber.enumeration.AccountState;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class Account extends BasicUser implements KnownUser {
 	private UserInfo info;
 	private AccountState state;

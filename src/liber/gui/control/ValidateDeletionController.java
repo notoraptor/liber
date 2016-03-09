@@ -10,7 +10,6 @@ import liber.Libersaurus;
 import liber.command.ValidateDeletionCommand;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
-import liber.notification.Notification;
 
 import java.io.ByteArrayInputStream;
 

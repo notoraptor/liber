@@ -254,7 +254,7 @@ public class WorkController implements Controller {
 		}
 	}
 	public void load(Object resource) throws Exception {
-		int tabIndex = resource instanceof Integer ? ((Integer)resource).intValue() : WorkForm.CONTACTS;
+		int tabIndex = resource instanceof Integer ? (Integer) resource : WorkForm.CONTACTS;
 		GUI.current.notifier().setInformer(new WorkInformer());
 		Account account = Libersaurus.current.account();
 		tabs.getSelectionModel().select(tabIndex);

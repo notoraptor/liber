@@ -1,5 +1,6 @@
 package liber.data;
 
+import liber.DistantServer;
 import liber.enumeration.Field;
 import liber.exception.AddressException;
 import liber.request.Response;
@@ -10,6 +11,7 @@ import java.net.InetAddress;
 public class Address {
 	private InetAddress ip;
 	private int port;
+	private boolean distant;
 	public Address(Liberaddress liberaddress) throws AddressException {
 		try {
 			Response response = new GetServerPlaceRequest(liberaddress).justSend();
@@ -17,6 +19,10 @@ public class Address {
 			String ipString = response.get(Field.ip);
 			String portString = response.get(Field.port);
 			if (ipString == null) {
+				ip = null;
+				port = -1;
+			} else if(DistantServer.isDistant(ipString)) {
+				distant = true;
 				ip = null;
 				port = -1;
 			} else {
@@ -38,5 +44,8 @@ public class Address {
 	}
 	public int port() {
 		return port;
+	}
+	public boolean isDistant() {
+		return distant;
 	}
 }

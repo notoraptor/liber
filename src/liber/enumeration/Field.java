@@ -1,9 +1,5 @@
 package liber.enumeration;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public enum Field {
 	author,
 	captcha, captchaImage, imageType,
@@ -19,5 +15,5 @@ public enum Field {
 	request,
 	secret,
 	sender,
-	username, firstname, lastname, photo, status, contactStatus, waitingMessages,
+	username, firstname, lastname, photo, status, contactStatus, waitingMessages, body,
 }

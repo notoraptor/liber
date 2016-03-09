@@ -23,7 +23,7 @@ public class Response {
 	public Response(HashMap<String, String> responseContent) throws RequestException {
 		content = responseContent;
 		if (!content.containsKey("status"))
-			throw RequestException.RESPONSE_ERROR_MISSING_STATUS;
+			throw RequestException.RESPONSE_ERROR_MISSING_STATUS();
 	}
 	static public Response parse(BufferedReader in) throws Exception {
 		HashMap<String, String> content = new HashMap<>();

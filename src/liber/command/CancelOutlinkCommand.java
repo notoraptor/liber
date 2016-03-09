@@ -3,10 +3,6 @@ package liber.command;
 import liber.Libersaurus;
 import liber.enumeration.CommandField;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class CancelOutlinkCommand extends CommandForOnline {
 	@Override
 	public CommandField[] fields() {

@@ -6,10 +6,6 @@ import liber.data.Message;
 import java.util.Collection;
 import java.util.HashMap;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public abstract class Links<E extends Message> {
 	private HashMap<Liberaddress, E> links;
 	public Links() {

@@ -2,8 +2,9 @@ package liber.notification;
 
 import liber.data.Contact;
 
-/* TODO: Il faudrait deux types de notifications: actives et passives.
-  actives (suite aux commandes) et passives (suite aux requêtes reçues via le composant serveur.
+/*
+* TODO: Il faudrait deux types de notifications: actives et passives.
+* actives (suite aux commandes) et passives (suite aux requêtes reçues via le composant serveur.
 */
 public class Notification {
 	static private Notifier manager = new DefaultNotifier();

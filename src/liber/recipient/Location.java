@@ -39,9 +39,9 @@ public class Location implements Recipient {
 		if (!user.hasAddress()) throw new OfflineLocationException();
 		Response response;
 		try (
-				Socket echoSocket = new Socket(user.ip(), user.port());
-				PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
-				BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()))
+			Socket echoSocket = new Socket(user.ip(), user.port());
+			PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+			BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()))
 		) {
 			out.print(request.toString());
 			out.flush();

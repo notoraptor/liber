@@ -4,10 +4,6 @@ import liber.data.Contact;
 import liber.enumeration.ContactData;
 import liber.notification.Info;
 
-/**
- liber
- ${PACKAGE_NAME} - 23/02/2016
- **/
 public class ContactUpdated extends Info<Contact> {
 	boolean firstname;
 	boolean lastname;

@@ -5,10 +5,6 @@ import liber.notification.Notification;
 import liber.enumeration.CommandField;
 import liber.enumeration.ContactData;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class UpdateInfoCommand extends CommandForOnline {
 	@Override
 	public CommandField[] fields() {
@@ -20,7 +16,7 @@ public class UpdateInfoCommand extends CommandForOnline {
 		String s = get(CommandField.data);
 		if(s == null || s.isEmpty()) return Notification.bad("Type of data to be updated is missing.");
 		try {
-			ContactData data = ContactData.valueOf(s);
+			ContactData.valueOf(s);
 		} catch(Exception e) {
 			return Notification.bad("Unknown \"data\" type. Possible values: firstname, lastname, photo, status.");
 		}

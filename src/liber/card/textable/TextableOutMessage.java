@@ -8,10 +8,6 @@ import liber.enumeration.MessageState;
 
 import java.util.HashMap;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class TextableOutMessage extends Textable<OutMessage> {
 	static private String liberaddress = "liberaddress";
 	static private String microtime = "microtime";

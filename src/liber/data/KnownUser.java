@@ -2,10 +2,6 @@ package liber.data;
 
 import liber.enumeration.ContactData;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 interface KnownUser {
 	UserInfo info();
 	String username();

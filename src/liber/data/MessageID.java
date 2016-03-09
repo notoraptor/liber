@@ -1,9 +1,5 @@
 package liber.data;
 
-/**
- liber
- ${PACKAGE_NAME} - 21/02/2016
- **/
 public class MessageID implements Comparable<MessageID> {
 	static private final int IN = 1;
 	static private final int OUT = 2;
