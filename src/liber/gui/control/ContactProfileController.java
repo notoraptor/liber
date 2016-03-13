@@ -10,6 +10,7 @@ import liber.data.Contact;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
 import liber.gui.Question;
+import liber.gui.form.ContactProfileForm;
 import liber.gui.form.WorkForm;
 import liber.notification.Info;
 import liber.notification.Informer;
@@ -19,7 +20,7 @@ import liber.notification.info.ContactUpdated;
 
 import java.io.ByteArrayInputStream;
 
-public class ContactProfileController implements Controller {
+public class ContactProfileController {
 	@FXML
 	private Label title;
 	@FXML
@@ -97,15 +98,12 @@ public class ContactProfileController implements Controller {
 			photo.setText(WorkController.noUserPhotoString);
 		}
 	}
-	@Override
-	public void load(Object resource) throws Exception {
-		if(resource instanceof Contact) {
-			contact = (Contact) resource;
-			GUI.current.notifier().setInformer(new ContactProfileInformer());
-			GUI.current.notifier().setCurrentContact(contact);
-			title.setText("Profil de " + contact.username());
-			liberaddress.setText(contact.liberaddress().toString());
-			updateContact();
-		}
+	public void init(ContactProfileForm form) throws Exception {
+		contact = form.contact();
+		GUI.current.notifier().setInformer(new ContactProfileInformer());
+		GUI.current.notifier().setCurrentContact(contact);
+		title.setText("Profil de " + contact.username());
+		liberaddress.setText(contact.liberaddress().toString());
+		updateContact();
 	}
 }

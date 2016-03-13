@@ -106,10 +106,13 @@ public abstract class ReceivedRequest {
 	final public String get(Field key) {
 		return parameters.get(key);
 	}
+	final public boolean has(Field key) {
+		return parameters.has(key);
+	}
 	public Field[] needed() {
 		return null;
 	}
-	public Response respond() throws RequestException {
+	final public Response respond() throws RequestException {
 		manage();
 		return new Response();
 	}

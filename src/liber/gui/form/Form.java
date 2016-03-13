@@ -2,7 +2,8 @@ package liber.gui.form;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import liber.gui.control.Controller;
+
+import java.lang.reflect.Method;
 
 public class Form {
 	private String filename;
@@ -21,17 +22,13 @@ public class Form {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/liber/gui/fxml/"  + filename));
 		Parent root = loader.load();
 		Object oc = loader.getController();
-		if(oc instanceof Controller)
-			init((Controller)oc);
-		else
-			init(root);
+		if(oc != null && initController(oc))
+			System.out.println("Contrôleur exécuté pour " + getName() + ".");
+		else {
+			System.err.println("Pas de contrôleur pour " + getName() + ".");
+			//init(root);
+		}
 		return root;
-	}
-	public void init(Parent root) throws Exception {
-		// Do anything you want with root here.
-	}
-	public void init(Controller controller) throws Exception {
-		//...
 	}
 	private String getName() {
 		String classname = getClass().getName();
@@ -42,5 +39,23 @@ public class Form {
 					+ classname.substring(1, classname.length() - "Form".length());
 		}
 		return classname;
+	}
+	private boolean initController(Object potentialController) {
+		String classname = getClass().getName();
+		int position = classname.lastIndexOf('.');
+		if(position > 0)
+			classname = classname.substring(position + 1);
+		if(classname.endsWith("Form"))
+			classname = classname.substring(0, classname.length() - "Form".length());
+		String controllerClassname = "liber.gui.control." + classname + "Controller";
+		try {
+			Class controllerClass = Class.forName(controllerClassname);
+			if(controllerClass.isAssignableFrom(potentialController.getClass())) {
+				Method method = controllerClass.getMethod("init", getClass());
+				method.invoke(potentialController, this);
+				return true;
+			}
+		} catch(Throwable ignored) {}
+		return false;
 	}
 }

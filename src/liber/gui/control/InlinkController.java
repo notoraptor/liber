@@ -5,10 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import liber.command.AcceptInlinkCommand;
 import liber.command.RefuseInlinkCommand;
+import liber.data.InMessage;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
 import liber.gui.Question;
 import liber.gui.form.Form;
+import liber.gui.form.InlinkForm;
 import liber.gui.form.WorkForm;
 import liber.notification.Info;
 import liber.notification.Informer;
@@ -26,9 +28,12 @@ public class InlinkController {
 			}
 		}
 	}
-	@FXML
-	protected void initialize() {
+	public void init(InlinkForm form) {
 		GUI.current.notifier().setInformer(new InlinkInformer());
+		InMessage inlink = form.inlink();
+		invitation.setText(inlink.decodedContent());
+		username.setText(inlink.sender().username());
+		liberaddress.setText(inlink.sender().liberaddress().toString());
 	}
 
 	@FXML

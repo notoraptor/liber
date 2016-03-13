@@ -3,7 +3,9 @@ package liber.recipient;
 import liber.data.User;
 import liber.exception.OfflineLocationException;
 import liber.request.Request;
+import liber.request.RequestToLiberaddress;
 import liber.request.Response;
+import liber.request.server.PostLaterRequest;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,9 +14,13 @@ import java.net.Socket;
 
 public class Location implements Recipient {
 	private User user;
+	private boolean responseFromLocation;
 	public Location(User locationUser) {
 		assert locationUser != null;
 		user = locationUser;
+	}
+	public boolean isResponseFromLocation() {
+		return responseFromLocation;
 	}
 	@Override
 	public boolean updatable() {
@@ -22,9 +28,7 @@ public class Location implements Recipient {
 	}
 	@Override
 	public void update() {
-		try {
-			user.updateAddress();
-		} catch (Exception ignored) {}
+		user.updateAddress();
 	}
 	@Override
 	public String address() {
@@ -36,8 +40,14 @@ public class Location implements Recipient {
 	}
 	@Override
 	public Response receive(Request request) throws Exception {
-		if (!user.hasAddress()) throw new OfflineLocationException();
-		Response response;
+		responseFromLocation = true;
+		// TODO: Pas sûr que ce soit ici qu'il faille gérer la gestion de l'envoi des requêtes vers les serveurs distants.
+		if (user.addressIsDistant()) {
+			responseFromLocation = false;
+			return new PostLaterRequest((RequestToLiberaddress) request).justSend();
+		}
+		if (!user.hasAddress())
+			throw new OfflineLocationException();
 		try (
 			Socket echoSocket = new Socket(user.ip(), user.port());
 			PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
@@ -45,9 +55,8 @@ public class Location implements Recipient {
 		) {
 			out.print(request.toString());
 			out.flush();
-			response = Response.parse(in);
+			return Response.parse(in);
 		}
-		return response;
 	}
 	@Override
 	public String toString() {

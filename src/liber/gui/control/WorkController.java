@@ -29,7 +29,7 @@ import liber.notification.info.*;
 
 import java.io.ByteArrayInputStream;
 
-public class WorkController implements Controller {
+public class WorkController {
 	//static public final String onlineSymbol = "\u2605";
 	//static public final String offlineSymbol = "\u2606";
 	static public final String noUserPhotoString = "\ud83d\ude09";
@@ -253,8 +253,8 @@ public class WorkController implements Controller {
 			button.setMaxWidth(Double.MAX_VALUE);
 		}
 	}
-	public void load(Object resource) throws Exception {
-		int tabIndex = resource instanceof Integer ? (Integer) resource : WorkForm.CONTACTS;
+	public void init(WorkForm form) throws Exception {
+		int tabIndex = form.getTabIndex();
 		GUI.current.notifier().setInformer(new WorkInformer());
 		Account account = Libersaurus.current.account();
 		tabs.getSelectionModel().select(tabIndex);

@@ -11,6 +11,7 @@ import liber.request.ReceivedRequest;
 import liber.request.Request;
 import liber.request.Response;
 import liber.request.client.*;
+import liber.request.reception.NowOnlineAcknowledgmentReceivedRequest;
 import liber.request.server.*;
 
 import java.io.*;
@@ -204,36 +205,10 @@ public class Libersaurus implements Closeable, InternetDependant {
 			}
 		}
 		// Notifier tous les contacts de la connexion.
-		// On peut en même temps vérifier quels contacts sont en ligne.
 		for (Contact contact : contacts()) {
 			try {
 				Response response = Request.sendRequest(new NowOnlineRequest(contact));
-				if(response != null && response.good()) {
-					contact.setOnline();
-					boolean updated = false;
-					Field[] toCheck = new Field[]{
-							Field.firstname,
-							Field.lastname,
-							Field.photo,
-							Field.contactStatus,
-					};
-					for(Field field: toCheck) if(response.has(field)) {
-						updated = true;
-						contact.update(ContactData.valueOf(field.toString()), response.get(field));
-					}
-					if(updated) Notification.info(new ContactUpdated(contact));
-					int m = Integer.valueOf(response.get(Field.waitingMessages));
-					contact.sendAknowledgements();
-					if(m == 0) {
-						// Le contact n'a aucun message à envoyer.
-						// Envoyer les message en attente locale.
-						contact.sendLocationWaitingMessages();
-					} else if(m > 0) {
-						// Le contact va envoyer des messages.
-						// Les messages éventuellement en attente locale sont invalides.
-						contact.convertLocationWaitingToNotSent();
-					}
-				}
+				System.err.println(response);
 			} catch (Exception ignored) {} // Le contact est peut-être déconnecté.
 		}
 		//Notification.good("Connexion réussie.");
@@ -327,9 +302,13 @@ public class Libersaurus implements Closeable, InternetDependant {
 	public void setContactOnline(Liberaddress sender, String secret, UserInfo info) throws RequestException {
 		Contact contact = libercard.contacts.get(sender);
 		if (contact != null && contact.secretIs(secret)) {
+			contact.setOnline();
+			try {
+				new NowOnlineAcknowledgmentRequest(contact).justSend();
+			} catch (Throwable ignored) {}
 			contact.manageOnline();
 			contact.update(info);
-			//Notification.good("liber.Contact " + contact.appellation() + " is connected.");
+			//Notification.good("Le contact " + contact.appellation() + " est connecté.");
 			Notification.info(new ContactUpdated(contact));
 		} else throw RequestException.ERROR_CONTACT();
 	}
@@ -456,12 +435,9 @@ public class Libersaurus implements Closeable, InternetDependant {
 		synchronized (this) {
 			if(online()) {
 				// Notifier tous les contacts de la déconnexion (ignorer les erreurs ici).
-				for (Contact contact : contacts()) {
-					try {
-						new NowOfflineRequest(contact).justSend();
-					} catch (Exception ignored) {
-					}
-				}
+				for (Contact contact : contacts()) if(contact.online()) try {
+					new NowOfflineRequest(contact).justSend();
+				} catch (Exception ignored) {}
 				// Transférer les messages en attente vers leurs liber-serveurs respectifs.
 				for (Contact contact : contacts())
 					contact.transferLocationWaitingMessagesToServers();
@@ -485,11 +461,9 @@ public class Libersaurus implements Closeable, InternetDependant {
 	}
 	public void delete() throws LibercardException {
 		if (libercard != null) {
-			for(Contact contact: contacts()) {
-				try {
-					new LinkDeletedRequest(contact).justSend();
-				} catch(Exception ignored) {}
-			}
+			for(Contact contact: contacts()) if(contact.online()) try {
+				new LinkDeletedRequest(contact).justSend();
+			} catch(Exception ignored) {}
 			libercard.delete();
 			libercard = null;
 			password = null;
@@ -630,6 +604,31 @@ public class Libersaurus implements Closeable, InternetDependant {
 			}
 		} catch (AddressException e) {
 			Notification.bad("Unable to retrieve user lcoation on the net.");
+		}
+	}
+	public void setContactWatchMe(NowOnlineAcknowledgmentReceivedRequest nowOnlineAcknowledgmentReceivedRequest) {
+		Contact contact = libercard.contacts.get(nowOnlineAcknowledgmentReceivedRequest.sender());
+		if(contact != null && contact.secretIs(nowOnlineAcknowledgmentReceivedRequest.secret())) {
+			contact.setOnline();
+			boolean updated = false;
+			Field[] toCheck = new Field[] { Field.firstname, Field.lastname, Field.photo, Field.status };
+			for(Field field: toCheck) if(nowOnlineAcknowledgmentReceivedRequest.has(field)) {
+				updated = true;
+				contact.update(ContactData.valueOf(field.toString()), nowOnlineAcknowledgmentReceivedRequest.get(field));
+			}
+			if(updated)
+				Notification.info(new ContactUpdated(contact));
+			int m = Integer.valueOf(nowOnlineAcknowledgmentReceivedRequest.get(Field.waitingMessages));
+			contact.sendAknowledgements();
+			if(m == 0) {
+				// Le contact n'a aucun message à envoyer.
+				// Envoyer les message en attente locale.
+				contact.sendLocationWaitingMessages();
+			} else if(m > 0) {
+				// Le contact va envoyer des messages.
+				// Les messages éventuellement en attente locale sont invalides.
+				contact.convertLocationWaitingToNotSent();
+			}
 		}
 	}
 }

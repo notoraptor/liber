@@ -2,6 +2,7 @@ package liber.gui.control;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -13,13 +14,11 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import liber.command.NewMessageCommand;
-import liber.data.Contact;
-import liber.data.InMessage;
-import liber.data.Message;
-import liber.data.OutMessage;
+import liber.data.*;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
 import liber.gui.form.ContactProfileForm;
+import liber.gui.form.DiscussionForm;
 import liber.gui.form.InMessageForm;
 import liber.gui.form.OutMessageForm;
 import liber.notification.Info;
@@ -28,7 +27,7 @@ import liber.notification.info.*;
 
 import java.io.ByteArrayInputStream;
 
-public class DiscussionController implements Controller {
+public class DiscussionController {
 	static public final String onlineString = "\u2714";
 	static public final String offlineString = "\u2716";
 	class DiscussionInformer implements Informer {
@@ -46,10 +45,8 @@ public class DiscussionController implements Controller {
 			}
 			else if(info instanceof MessageReceived) {
 				MessageReceived mr = (MessageReceived)info;
-				if(mr.get().liberaddress().equals(contact.liberaddress())) {
-					Parent root = new InMessageForm(mr.get()).root();
-					history.getChildren().add(root);
-				}
+				if(mr.get().liberaddress().equals(contact.liberaddress()))
+					addInMessage(mr.get());
 			}
 			else if(info instanceof MessageCreated) {
 				MessageCreated mc = (MessageCreated)info;
@@ -144,33 +141,59 @@ public class DiscussionController implements Controller {
 			photo.setText(WorkController.noUserPhotoString);
 		}
 	}
+	private void addChildrenCorrectly(Parent root, MessageID nextID) {
+		ObservableList<Node> ol = history.getChildren();
+		if(ol.isEmpty())
+			ol.add(root);
+		else {
+			int olSize = ol.size();
+			int position;
+			for (position = olSize - 1; position >= 0; --position) {
+				Object userData = ol.get(position).getUserData();
+				if (userData != null && userData instanceof MessageID) {
+					MessageID previousID = (MessageID) userData;
+					if (previousID.compareTo(nextID) <= 0)
+						break;
+				}
+			}
+			ol.add(position + 1, root);
+		}
+	}
+	private void addInMessage(InMessage im) throws Exception {
+		Parent root = new InMessageForm(im).root();
+		MessageID id = im.id();
+		root.setUserData(id);
+		addChildrenCorrectly(root, id);
+		// history.getChildren().add(root);
+	}
 	private void addOutMessage(OutMessage om) throws Exception {
 		Parent root = new OutMessageForm(om).root();
-		root.setId(om.id().toString());
-		history.getChildren().add(root);
+		MessageID id = om.id();
+		root.setUserData(id);
+		root.setId(id.toString());
+		addChildrenCorrectly(root, id);
+		//history.getChildren().add(root);
 	}
-	@Override
-	public void load(Object resource) throws Exception {
-		if(resource instanceof Contact) {
-			contact = (Contact)resource;
-			GUI.current.notifier().setInformer(new DiscussionInformer());
-			GUI.current.notifier().setCurrentContact(contact);
-			history.getChildren().addListener((ListChangeListener<? super Node>) (changed) -> messageListModified = true);
-			scrollPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
-				if (messageListModified) {
-					messageListModified = false;
-					Platform.runLater(() -> scrollPane.setVvalue(scrollPane.getVmax()));
-				}
-			});
-			liberaddress.setText(contact.liberaddress().toString());
-			updateContact();
-			for(Message message: contact.messages()) {
-				if(message instanceof InMessage) {
-					Parent root = new InMessageForm((InMessage)message).root();
-					history.getChildren().add(root);
-				} else {
-					addOutMessage((OutMessage)message);
-				}
+	public void init(DiscussionForm form) throws Exception {
+		contact = form.contact();
+		GUI.current.notifier().setInformer(new DiscussionInformer());
+		GUI.current.notifier().setCurrentContact(contact);
+		history.getChildren().addListener((ListChangeListener<? super Node>) (changed) -> messageListModified = true);
+		scrollPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
+			if (messageListModified) {
+				messageListModified = false;
+				Platform.runLater(() -> scrollPane.setVvalue(scrollPane.getVmax()));
+			}
+		});
+		liberaddress.setText(contact.liberaddress().toString());
+		updateContact();
+		for(Message message: contact.messages()) {
+			if(message instanceof InMessage) {
+				addInMessage((InMessage)message);
+				//Parent root = new InMessageForm((InMessage)message).root();
+				//history.getChildren().add(root);
+			} else {
+				addOutMessage((OutMessage)message);
 			}
 		}
 	}

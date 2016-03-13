@@ -4,10 +4,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import liber.command.CancelOutlinkCommand;
+import liber.data.OutMessage;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
 import liber.gui.Question;
 import liber.gui.form.Form;
+import liber.gui.form.OutlinkForm;
 import liber.gui.form.WorkForm;
 import liber.notification.Info;
 import liber.notification.Informer;
@@ -37,8 +39,12 @@ public class OutlinkController {
 	}
 
 	@FXML
-	protected void initialize() {
+	protected void init(OutlinkForm form) {
 		GUI.current.notifier().setInformer(new OutlinkInformer());
+		OutMessage outlink = form.outlink();
+		invitation.setText(outlink.decodedContent());
+		username.setText(outlink.recipient().username());
+		liberaddress.setText(outlink.recipient().liberaddress().toString());
 	}
 
 	@FXML

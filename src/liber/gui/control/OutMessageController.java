@@ -4,8 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import liber.data.OutMessage;
+import liber.gui.form.OutMessageForm;
 
-public class OutMessageController implements Controller {
+public class OutMessageController {
 	static public final String notSent = "\u274c";
 	static public final String locationWaiting = "- - -";
 	static public final String liberserverWaiting = "\u2708";
@@ -38,13 +39,10 @@ public class OutMessageController implements Controller {
 	@FXML
 	private Label messageState;
 
-	@Override
-	public void load(Object object) {
-		if(object instanceof OutMessage) {
-			OutMessage message = (OutMessage) object;
-			content.setText(message.decodedContent());
-			timestamp.setText(message.timeString());
-			setState(messageState, message);
-		}
+	public void init(OutMessageForm form) {
+		OutMessage message = form.message();
+		content.setText(message.decodedContent());
+		timestamp.setText(message.timeString());
+		setState(messageState, message);
 	}
 }

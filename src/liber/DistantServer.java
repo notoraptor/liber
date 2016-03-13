@@ -18,7 +18,7 @@ public class DistantServer extends ServerInterface {
 	public void run() {
 		while(runServer) {
 			context.getNextPosted();
-			long timeToWait = 500L + new Random().nextInt(301);
+			long timeToWait = 900L + new Random().nextInt(101);
 			try {
 				Thread.sleep(timeToWait);
 			} catch (InterruptedException e) {

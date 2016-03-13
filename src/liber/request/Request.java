@@ -76,15 +76,16 @@ abstract public class Request {
 		return  recipient.serverAddress();
 	}
 	private Response send() throws RecipientException, RequestException {
-		System.err.println("Tentative: requête " + (++count) + " envoyée à " + recipient);
 		Response response;
 		try {
+			System.err.println("Tentative " + (++count) + ": " + request + " -> " + recipient);
 			response = recipient.receive(this);
 		} catch (Exception e) {
 			if (!recipient.updatable())
 				throw new RecipientException(e);
 			recipient.update();
 			try {
+				System.err.println("Tentative+" + (++count) + ": " + request + " -> " + recipient);
 				response = recipient.receive(this);
 			} catch (Exception f) {
 				throw new RecipientException(f);

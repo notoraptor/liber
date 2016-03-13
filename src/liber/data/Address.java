@@ -48,4 +48,9 @@ public class Address {
 	public boolean isDistant() {
 		return distant;
 	}
+	public void clear() {
+		ip = null;
+		port = -1;
+		distant = false;
+	}
 }

@@ -65,9 +65,11 @@ public class Contact extends User implements KnownUser {
 	}
 	public void setOnline() {
 		online = true;
+		updateAddress();
 	}
 	public void setOffline() {
 		online = false;
+		updateAddress();
 	}
 	public void addMessage(InMessage message, boolean inform) {
 		history.put(message.id(), message);
@@ -185,7 +187,6 @@ public class Contact extends User implements KnownUser {
 		return locationWaiting.isEmpty() && liberserverWaiting.isEmpty() && notSent.isEmpty();
 	}
 	public void manageOnline() {
-		setOnline();
 		sendAknowledgements();
 		sendLocationWaitingMessages();
 	}

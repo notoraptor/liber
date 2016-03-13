@@ -1,7 +1,5 @@
 package liber.gui.form;
 
-import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import liber.data.InMessage;
 
 public class InlinkForm extends Form {
@@ -11,12 +9,7 @@ public class InlinkForm extends Form {
 		assert theInlink != null;
 		inlink = theInlink;
 	}
-	@Override public void init(Parent root) {
-		Label invitation = (Label) root.lookup("#invitation");
-		Label username = (Label) root.lookup("#username");
-		Label liberaddress = (Label) root.lookup("#liberaddress");
-		invitation.setText(inlink.decodedContent());
-		username.setText(inlink.sender().username());
-		liberaddress.setText(inlink.sender().liberaddress().toString());
+	public InMessage inlink() {
+		return inlink;
 	}
 }

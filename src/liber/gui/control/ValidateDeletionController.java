@@ -10,6 +10,7 @@ import liber.Libersaurus;
 import liber.command.ValidateDeletionCommand;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
+import liber.gui.form.ValidateDeletionForm;
 
 import java.io.ByteArrayInputStream;
 
@@ -38,4 +39,13 @@ public class ValidateDeletionController {
 		}
 	}
 
+	public void init(ValidateDeletionForm form) {
+		if(form.isFromConnexion()) {
+			infoLabel.setText("Votre compte est en attente de suppression.");
+		}
+		byte[] data = Libersaurus.current.features().getCaptchaImageForDeletion();
+		if(data != null) {
+			imageLabel.setImage(new Image(new ByteArrayInputStream(data)));
+		}
+	}
 }

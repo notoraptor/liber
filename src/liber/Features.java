@@ -142,21 +142,16 @@ public class Features {
 	}
 	public void updateInfo(ContactData data, String value) {
 		liber.updateInfo(data, value);
-		for (Contact contact : liber.contacts()) {
-			try {
-				new ContactDataUpdatedRequest(contact, data, value).justSend();
-			} catch (Exception ignored) {}
-		}
+		for (Contact contact : liber.contacts()) if(contact.online()) try {
+			new ContactDataUpdatedRequest(contact, data, value).justSend();
+		} catch (Exception ignored) {}
 		Notification.good(data + " updated.");
 	}
 	public void deleteInfo(ContactData data) {
 		liber.deleteInfo(data);
-		for (Contact contact : liber.contacts()) {
-			try {
-				new ContactDataDeletedRequest(contact, data).justSend();
-			} catch (Exception ignored) {
-			}
-		}
+		for (Contact contact : liber.contacts()) if(contact.online()) try {
+			new ContactDataDeletedRequest(contact, data).justSend();
+		} catch (Exception ignored) {}
 		Notification.good(data + " deleted.");
 	}
 	public byte[] getCaptchaImageForCreation() {

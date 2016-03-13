@@ -37,8 +37,11 @@ public class User extends BasicUser {
 	public boolean addressIsDistant() {
 		return address.isDistant();
 	}
-	public void updateAddress() throws AddressException {
-		address = new Address(liberaddress());
+	public void updateAddress() {
+		address.clear();
+		try {
+			address = new Address(liberaddress());
+		} catch (Throwable ignored) {}
 	}
 	private void generateSecret() {
 		Random random = new Random();

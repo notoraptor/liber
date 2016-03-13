@@ -11,6 +11,7 @@ import liber.command.Command;
 import liber.command.ValidateCreationCommand;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
+import liber.gui.form.ValidateCreationForm;
 import liber.gui.form.WorkForm;
 
 import java.io.ByteArrayInputStream;
@@ -40,4 +41,13 @@ public class ValidateCreationController {
 		}
 	}
 
+	public void init(ValidateCreationForm form) {
+		if(form.isFromConnexion()) {
+			infoLabel.setText("Votre compte est en attente de validation.");
+		}
+		byte[] data = Libersaurus.current.features().getCaptchaImageForCreation();
+		if(data != null) {
+			imageLabel.setImage(new Image(new ByteArrayInputStream(data)));
+		}
+	}
 }

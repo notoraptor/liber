@@ -8,11 +8,13 @@ import liber.gui.form.Form;
 import liber.gui.form.HomeForm;
 import liber.gui.form.WorkForm;
 import liber.notification.Notification;
+import liber.notification.info.LibersaurusLoaded;
 
 import java.util.LinkedList;
 
 public class GUI extends Application {
 	static public GUI current;
+	Libersaurus instance;
 	private GuiNotifier notifier;
 	private LinkedList<Form> history;
 	private Stage stage;
@@ -63,13 +65,17 @@ public class GUI extends Application {
 		return (form == null ? new WorkForm() : (WorkForm)form);
 	}
 	public static void main(String[] args) {
-		try (
-			Libersaurus instance = new Libersaurus()
-		) {
+		try {
 			launch(args);
 		} catch (Exception e) {
 			System.err.println("Erreur fatale.");
 			e.printStackTrace();
+			if(Libersaurus.current != null) try {
+				Libersaurus.current.close();
+			} catch (Exception f) {
+				System.err.println("Impossible de fermer totalement Libersaurus après une erreur fatale.");
+				f.printStackTrace();
+			}
 		}
 	}
 	@Override
@@ -82,6 +88,21 @@ public class GUI extends Application {
 		stage.setMinHeight(500);
 		Notification.setManager(notifier);
 		loadFirst(new HomeForm());
+		new Thread(() -> {
+			try {
+				instance = new Libersaurus();
+				Notification.info(new LibersaurusLoaded(instance));
+			} catch (Exception e) {
+				System.err.println("Erreur pendant l'instanciation de Libersaurus.");
+				e.printStackTrace();
+			}
+		}).start();
 		stage.show();
+	}
+	@Override
+	public void stop() throws Exception {
+		if(instance != null)
+			instance.close();
+		super.stop();
 	}
 }

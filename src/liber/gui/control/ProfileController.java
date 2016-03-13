@@ -8,9 +8,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import liber.command.UpdateInfoCommand;
+import liber.data.Account;
 import liber.enumeration.CommandField;
 import liber.enumeration.ContactData;
 import liber.gui.GUI;
+import liber.gui.form.ProfileForm;
 import liber.notification.Notification;
 
 import java.io.*;
@@ -121,4 +123,17 @@ public class ProfileController {
 		GUI.current.back();
 	}
 
+	public void init(ProfileForm form) {
+		Account account = form.account();
+		firstnameLabel.setText(account.info().firstname());
+		lastnameLabel.setText(account.info().lastname());
+		statusLabel.setText(account.info().status());
+		if(account.info().hasPhoto()) {
+			ImageView imageView = ProfileController.instanciateImageView(
+					new Image(new ByteArrayInputStream(account.info().photoBytes()))
+			);
+			photoLabel.setText(null);
+			photoLabel.setGraphic(imageView);
+		}
+	}
 }
