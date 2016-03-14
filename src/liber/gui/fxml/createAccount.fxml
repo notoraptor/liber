@@ -26,14 +26,14 @@
         <RowConstraints vgrow="SOMETIMES" />
         <RowConstraints vgrow="SOMETIMES" />
     </rowConstraints>
-    <TextField fx:id="liberserver" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+    <TextField fx:id="liberserver" text="http://liber.notoraptor.net" GridPane.columnSpan="2" GridPane.rowIndex="2" />
     <TextField fx:id="username" GridPane.columnSpan="2" GridPane.rowIndex="4" />
     <PasswordField fx:id="password" GridPane.columnSpan="2" GridPane.rowIndex="6" />
     <PasswordField fx:id="passwordAgain" GridPane.columnSpan="2" GridPane.rowIndex="8" />
     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#cancel" text="Annuler" GridPane.rowIndex="9" />
     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createAccount" text="Créer le compte" GridPane.columnIndex="1" GridPane.rowIndex="9" />
     <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Liber-serveur valide (exemple: http://liber.notoraptor.net)" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Pseudonyme" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Pseudonyme (lettres sans accents et chiffres, uniquement)" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="3" />
     <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Mot de passe (au moins 8 caractères)" GridPane.columnSpan="2" GridPane.rowIndex="5" />
     <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Mot de passe (une seconde fois)" GridPane.columnSpan="2" GridPane.rowIndex="7" />
     <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Créer un compte" GridPane.columnSpan="2">

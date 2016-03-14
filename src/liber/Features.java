@@ -154,7 +154,7 @@ public class Features {
 		} catch (Exception ignored) {}
 		Notification.good(data + " deleted.");
 	}
-	public byte[] getCaptchaImageForCreation() {
+	public static byte[] getCaptchaImageForCreation() {
 		try {
 			Response response = new GetCaptchaImageForCreationRequest().justSend();
 			if (response.good()) {
@@ -167,7 +167,7 @@ public class Features {
 		}
 		return null;
 	}
-	public byte[] getCaptchaImageForDeletion() {
+	public static byte[] getCaptchaImageForDeletion() {
 		try {
 			Response response = new GetCaptchaImageForDeletionRequest().justSend();
 			if (response.good()) {
@@ -180,19 +180,19 @@ public class Features {
 		}
 		return null;
 	}
-	public byte[] getCaptchaImage(String captchaImage) {
+	private static byte[] getCaptchaImage(String captchaImage) {
 		return Base64.getDecoder().decode(captchaImage);
 	}
-	public void generateCaptchaImageForCreation(String captchaImage, String imageType) throws IOException {
+	public static void generateCaptchaImageForCreation(String captchaImage, String imageType) throws IOException {
 		generateCaptchaImage(captchaImage, imageType, "Creation");
 	}
-	public void generateCaptchaImageForDeletion(String captchaImage, String imageType) throws IOException {
+	public static void generateCaptchaImageForDeletion(String captchaImage, String imageType) throws IOException {
 		generateCaptchaImage(captchaImage, imageType, "Deletion");
 	}
-	private void generateCaptchaImage(String captchaImage, String imageType, String imageName) throws IOException {
+	private static void generateCaptchaImage(String captchaImage, String imageType, String imageName) throws IOException {
 		byte[] buffer = Base64.getDecoder().decode(captchaImage);
 		BufferedImage image = ImageIO.read(new ByteArrayInputStream(buffer));
-		File file = new File("captchaImageFor" + imageName + "." + imageType);
+		File file = new File("captchaImageFor" + imageName + '.' + imageType);
 		ImageIO.write(image, imageType, file);
 		System.out.println("[L'image CAPTCHA est dans le fichier \"" + file.getAbsolutePath() + "\"].");
 	}

@@ -49,6 +49,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 	public Libersaurus() throws Exception {
 		directory = Utils.workingDirectory();
 		configuration = new Configuration(directory);
+		/*
 		try {
 			System.err.println("Création d'un serveur local joignable.");
 			server = new Server(configuration.getPrivatePort(), configuration.getPublicPort());
@@ -58,6 +59,9 @@ public class Libersaurus implements Closeable, InternetDependant {
 			System.err.println("Utilisation du liber-serveur (dès que possible) comme serveur distant.");
 			server = new DistantServer(this);
 		}
+		*/
+		System.err.println("Utilisation par défaut d'un serveur distant.");
+		server = new DistantServer(this);
 		server.start();
 		libercard = null;
 		password = null;
@@ -188,7 +192,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 				s.append(contact.appellation());
 				--sendersCount;
 			}
-			Notification.good("Vous avez reçu des messages de " +  s.toString() + ".");
+			Notification.good("Vous avez reçu des messages de " + s + '.');
 		}
 		// Déterminer pour chaque contact si la discussion est ouverte ou fermée.
 		for(Contact contact: contacts()) {
@@ -282,6 +286,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 						String body = Utils.decode(response.get(Field.body));
 						BufferedReader in = new BufferedReader(new StringReader(body));
 						ReceivedRequest receivedRequest = ReceivedRequest.parse(in);
+						System.err.println("<<\t" + receivedRequest.name());
 						receivedRequest.respond();
 						in.close();
 					}
@@ -368,7 +373,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 			Contact contact = new Contact(sender, secret);
 			InMessage inlink = new InMessage(contact, microtime, invitation);
 			libercard.inlinks.add(inlink);
-			Notification.good("Vous avez reçu une demande de contact de la part de " + contact.appellation() + ".");
+			Notification.good("Vous avez reçu une demande de contact de la part de " + contact.appellation() + '.');
 			Notification.info(new LinkOfferReceived(inlink));
 		} catch (AddressException e) {
 			throw RequestException.ERROR_USER_ADDRESS();

@@ -10,10 +10,10 @@ interface KnownUser {
 		String appellation = info.firstname();
 		if (info.lastname() != null) {
 			if (appellation == null) appellation = info.lastname();
-			else appellation += " " + info.lastname();
+			else appellation += ' ' + info.lastname();
 		}
 		if (appellation == null) appellation = username();
-		else appellation += " (" + username() + ")";
+		else appellation += " (" + username() + ')';
 		return appellation;
 	}
 	default void update(ContactData data, String value) {

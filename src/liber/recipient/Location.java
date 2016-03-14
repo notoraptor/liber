@@ -60,6 +60,6 @@ public class Location implements Recipient {
 	}
 	@Override
 	public String toString() {
-		return user.liberaddress() + " (" + user.ip() + ":" + user.port() + ")";
+		return user.liberaddress() + " (" + (user.addressIsDistant() ? "distant:" : "") + user.ip() + ':' + user.port() + ')';
 	}
 }

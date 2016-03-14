@@ -39,7 +39,7 @@ public abstract class RequestToLiberaddress extends Request {
 		for (Map.Entry<Field, String> entry : parameters()) {
 			String value = entry.getValue();
 			if (value == null) value = "";
-			s.append(entry.getKey()).append("\t").append(value).append("\r\n");
+			s.append(entry.getKey()).append('\t').append(value).append("\r\n");
 		}
 		s.append("end\r\n");
 		return s.toString();

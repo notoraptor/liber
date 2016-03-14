@@ -56,11 +56,11 @@ public class ContactProfileController {
 	void deleteHistory(ActionEvent event) throws Exception {
 		Question question = new Question();
 		question.setTitle("Supprimer l'historique");
-		question.setQuestion("Voulez-vous vraiment supprimer l'historique de discussion avec\n" + contact.appellation() + "?");
+		question.setQuestion("Voulez-vous vraiment supprimer l'historique de discussion avec\n" + contact.appellation() + '?');
 		question.setPositiveLabel("Supprimer l'historique");
 		question.setAction(() -> {
 			contact.clearHistory();
-			Notification.good("Historique supprimé pour " + contact.appellation() + ".");
+			Notification.good("Historique supprimé pour " + contact.appellation() + '.');
 		});
 		question.show();
 	}

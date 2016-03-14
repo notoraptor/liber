@@ -65,7 +65,7 @@ public class Server extends ServerInterface {
 	synchronized public void close() throws IOException {
 		runServer = false;
 		server.close();
-		System.err.println("Server " + (isRunning() ? "encore ouvert" : "fermé") + ".");
+		System.err.println("Server " + (isRunning() ? "encore ouvert." : "fermé."));
 		try {
 			makePrivate();
 		} catch (Exception e) {

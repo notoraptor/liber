@@ -23,9 +23,9 @@ public class Form {
 		Parent root = loader.load();
 		Object oc = loader.getController();
 		if(oc != null && initController(oc))
-			System.out.println("Contrôleur exécuté pour " + getName() + ".");
+			System.out.println("Contrôleur exécuté pour " + getName() + '.');
 		else {
-			System.err.println("Pas de contrôleur pour " + getName() + ".");
+			System.err.println("Pas de contrôleur pour " + getName() + '.');
 			//init(root);
 		}
 		return root;

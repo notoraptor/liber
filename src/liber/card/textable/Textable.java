@@ -21,7 +21,7 @@ abstract class Textable<T> {
 	public void check(HashMap<String, String> map) throws Exception {
 		for (String field : fields())
 			if (!map.containsKey(field)) {
-				throw new Exception("Error while loading " + name() + " from libercard: missing field " + field + ".");
+				throw new Exception("Error while loading " + name() + " from libercard: missing field " + field + '.');
 			}
 	}
 	public StringBuilder toText() {

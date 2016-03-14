@@ -16,5 +16,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="bcprov-jdk15on-154" level="project" />
+    <orderEntry type="library" name="commons-codec-1.9" level="project" />
   </component>
 </module>

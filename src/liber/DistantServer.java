@@ -9,16 +9,19 @@ public class DistantServer extends ServerInterface {
 		return (ip.equals(publicIP) || ip.equals(privateIP));
 	}
 	final private Libersaurus context;
-	private boolean runServer = true;
+	private boolean runServer;
+	private Random random;
 	public DistantServer(Libersaurus instance) {
 		assert instance != null;
 		context = instance;
+		runServer = true;
+		random = new Random();
 	}
 	@Override
 	public void run() {
 		while(runServer) {
 			context.getNextPosted();
-			long timeToWait = 900L + new Random().nextInt(101);
+			long timeToWait = 800L + random.nextInt(101);
 			try {
 				Thread.sleep(timeToWait);
 			} catch (InterruptedException e) {

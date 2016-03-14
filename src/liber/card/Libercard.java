@@ -32,7 +32,7 @@ public class Libercard {
 	}
 	static public Libercard load(Liberaddress accountLiberaddress) throws Exception {
 		Libercard libercard = null;
-		File file = new File(Libersaurus.current.getDirectory(), lcfoldername + "/" + getFilename(accountLiberaddress));
+		File file = new File(Libersaurus.current.getDirectory(), lcfoldername + '/' + getFilename(accountLiberaddress));
 		if (file.exists() && file.isFile()) {
 			libercard = new Libercard();
 			BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
@@ -97,7 +97,7 @@ public class Libercard {
 	}
 	public void delete() throws LibercardException {
 		try {
-			File file = new File(Libersaurus.current.getDirectory(), lcfoldername + "/" + getFilename(account.liberaddress()));
+			File file = new File(Libersaurus.current.getDirectory(), lcfoldername + '/' + getFilename(account.liberaddress()));
 			if (file.exists() && file.isFile()) {
 				if (!file.delete())
 					throw new Exception("Unable to delete libercard \"" + file.getAbsolutePath() + "\".");

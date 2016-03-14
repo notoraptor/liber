@@ -65,7 +65,7 @@ public class WorkController {
 							t1.setText(DiscussionController.offlineString);
 							t1.setFill(Color.RED);
 						}
-						Text t2 = new Text(" " + contact.appellation());
+						Text t2 = new Text(' ' + contact.appellation());
 						tf.getChildren().addAll(t1, t2);
 						//tf.setStyle("-fx-font-size:15");
 						//tf.setStyle("-fx-font-weight:bold");
@@ -181,7 +181,7 @@ public class WorkController {
 				t1.setText(DiscussionController.offlineString);
 				t1.setFill(Color.RED);
 			}
-			Text t2 = new Text(" " + contact.appellation());
+			Text t2 = new Text(' ' + contact.appellation());
 			tf.getChildren().addAll(t1, t2);
 			username.setText(null);
 			username.setGraphic(tf);

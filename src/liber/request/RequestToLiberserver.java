@@ -33,6 +33,7 @@ public abstract class RequestToLiberserver extends Request {
 				s.append("&").append(entry.getKey()).append("=").append(URLEncoder.encode(value, "UTF-8"));
 			}
 		} catch (UnsupportedEncodingException e) {
+			s = new StringBuilder();
 			s.append("request=").append(name());
 			s.append("&sender=").append(sender());
 			s.append("&recipient=").append(recipientAddress());

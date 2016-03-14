@@ -10,13 +10,13 @@ import liber.exception.RequestException;
 import liber.notification.Notification;
 import liber.recipient.Recipient;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
 abstract public class Request {
 	static private long count = 0;
-	private HashMap<Field, String> parameters;
+	private EnumMap<Field, String> parameters;
 	private String request;
 	private String sender;
 	private Recipient recipient;
@@ -25,7 +25,7 @@ abstract public class Request {
 		request = Utils.getRequestName(this);
 		sender = theSender;
 		recipient = theRecipient;
-		parameters = new HashMap<>();
+		parameters = new EnumMap<>(Field.class);
 	}
 	public Request(Liberaddress senderAddress, Recipient theRecipient) {
 		this(senderAddress.toString(), theRecipient);
@@ -35,7 +35,7 @@ abstract public class Request {
 	}
 	static public Response sendRequest(Request request, String message) {
 		Response response = null;
-		System.err.println("Internet? " + Internet.isConnected());
+		//System.err.println("Internet? " + Internet.isConnected());
 		if(Internet.isConnected()) {
 			try {
 				response = request.justSend();
@@ -81,6 +81,7 @@ abstract public class Request {
 			System.err.println("Tentative " + (++count) + ": " + request + " -> " + recipient);
 			response = recipient.receive(this);
 		} catch (Exception e) {
+			e.printStackTrace();
 			if (!recipient.updatable())
 				throw new RecipientException(e);
 			recipient.update();

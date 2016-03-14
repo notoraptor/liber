@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class Utils {
 	static final private Pattern urlPattern = Pattern.compile("^[A-Za-z]+\\://[A-Za-z0-9/_\\.\\$\\#-]+$");
-	static final private Pattern usernamePattern = Pattern.compile("^[A-Za-z0-9_\\.\\$\\#-]+$");
+	static final private Pattern usernamePattern = Pattern.compile("^[A-Za-z0-9_\\.-]+$");
 	static public boolean urlIsValid(String url) {
 		return url != null && urlPattern.matcher(url).find();
 	}
@@ -48,7 +48,7 @@ public class Utils {
 	}
 	static public String getRequestName(Request request) {
 		String classname = request.getClass().getName();
-		int position = classname.lastIndexOf(".");
+		int position = classname.lastIndexOf('.');
 		if(position > 0) classname = classname.substring(position + 1);
 		if (!classname.startsWith("Request")) {
 			classname = Character.toLowerCase(classname.charAt(0)) + classname.substring(1, classname.length() - "Request".length());
@@ -57,7 +57,7 @@ public class Utils {
 	}
 	static public String getRequestName(ReceivedRequest request) {
 		String classname = request.getClass().getName();
-		int position = classname.lastIndexOf(".");
+		int position = classname.lastIndexOf('.');
 		if(position > 0) classname = classname.substring(position + 1);
 		if(classname.endsWith("ReceivedRequest"))
 			classname = Character.toLowerCase(classname.charAt(0)) +
@@ -82,8 +82,14 @@ public class Utils {
 	static public String encode(String decoded) {
 		return Base64.getEncoder().encodeToString(decoded.getBytes());
 	}
+	static public String encode(byte[] bytes) {
+		return Base64.getEncoder().encodeToString(bytes);
+	}
 	static public String decode(String encoded) {
 		return new String(Base64.getDecoder().decode(encoded));
+	}
+	static public byte[] decodeToBytes(String encoded) {
+		return Base64.getDecoder().decode(encoded);
 	}
 	static public <K, V> void implode(HashMap<K, V> from, StringBuilder to, String coupleJoiner, String entrySeparator) {
 		boolean written = false;

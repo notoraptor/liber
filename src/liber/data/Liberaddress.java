@@ -24,11 +24,11 @@ public class Liberaddress {
 			liberserver = liberserver.substring(0, liberserver.length() - Liberserver.end.length());
 		this.liberserver = new Liberserver(liberserver + Liberserver.end);
 		this.username = username;
-		this.liberaddress = liberserver + "/" + username;
+		this.liberaddress = liberserver + '/' + username;
 	}
 	public Liberaddress(String liberaddress) throws UsernameException, RecipientAddressException {
 		if (!Utils.urlIsValid(liberaddress)) liberaddress = "http://" + liberaddress;
-		int indexOfSeparator = liberaddress.lastIndexOf("/");
+		int indexOfSeparator = liberaddress.lastIndexOf('/');
 		this.liberserver = new Liberserver(liberaddress.substring(0, indexOfSeparator) + Liberserver.end);
 		this.username = liberaddress.substring(indexOfSeparator + 1);
 		this.liberaddress = liberaddress;

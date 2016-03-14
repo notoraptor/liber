@@ -265,10 +265,10 @@ public class Contact extends User implements KnownUser {
 			}
 			writer.close();
 			Notification.good("L'historique de vos échanges avec " +
-				appellation() + " a été sauvegardé dans le fichier: " + filename.getAbsolutePath() + "\n" +
+				appellation() + " a été sauvegardé dans le fichier: " + filename.getAbsolutePath() + '\n' +
 				"Vous pouvez récupérer ou supprimer ce fichier selon vos besoins.");
 		} catch (Exception e) {
-			Notification.bad("Impossible de sauvegarder l'historique de vos échanges avec " + appellation() + ".");
+			Notification.bad("Impossible de sauvegarder l'historique de vos échanges avec " + appellation() + '.');
 			e.printStackTrace();
 		}
 	}

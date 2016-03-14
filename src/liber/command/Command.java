@@ -4,14 +4,14 @@ import liber.Utils;
 import liber.enumeration.CommandField;
 import liber.notification.Notification;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Scanner;
 
 public abstract class Command {
 	private Scanner scanner;
-	private HashMap<CommandField, String> parameters;
+	private EnumMap<CommandField, String> parameters;
 	public Command() {
-		parameters = new HashMap<>();
+		parameters = new EnumMap<>(CommandField.class);
 	}
 	static public Command getInstance(String commandName) {
 		commandName = "liber.command." +
