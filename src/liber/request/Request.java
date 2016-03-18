@@ -17,12 +17,13 @@ import java.util.Set;
 abstract public class Request {
 	static private long count = 0;
 	private EnumMap<Field, String> parameters;
-	private String request;
+	private RequestName request;
 	private String sender;
 	private Recipient recipient;
 	private Request(String theSender, Recipient theRecipient) {
 		assert theSender != null && theRecipient != null;
-		request = Utils.getRequestName(this);
+		//request = Utils.getRequestName(this);
+		request = getRequestName();
 		sender = theSender;
 		recipient = theRecipient;
 		parameters = new EnumMap<>(Field.class);
@@ -63,7 +64,7 @@ abstract public class Request {
 	public Response justSend() throws RecipientException, RequestException {
 		return send();
 	}
-	final public String name() {
+	final public RequestName name() {
 		return request;
 	}
 	final public String sender() {
@@ -127,4 +128,5 @@ abstract public class Request {
 			//throw liber.RequestException.RESPONSE_STATUS(response.status());
 		}
 	}
+	abstract protected RequestName getRequestName();
 }

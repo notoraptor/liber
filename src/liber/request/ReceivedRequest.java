@@ -5,15 +5,60 @@ import liber.Utils;
 import liber.data.Liberaddress;
 import liber.enumeration.Field;
 import liber.exception.RequestException;
+import liber.request.reception.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.EnumMap;
 
 public abstract class ReceivedRequest {
 	private Liberaddress sender;
 	private Liberaddress recipient;
 	private ReceivedContent parameters;
 	protected ReceivedRequest() {}
+	static class InitialReceivedRequestLookup implements  ReceivedRequestLookup {
+		@Override
+		public ReceivedRequest lookup(ReceivedContent content) {
+			init();
+			receivedRequestLookup = new DefaultReceivedRequestLookup();
+			return findConstructor(content);
+		}
+	}
+	static class DefaultReceivedRequestLookup implements ReceivedRequestLookup {
+		@Override
+		public ReceivedRequest lookup(ReceivedContent content) {
+			return findConstructor(content);
+		}
+	}
+	static private EnumMap<RequestName, ReceivedRequestConstructor> parsers;
+	static private ReceivedRequestLookup receivedRequestLookup = new InitialReceivedRequestLookup();
+	static private ReceivedRequest findConstructor(ReceivedContent content) {
+		try {
+			RequestName requestName = RequestName.valueOf(content.get(Field.request));
+			ReceivedRequestConstructor constructor = parsers.get(requestName);
+			ReceivedRequest receivedRequest = constructor == null ? null : constructor.get();
+			return receivedRequest;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	static private void init() {
+		System.err.println("[[[[]]]] Initialisation des analyseurs de requêtes reçues.");
+		parsers = new EnumMap<>(RequestName.class);
+		parsers.put(RequestName.contactDataDeleted,			() -> new ContactDataDeletedReceivedRequest());
+		parsers.put(RequestName.contactDataUpdated,			() -> new ContactDataUpdatedReceivedRequest());
+		parsers.put(RequestName.linkAccepted,				() -> new LinkAcceptedReceivedRequest());
+		parsers.put(RequestName.linkCancelled,				() -> new LinkCancelledReceivedRequest());
+		parsers.put(RequestName.linkDeleted,				() -> new LinkDeletedReceivedRequest());
+		parsers.put(RequestName.linkOffer,					() -> new LinkOfferReceivedRequest());
+		parsers.put(RequestName.linkRefused,				() -> new LinkRefusedReceivedRequest());
+		parsers.put(RequestName.messageAcknowledgment,		() -> new MessageAcknowledgmentReceivedRequest());
+		parsers.put(RequestName.message,					() -> new MessageReceivedRequest());
+		parsers.put(RequestName.nowOffline,					() -> new NowOfflineReceivedRequest());
+		parsers.put(RequestName.nowOnlineAcknowledgment,	() -> new NowOnlineAcknowledgmentReceivedRequest());
+		parsers.put(RequestName.nowOnline,					() -> new NowOnlineReceivedRequest());
+
+	}
 	static public ReceivedRequest parse(BufferedReader in) throws RequestException {
 		ReceivedContent content = new ReceivedContent();
 		String line;
@@ -33,20 +78,11 @@ public abstract class ReceivedRequest {
 		}
 		if (content.isEmpty())
 			throw RequestException.REQUEST_ERROR_NO_REQUEST();
-		String requestName = content.get(Field.request);
-		if (requestName == null || requestName.length() < 2)
-			throw RequestException.REQUEST_ERROR_NAME_MISSING();
-		String requestClassname = "liber.request.reception."
-						+ Character.toUpperCase(requestName.charAt(0))
-						+ requestName.substring(1, requestName.length())
-						+ "ReceivedRequest";
-		if (!(Utils.classExtends(requestClassname, ReceivedRequest.class)))
+		ReceivedRequest receivedRequest = receivedRequestLookup.lookup(content);
+		if(receivedRequest == null)
 			throw RequestException.REQUEST_ERROR_UNKNOWN_REQUEST();
-		ReceivedRequest request = (ReceivedRequest) Utils.instanciate(requestClassname);
-		assert request != null;
-		request.loadFrom(content);
-		return request;
-		//return (liber.ReceivedRequest)liber.Utils.instanciate(requestClassname, content);
+		receivedRequest.loadFrom(content);
+		return receivedRequest;
 	}
 	protected void loadFrom(ReceivedContent content) throws RequestException {
 		// Récupération des champs obligatoires.
@@ -63,9 +99,6 @@ public abstract class ReceivedRequest {
 			throw RequestException.REQUEST_ERROR_RECIPIENT_MISSING();
 		if (secret == null || secret.isEmpty())
 			throw RequestException.REQUEST_ERROR_SECRET_MISSING();
-		// Le nom de la requête doit correspondre au nom de la classe courante.
-		if (!request.equals(Utils.getRequestName(this)))
-			throw RequestException.REQUEST_ERROR_NAME();
 		// La liberadresse de l'expéditeur doit être valide.
 		try {
 			this.sender = new Liberaddress(sender);

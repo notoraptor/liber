@@ -4,6 +4,7 @@ import liber.Libersaurus;
 import liber.data.Liberaddress;
 import liber.enumeration.Field;
 import liber.request.RequestFromCandidateToLiberserver;
+import liber.request.RequestName;
 
 public class CreateAccountRequest extends RequestFromCandidateToLiberserver {
 	public CreateAccountRequest(Liberaddress liberaddress, String password) {
@@ -18,5 +19,9 @@ public class CreateAccountRequest extends RequestFromCandidateToLiberserver {
 	@Override
 	public Field[] goodFields() {
 		return new Field[]{Field.captchaImage, Field.imageType};
+	}
+	@Override
+	protected RequestName getRequestName() {
+		return RequestName.createAccount;
 	}
 }

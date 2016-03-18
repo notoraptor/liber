@@ -3,6 +3,7 @@ package liber.request.server;
 import liber.data.OutMessage;
 import liber.enumeration.Field;
 import liber.request.RequestFromUserToLiberserver;
+import liber.request.RequestName;
 
 public class PostMessageRequest extends RequestFromUserToLiberserver {
 	public PostMessageRequest(OutMessage message) {
@@ -10,5 +11,9 @@ public class PostMessageRequest extends RequestFromUserToLiberserver {
 		add(Field.username, message.liberaddress().username());
 		add(Field.microtime, message.microtime());
 		add(Field.message, message.encodedContent());
+	}
+	@Override
+	protected RequestName getRequestName() {
+		return RequestName.postMessage;
 	}
 }

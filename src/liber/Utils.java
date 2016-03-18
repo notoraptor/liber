@@ -27,14 +27,6 @@ public class Utils {
 			return false;
 		}
 	}
-	static public boolean classExists(String classname) {
-		try {
-			Class.forName(classname);
-			return true;
-		} catch (Throwable e) {
-			return false;
-		}
-	}
 	static public Object instanciate(String classname, Object... arguments) {
 		try {
 			Class[] classes = new Class[arguments.length];
@@ -45,24 +37,6 @@ public class Utils {
 		} catch (Exception e) {
 			return null;
 		}
-	}
-	static public String getRequestName(Request request) {
-		String classname = request.getClass().getName();
-		int position = classname.lastIndexOf('.');
-		if(position > 0) classname = classname.substring(position + 1);
-		if (!classname.startsWith("Request")) {
-			classname = Character.toLowerCase(classname.charAt(0)) + classname.substring(1, classname.length() - "Request".length());
-		}
-		return classname;
-	}
-	static public String getRequestName(ReceivedRequest request) {
-		String classname = request.getClass().getName();
-		int position = classname.lastIndexOf('.');
-		if(position > 0) classname = classname.substring(position + 1);
-		if(classname.endsWith("ReceivedRequest"))
-			classname = Character.toLowerCase(classname.charAt(0)) +
-				classname.substring(1, classname.length() - "ReceivedRequest".length());
-		return classname;
 	}
 	static public String hash(String message) throws Exception {
 		MessageDigest md = MessageDigest.getInstance("SHA");

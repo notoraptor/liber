@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import liber.Action;
 import liber.gui.form.QuestionForm;
 
 public class Question {

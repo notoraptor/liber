@@ -4,6 +4,7 @@ import liber.Libersaurus;
 import liber.data.Liberaddress;
 import liber.enumeration.Field;
 import liber.request.RequestFromCandidateToLiberserver;
+import liber.request.RequestName;
 
 public class LoginRequest extends RequestFromCandidateToLiberserver {
 	public LoginRequest(Liberaddress liberaddress, String password) {
@@ -14,5 +15,9 @@ public class LoginRequest extends RequestFromCandidateToLiberserver {
 		add(Field.publicPort, Libersaurus.current.publicPort());
 		add(Field.privateIP, Libersaurus.current.privateIP());
 		add(Field.privatePort, Libersaurus.current.privatePort());
+	}
+	@Override
+	protected RequestName getRequestName() {
+		return RequestName.login;
 	}
 }

@@ -24,7 +24,7 @@ public abstract class RequestToLiberserver extends Request {
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		try {
-			s.append("request=").append(URLEncoder.encode(name(), "UTF-8"));
+			s.append("request=").append(URLEncoder.encode(name().toString(), "UTF-8"));
 			s.append("&sender=").append(URLEncoder.encode(sender(), "UTF-8"));
 			s.append("&recipient=").append(URLEncoder.encode(recipientAddress(), "UTF-8"));
 			for (Map.Entry<Field, String> entry : parameters()) {

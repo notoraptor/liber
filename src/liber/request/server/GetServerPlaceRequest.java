@@ -5,6 +5,7 @@ import liber.data.Liberaddress;
 import liber.enumeration.Field;
 import liber.recipient.Liberserver;
 import liber.request.RequestFromCandidateToLiberserver;
+import liber.request.RequestName;
 
 public class GetServerPlaceRequest extends RequestFromCandidateToLiberserver {
 	public GetServerPlaceRequest(Liberserver liberserver, String username) {
@@ -18,5 +19,9 @@ public class GetServerPlaceRequest extends RequestFromCandidateToLiberserver {
 	@Override
 	public Field[] goodFields() {
 		return new Field[]{Field.ip, Field.port};
+	}
+	@Override
+	protected RequestName getRequestName() {
+		return RequestName.getServerPlace;
 	}
 }
