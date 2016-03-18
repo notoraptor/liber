@@ -12,4 +12,8 @@ public class InlinkForm extends Form {
 	public InMessage inlink() {
 		return inlink;
 	}
+	@Override
+	protected String name() {
+		return "inlink";
+	}
 }

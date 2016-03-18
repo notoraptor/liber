@@ -12,4 +12,8 @@ public class OutlinkForm extends Form {
 	public OutMessage outlink() {
 		return outlink;
 	}
+	@Override
+	protected String name() {
+		return "outlink";
+	}
 }

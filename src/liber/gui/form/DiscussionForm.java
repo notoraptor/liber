@@ -11,4 +11,8 @@ public class DiscussionForm extends Form {
 	public Contact contact() {
 		return contact;
 	}
+	@Override
+	protected String name() {
+		return "discussion";
+	}
 }

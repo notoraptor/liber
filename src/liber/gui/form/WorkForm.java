@@ -21,4 +21,8 @@ public class WorkForm extends Form {
 	public WorkForm() {
 		this(CONTACTS);
 	}
+	@Override
+	protected String name() {
+		return "work";
+	}
 }

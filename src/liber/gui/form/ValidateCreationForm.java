@@ -12,4 +12,8 @@ public class ValidateCreationForm extends Form {
 	public boolean isFromConnexion() {
 		return fromConnexion;
 	}
+	@Override
+	protected String name() {
+		return "validateCreation";
+	}
 }

@@ -5,11 +5,11 @@ import javafx.scene.Parent;
 
 import java.lang.reflect.Method;
 
-public class Form {
+abstract public class Form {
 	private String filename;
 	private String title;
 	public Form(String title) {
-		this.filename = getName() + ".fxml";
+		this.filename = name() + ".fxml";
 		this.title = title;
 	}
 	final public String filename() {
@@ -23,9 +23,9 @@ public class Form {
 		Parent root = loader.load();
 		Object oc = loader.getController();
 		if(oc != null && initController(oc))
-			System.out.println("Contrôleur exécuté pour " + getName() + '.');
+			System.out.println("Contrôleur exécuté pour " + name() + '.');
 		else {
-			System.err.println("Pas de contrôleur pour " + getName() + '.');
+			System.err.println("Pas de contrôleur pour " + name() + '.');
 			//init(root);
 		}
 		return root;
@@ -40,6 +40,7 @@ public class Form {
 		}
 		return classname;
 	}
+	abstract protected String name();
 	private boolean initController(Object potentialController) {
 		String classname = getClass().getName();
 		int position = classname.lastIndexOf('.');

@@ -11,4 +11,8 @@ public class InMessageForm extends Form {
 	public InMessage message() {
 		return message;
 	}
+	@Override
+	protected String name() {
+		return "inMessage";
+	}
 }

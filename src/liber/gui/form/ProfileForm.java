@@ -10,4 +10,8 @@ public class ProfileForm extends Form {
 	public Account account() {
 		return Libersaurus.current.account();
 	}
+	@Override
+	protected String name() {
+		return "profile";
+	}
 }

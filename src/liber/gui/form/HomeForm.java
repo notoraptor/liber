@@ -13,4 +13,8 @@ public class HomeForm extends Form {
 	public Libersaurus getContext() {
 		return context;
 	}
+	@Override
+	protected String name() {
+		return "home";
+	}
 }

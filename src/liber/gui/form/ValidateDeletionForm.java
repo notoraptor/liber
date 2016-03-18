@@ -12,4 +12,8 @@ public class ValidateDeletionForm extends Form {
 	public boolean isFromConnexion() {
 		return fromConnexion;
 	}
+	@Override
+	protected String name() {
+		return "validateDeletion";
+	}
 }

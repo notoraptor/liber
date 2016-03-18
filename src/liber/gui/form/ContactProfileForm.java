@@ -12,4 +12,8 @@ public class ContactProfileForm extends Form {
 	public Contact contact() {
 		return contact;
 	}
+	@Override
+	protected String name() {
+		return "contactProfile";
+	}
 }

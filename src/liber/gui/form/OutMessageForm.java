@@ -11,4 +11,8 @@ public class OutMessageForm extends Form {
 	public OutMessage message() {
 		return message;
 	}
+	@Override
+	protected String name() {
+		return "outMessage";
+	}
 }
