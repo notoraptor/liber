@@ -1,6 +1,7 @@
 package liber;
 
 import liber.card.Libercard;
+import liber.card.LibercardReport;
 import liber.data.*;
 import liber.enumeration.ContactData;
 import liber.enumeration.Field;
@@ -11,7 +12,6 @@ import liber.request.ReceivedRequest;
 import liber.request.Request;
 import liber.request.Response;
 import liber.request.client.*;
-import liber.request.reception.NowOnlineAcknowledgmentReceivedRequest;
 import liber.request.server.*;
 
 import java.io.*;
@@ -211,19 +211,14 @@ public class Libersaurus implements Closeable, InternetDependant {
 		// Notifier tous les contacts de la connexion.
 		for (Contact contact : contacts()) {
 			try {
-				Response response = Request.sendRequest(new NowOnlineRequest(contact));
-				System.err.println(response);
+				new NowOnlineRequest(contact).justSend();
+				//System.err.println(response);
 			} catch (Exception ignored) {} // Le contact est peut-être déconnecté.
 		}
 		//Notification.good("Connexion réussie.");
-		// debug: afficher les informations de la libercarte.
-		printLibercard();
 	}
 	private void finalizeLogout() throws Exception {
 		clearLibercard();
-	}
-	private void printLibercard() {
-		libercard.print();
 	}
 	// Accesseurs.
 	public boolean loaded() {
@@ -304,15 +299,15 @@ public class Libersaurus implements Closeable, InternetDependant {
 			Notification.info(new ContactUpdated(contact));
 		}
 	}
-	public void setContactOnline(Liberaddress sender, String secret, UserInfo info) throws RequestException {
+	public void setContactOnline(Liberaddress sender, String secret) throws RequestException {
 		Contact contact = libercard.contacts.get(sender);
 		if (contact != null && contact.secretIs(secret)) {
 			contact.setOnline();
 			try {
-				new NowOnlineAcknowledgmentRequest(contact).justSend();
+				Response r = new NowOnlineAcknowledgmentRequest(contact).justSend();
+				if(r.good()) libercard.account.sentInfosToContact(contact);
 			} catch (Throwable ignored) {}
 			contact.manageOnline();
-			contact.update(info);
 			//Notification.good("Le contact " + contact.appellation() + " est connecté.");
 			Notification.info(new ContactUpdated(contact));
 		} else throw RequestException.ERROR_CONTACT();
@@ -369,15 +364,13 @@ public class Libersaurus implements Closeable, InternetDependant {
 		if (libercard.contacts.has(sender)) throw RequestException.ERROR_INLINK();
 		if (libercard.inlinks.has(sender)) throw RequestException.ERROR_INLINK();
 		if (libercard.outlinks.has(sender)) throw RequestException.ERROR_INLINK();
-		try {
-			Contact contact = new Contact(sender, secret);
-			InMessage inlink = new InMessage(contact, microtime, invitation);
-			libercard.inlinks.add(inlink);
-			Notification.good("Vous avez reçu une demande de contact de la part de " + contact.appellation() + '.');
-			Notification.info(new LinkOfferReceived(inlink));
-		} catch (AddressException e) {
+		Contact contact = new Contact(sender, secret);
+		if(!contact.exists())
 			throw RequestException.ERROR_USER_ADDRESS();
-		}
+		InMessage inlink = new InMessage(contact, microtime, invitation);
+		libercard.inlinks.add(inlink);
+		Notification.good("Vous avez reçu une demande de contact de la part de " + contact.appellation() + '.');
+		Notification.info(new LinkOfferReceived(inlink));
 	}
 	public void addMessage(Liberaddress sender, String secret, long microtime, String content) throws RequestException {
 		Contact contact = libercard.contacts.get(sender);
@@ -502,7 +495,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 			} else {
 				libercard.deleteContact(contact);
 				/*
-				Note: il faut aussi s'occuper des waitingMessages
+				TODO: il faut aussi s'occuper des waitingMessages
 				et des messages en attente pour ce contact envoyés sur son liberserveur.
 				*/
 				Notification.good("Contact supprimé.");
@@ -519,27 +512,18 @@ public class Libersaurus implements Closeable, InternetDependant {
 	}
 	public void acceptInlink(Liberaddress liberaddress) {
 		InMessage message = libercard.inlinks.get(liberaddress);
-		if (message == null) Notification.bad("You have not received link from that liberaddress");
+		if (message == null) Notification.bad("Vous n'avez pas reçu de demande de cette liber-adresse.");
 		else {
 			Response response = Request.sendRequest(new LinkAcceptedRequest(message.sender()));
 			if (response != null) if (response.bad()) {
-				Notification.bad("Unable to inform user that you have accepted the link. Link still to be accepted.");
+				Notification.bad("Impossible d'informer l'utilisateur que vous avez accepté sa demande." +
+						" Veuillez réessayer plus tard!");
 			} else {
 				Contact contact = message.sender();
 				libercard.inlinks.remove(message);
 				libercard.contacts.add(contact);
 				contact.addMessage(message, false);
-				response = Request.sendRequest(new NowOnlineRequest(contact));
-				if(response != null && response.good()) {
-					contact.setOnline();
-					boolean updated = false;
-					Field[] toCheck = new Field[]{Field.firstname, Field.lastname, Field.photo, Field.contactStatus};
-					for(Field field: toCheck) if(response.has(field)) {
-						updated = true;
-						contact.update(ContactData.valueOf(field.toString()), response.get(field));
-					}
-					if(updated) Notification.info(new ContactUpdated(contact));
-				}
+				Request.sendRequest(new NowOnlineRequest(contact));
 				Notification.good("Contact créé.");
 			}
 		}
@@ -593,37 +577,31 @@ public class Libersaurus implements Closeable, InternetDependant {
 			Notification.bad("You have already received a link offer of that liberaddress");
 		if (libercard.outlinks.has(recipient))
 			Notification.bad("You have already sent a link offer to that liberaddress.");
-		else try {
+		else {
 			Contact potentialContact = new Contact(recipient);
-			OutMessage outlink = new OutMessage(potentialContact, message);
-			Response response = Request.sendRequest(
-					new LinkOfferRequest(outlink), "Impossible d'envoyer votre demande de mise en relation. Raisons possibles:\n" +
-							"1) L'utilisateur n'existe pas.\n" +
-							"2) L'utilisateur est actuellement déconnecté.\n" +
-							"3) Vous n'êtes pas connecté à Internet.");
-			if (response != null) if (response.good()) {
-				libercard.outlinks.add(outlink);
-				Notification.good("Votre demande a été envoyé! L'utilisateur vous répondra bientôt.");
+			if(potentialContact.exists()) {
+				OutMessage outlink = new OutMessage(potentialContact, message);
+				Response response = Request.sendRequest(
+						new LinkOfferRequest(outlink), "Impossible d'envoyer votre demande de mise en relation. Raisons possibles:\n" +
+								"1) L'utilisateur n'existe pas.\n" +
+								"2) L'utilisateur est actuellement déconnecté.\n" +
+								"3) Vous n'êtes pas connecté à Internet.");
+				if (response != null) if (response.good()) {
+					libercard.outlinks.add(outlink);
+					Notification.good("Votre demande a été envoyé! L'utilisateur vous répondra bientôt.");
+				} else {
+					Notification.bad("Impossible d'envoyer la demande de mise en relation (" + response.status() + ").");
+				}
 			} else {
-				Notification.bad("Impossible d'envoyer la demande de mise en relation (" + response.status() + ").");
+				Notification.bad("Impossible de localiser cet utilisateur sur Internet.");
 			}
-		} catch (AddressException e) {
-			Notification.bad("Unable to retrieve user lcoation on the net.");
 		}
 	}
-	public void setContactWatchMe(NowOnlineAcknowledgmentReceivedRequest nowOnlineAcknowledgmentReceivedRequest) {
-		Contact contact = libercard.contacts.get(nowOnlineAcknowledgmentReceivedRequest.sender());
-		if(contact != null && contact.secretIs(nowOnlineAcknowledgmentReceivedRequest.secret())) {
+	public void setContactWatchMe(Liberaddress sender, String secret, String waitingMessages) {
+		Contact contact = libercard.contacts.get(sender);
+		if(contact != null && contact.secretIs(secret)) {
 			contact.setOnline();
-			boolean updated = false;
-			Field[] toCheck = new Field[] { Field.firstname, Field.lastname, Field.photo, Field.status };
-			for(Field field: toCheck) if(nowOnlineAcknowledgmentReceivedRequest.has(field)) {
-				updated = true;
-				contact.update(ContactData.valueOf(field.toString()), nowOnlineAcknowledgmentReceivedRequest.get(field));
-			}
-			if(updated)
-				Notification.info(new ContactUpdated(contact));
-			int m = Integer.valueOf(nowOnlineAcknowledgmentReceivedRequest.get(Field.waitingMessages));
+			int m = Integer.valueOf(waitingMessages);
 			contact.sendAknowledgements();
 			if(m == 0) {
 				// Le contact n'a aucun message à envoyer.
@@ -634,6 +612,10 @@ public class Libersaurus implements Closeable, InternetDependant {
 				// Les messages éventuellement en attente locale sont invalides.
 				contact.convertLocationWaitingToNotSent();
 			}
+			libercard.account.sentInfosToContact(contact);
 		}
+	}
+	public LibercardReport reportLibercard() {
+		return libercard.report();
 	}
 }

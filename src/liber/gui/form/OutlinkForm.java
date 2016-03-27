@@ -1,6 +1,8 @@
 package liber.gui.form;
 
+import javafx.fxml.FXMLLoader;
 import liber.data.OutMessage;
+import liber.gui.control.OutlinkController;
 
 public class OutlinkForm extends Form {
 	private OutMessage outlink;
@@ -13,7 +15,13 @@ public class OutlinkForm extends Form {
 		return outlink;
 	}
 	@Override
-	protected String name() {
-		return "outlink";
+	protected FormName name() {
+		return FormName.outlink;
+	}
+	@Override
+	protected boolean control(FXMLLoader loader) {
+		OutlinkController controller = loader.getController();
+		controller.init(this);
+		return true;
 	}
 }

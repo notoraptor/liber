@@ -1,7 +1,8 @@
 package liber.gui.form;
 
+import javafx.fxml.FXMLLoader;
 import liber.data.Contact;
-import liber.gui.form.Form;
+import liber.gui.control.ContactProfileController;
 
 public class ContactProfileForm extends Form {
 	private Contact contact;
@@ -13,7 +14,13 @@ public class ContactProfileForm extends Form {
 		return contact;
 	}
 	@Override
-	protected String name() {
-		return "contactProfile";
+	protected FormName name() {
+		return FormName.contactProfile;
+	}
+	@Override
+	protected boolean control(FXMLLoader loader) throws Exception {
+		ContactProfileController controller = loader.getController();
+		controller.init(this);
+		return true;
 	}
 }

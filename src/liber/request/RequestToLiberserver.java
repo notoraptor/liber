@@ -30,7 +30,7 @@ public abstract class RequestToLiberserver extends Request {
 			for (Map.Entry<Field, String> entry : parameters()) {
 				String value = entry.getValue();
 				if (value == null) value = "";
-				s.append("&").append(entry.getKey()).append("=").append(URLEncoder.encode(value, "UTF-8"));
+				s.append('&').append(entry.getKey()).append('=').append(URLEncoder.encode(value, "UTF-8"));
 			}
 		} catch (UnsupportedEncodingException e) {
 			s = new StringBuilder();
@@ -40,7 +40,7 @@ public abstract class RequestToLiberserver extends Request {
 			for (Map.Entry<Field, String> entry : parameters()) {
 				String value = entry.getValue();
 				if (value == null) value = "";
-				s.append("&").append(entry.getKey()).append("=").append(value);
+				s.append('&').append(entry.getKey()).append('=').append(value);
 			}
 		}
 		return s.toString();

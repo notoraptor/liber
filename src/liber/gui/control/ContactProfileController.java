@@ -37,7 +37,7 @@ public class ContactProfileController {
 		GUI.current.back();
 	}
 	@FXML
-	void confirmContactDeleltion(ActionEvent event) throws Exception {
+	void confirmContactDeletion(ActionEvent event) throws Exception {
 		Question question = new Question();
 		question.setTitle("Supprimer le contact");
 		question.setQuestion("Voulez-vous vraiment supprimer le contact \n" + contact.appellation() + "?\n" +

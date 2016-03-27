@@ -63,7 +63,7 @@ public class Response {
 		return content.get("status");
 	}
 	public boolean good() {
-		return content.get("status").equals("OK");
+		return status().equals("OK");
 	}
 	public boolean bad() {
 		return !good();
@@ -74,7 +74,7 @@ public class Response {
 		for (Map.Entry<String, String> entry : content.entrySet()) {
 			String value = entry.getValue();
 			if(value == null) value = "";
-			s.append(entry.getKey()).append("\t").append(value).append("\r\n");
+			s.append(entry.getKey()).append('\t').append(value).append("\r\n");
 		}
 		s.append("end\r\n");
 		return s.toString();

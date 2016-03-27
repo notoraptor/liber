@@ -1,8 +1,5 @@
 package liber;
 
-import liber.request.ReceivedRequest;
-import liber.request.Request;
-
 import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -12,31 +9,19 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Utils {
-	static final private Pattern urlPattern = Pattern.compile("^[A-Za-z]+\\://[A-Za-z0-9/_\\.\\$\\#-]+$");
+	static final private Pattern urlPattern = Pattern.compile("^[A-Za-z]+://[A-Za-z0-9/_\\.\\$#-]+$");
 	static final private Pattern usernamePattern = Pattern.compile("^[A-Za-z0-9_\\.-]+$");
 	static public boolean urlIsValid(String url) {
 		return url != null && urlPattern.matcher(url).find();
 	}
+	static public boolean urlIsInvalid(String url) {
+		return url == null || !urlPattern.matcher(url).find();
+	}
 	static public boolean usernameIsValid(String un) {
 		return un != null && usernamePattern.matcher(un).find();
 	}
-	static public boolean classExtends(String subClassname, Class<?> superClass) {
-		try {
-			return superClass.isAssignableFrom(Class.forName(subClassname));
-		} catch (Throwable e) {
-			return false;
-		}
-	}
-	static public Object instanciate(String classname, Object... arguments) {
-		try {
-			Class[] classes = new Class[arguments.length];
-			for (int i = 0; i < arguments.length; ++i) {
-				classes[i] = arguments[i].getClass();
-			}
-			return Class.forName(classname).getDeclaredConstructor(classes).newInstance(arguments);
-		} catch (Exception e) {
-			return null;
-		}
+	static public boolean usernameIsInvalid(String un) {
+		return un == null || !usernamePattern.matcher(un).find();
 	}
 	static public String hash(String message) throws Exception {
 		MessageDigest md = MessageDigest.getInstance("SHA");

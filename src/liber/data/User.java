@@ -6,18 +6,36 @@ import java.net.InetAddress;
 import java.util.Random;
 
 public class User extends BasicUser {
+	private boolean userAccountExists;
 	private Address address;
 	private String secret;
-	public User(Liberaddress liberaddress) throws AddressException {
+	public User(Liberaddress liberaddress) {
 		super(liberaddress);
 		generateSecret();
-		address = new Address(liberaddress);
+		userAccountExists = true;
+		try {
+			address = new Address(liberaddress);
+		} catch (AddressException e) {
+			if(e.responseIsErrorUsername())
+				userAccountExists = false;
+			address = new Address();
+		}
 	}
-	public User(Liberaddress liberaddress, String theSecret) throws AddressException {
+	public User(Liberaddress liberaddress, String theSecret) {
 		super(liberaddress);
 		assert theSecret != null;
 		secret = theSecret;
-		address = new Address(liberaddress);
+		userAccountExists = true;
+		try {
+			address = new Address(liberaddress);
+		} catch (AddressException e) {
+			if(e.responseIsErrorUsername())
+				userAccountExists = false;
+			address = new Address();
+		}
+	}
+	public boolean exists() {
+		return userAccountExists;
 	}
 	public String secret() {
 		return secret;
@@ -38,10 +56,11 @@ public class User extends BasicUser {
 		return address.isDistant();
 	}
 	public void updateAddress() {
-		address.clear();
 		try {
 			address = new Address(liberaddress());
-		} catch (Throwable ignored) {}
+		} catch (AddressException e) {
+			address = new Address();
+		}
 	}
 	private void generateSecret() {
 		Random random = new Random();

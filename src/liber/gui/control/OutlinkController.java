@@ -39,7 +39,7 @@ public class OutlinkController {
 	}
 
 	@FXML
-	protected void init(OutlinkForm form) {
+	public void init(OutlinkForm form) {
 		GUI.current.notifier().setInformer(new OutlinkInformer());
 		OutMessage outlink = form.outlink();
 		invitation.setText(outlink.decodedContent());

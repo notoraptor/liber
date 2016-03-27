@@ -1,6 +1,9 @@
 package liber.data;
 
 import liber.enumeration.AccountState;
+import liber.enumeration.ContactData;
+import liber.request.Response;
+import liber.request.client.ContactDataUpdatedRequest;
 
 public class Account extends BasicUser implements KnownUser {
 	private UserInfo info;
@@ -40,5 +43,27 @@ public class Account extends BasicUser implements KnownUser {
 	}
 	public boolean toConfirm() {
 		return state == AccountState.TO_CONFIRM;
+	}
+	public void sentInfosToContact(Contact contact) {
+		if(!contact.accountFirstnameSent) try {
+			Response response = new ContactDataUpdatedRequest(contact, ContactData.firstname, info.firstname()).justSend();
+			if(response.good())
+				contact.accountFirstnameSent = true;
+		} catch (Exception ignored) {}
+		if(!contact.accountLastnameSent) try {
+			Response response = new ContactDataUpdatedRequest(contact, ContactData.lastname, info.lastname()).justSend();
+			if(response.good())
+				contact.accountLastnameSent = true;
+		} catch (Exception ignored) {}
+		if(!contact.accountStatusSent) try {
+			Response response = new ContactDataUpdatedRequest(contact, ContactData.status, info.status()).justSend();
+			if(response.good())
+				contact.accountStatusSent = true;
+		} catch (Exception ignored) {}
+		if(!contact.accountPhotoSent) try {
+			Response response = new ContactDataUpdatedRequest(contact, ContactData.photo, info.photo()).justSend();
+			if(response.good())
+				contact.accountPhotoSent = true;
+		} catch (Exception ignored) {}
 	}
 }

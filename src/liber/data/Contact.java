@@ -2,6 +2,8 @@ package liber.data;
 
 import liber.Internet;
 import liber.Libersaurus;
+import liber.card.Libercard;
+import liber.card.textable.TextableContact;
 import liber.card.textable.TextableInMessage;
 import liber.card.textable.TextableOutMessage;
 import liber.exception.InternetException;
@@ -28,6 +30,10 @@ import java.util.*;
 * donc, ils ne peuvent avoir le même MessageID.
 */
 public class Contact extends User implements KnownUser {
+	public boolean accountPhotoSent;
+	public boolean accountFirstnameSent;
+	public boolean accountLastnameSent;
+	public boolean accountStatusSent;
 	private boolean online;
 	private UserInfo info;
 	private TreeMap<MessageID, Message> history;
@@ -37,11 +43,11 @@ public class Contact extends User implements KnownUser {
 	private TreeSet<MessageID> confirmationWaiting;
 	private TreeSet<MessageID> notSent;
 	private TreeSet<MessageID> sent;
-	public Contact(Liberaddress liberaddress) throws AddressException {
+	public Contact(Liberaddress liberaddress) {
 		super(liberaddress);
 		init();
 	}
-	public Contact(Liberaddress liberaddress, String theSecret) throws AddressException {
+	public Contact(Liberaddress liberaddress, String theSecret) {
 		super(liberaddress, theSecret);
 		init();
 	}
@@ -160,8 +166,10 @@ public class Contact extends User implements KnownUser {
 			OutMessage message = (OutMessage) history.get(id);
 			Response response = Request.sendRequest(new CheckPostedMessageRequest(message));
 			if(response == null) {
-				if (Internet.isConnected()) break;
-				else throw new InternetException();
+				if (Internet.isConnected())
+					break;
+				else
+					throw new InternetException();
 			}
 			if (response.status().equals("NO_MESSAGE")) {
 				message.setConfirmationWaiting();
@@ -244,32 +252,34 @@ public class Contact extends User implements KnownUser {
 		return "Discussion-(" + username() + ")-(" + sdf.format(date) + ").history";
 	}
 	// TODO: Il faut sauver l'historique dans un format lisible pour un humain (préférer HTML).
-	public void saveHistory() {
-		try {
-			File directory = new File(Libersaurus.current.getDirectory(), "histories");
-			if (!directory.exists()) {
-				if (!directory.mkdir())
-					throw new Exception("Unable to create \"histories\" directory.");
-			} else if (!directory.isDirectory())
-				throw new Exception("Unable to use \"histories\" as directory (it's a file) to store histories.");
-			File filename = new File(directory, historyFilename());
-			BufferedWriter writer = new BufferedWriter(new FileWriter(filename.getAbsolutePath()));
-			for (Message message : history.values()) {
-				StringBuilder s;
-				if (message instanceof InMessage)
-					s = new TextableInMessage(null, (InMessage) message).toText();
-				else
-					s = new TextableOutMessage(null, (OutMessage) message).toText();
-				writer.write(s.toString());
-				writer.newLine();
-			}
-			writer.close();
-			Notification.good("L'historique de vos échanges avec " +
-				appellation() + " a été sauvegardé dans le fichier: " + filename.getAbsolutePath() + '\n' +
-				"Vous pouvez récupérer ou supprimer ce fichier selon vos besoins.");
-		} catch (Exception e) {
-			Notification.bad("Impossible de sauvegarder l'historique de vos échanges avec " + appellation() + '.');
-			e.printStackTrace();
+	private File createHistoriesDirectory() throws Exception {
+		File directory = new File(Libersaurus.current.getDirectory(), Libercard.historiesFoldername);
+		if (!directory.exists()) {
+			if (!directory.mkdir())
+				throw new Exception("Impossible de créer le dossier \"" + directory.getAbsolutePath() + "\".");
+		} else if (!directory.isDirectory())
+			throw new Exception("Impossible de sauvegarder les historiques vers le chemin \""
+					+ directory.getAbsolutePath() + "\" car c'est un fichier, pas un dossier.");
+		return directory;
+	}
+	public String saveHistory() throws Exception {
+		File directory = createHistoriesDirectory();
+		File filename = new File(directory, historyFilename());
+		BufferedWriter writer = new BufferedWriter(new FileWriter(filename.getAbsolutePath()));
+		// Contact
+		StringBuilder s = new TextableContact(null, this).toText();
+		writer.write(s.toString());
+		writer.newLine();
+		// Historique des messages.
+		for (Message message : history.values()) {
+			if (message instanceof InMessage)
+				s = new TextableInMessage (null, (InMessage)  message).toText();
+			else
+				s = new TextableOutMessage(null, (OutMessage) message).toText();
+			writer.write(s.toString());
+			writer.newLine();
 		}
+		writer.close();
+		return filename.getAbsolutePath();
 	}
 }

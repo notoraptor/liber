@@ -1,6 +1,8 @@
 package liber.gui.form;
 
+import javafx.fxml.FXMLLoader;
 import liber.data.InMessage;
+import liber.gui.control.InlinkController;
 
 public class InlinkForm extends Form {
 	private InMessage inlink;
@@ -13,7 +15,13 @@ public class InlinkForm extends Form {
 		return inlink;
 	}
 	@Override
-	protected String name() {
-		return "inlink";
+	protected FormName name() {
+		return FormName.inlink;
+	}
+	@Override
+	protected boolean control(FXMLLoader loader) {
+		InlinkController controller = loader.getController();
+		controller.init(this);
+		return true;
 	}
 }

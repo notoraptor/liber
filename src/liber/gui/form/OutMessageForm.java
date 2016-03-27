@@ -1,6 +1,8 @@
 package liber.gui.form;
 
+import javafx.fxml.FXMLLoader;
 import liber.data.OutMessage;
+import liber.gui.control.OutMessageController;
 
 public class OutMessageForm extends Form {
 	private OutMessage message;
@@ -12,7 +14,13 @@ public class OutMessageForm extends Form {
 		return message;
 	}
 	@Override
-	protected String name() {
-		return "outMessage";
+	protected FormName name() {
+		return FormName.outMessage;
+	}
+	@Override
+	protected boolean control(FXMLLoader loader) {
+		OutMessageController controller = loader.getController();
+		controller.init(this);
+		return true;
 	}
 }

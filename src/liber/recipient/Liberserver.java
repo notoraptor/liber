@@ -53,11 +53,10 @@ public class Liberserver implements Recipient {
 	}
 	private String address;
 	public Liberserver(String serverAddress) throws RecipientAddressException {
-		address = serverAddress;
-		if (!(Utils.urlIsValid(address) && address.endsWith(end))) {
-			System.err.println(address);
-			throw new RecipientAddressException();
+		if (Utils.urlIsInvalid(serverAddress) || !serverAddress.endsWith(end)) {
+			throw new RecipientAddressException("Mauvaise adresse de liber-serveur: " + serverAddress);
 		}
+		address = serverAddress;
 	}
 	@Override
 	public String address() {

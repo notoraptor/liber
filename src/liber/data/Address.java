@@ -3,19 +3,27 @@ package liber.data;
 import liber.DistantServer;
 import liber.enumeration.Field;
 import liber.exception.AddressException;
+import liber.exception.RecipientException;
+import liber.exception.RequestException;
 import liber.request.Response;
 import liber.request.server.GetServerPlaceRequest;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class Address {
 	private InetAddress ip;
 	private int port;
 	private boolean distant;
+	public Address() {
+		ip = null;
+		port = -1;
+		distant = false;
+	}
 	public Address(Liberaddress liberaddress) throws AddressException {
 		try {
 			Response response = new GetServerPlaceRequest(liberaddress).justSend();
-			if (response.bad()) throw new AddressException(response.status());
+			if (response.bad()) throw new AddressException(response);
 			String ipString = response.get(Field.ip);
 			String portString = response.get(Field.port);
 			if (ipString == null) {
@@ -28,9 +36,9 @@ public class Address {
 			} else {
 				ip = InetAddress.getByName(ipString);
 				port = Integer.parseInt(portString);
-				if (port <= 0) throw new AddressException("port is " + port);
+				if (port <= 0) throw new AddressException(port);
 			}
-		} catch (Exception e) {
+		} catch (RecipientException|RequestException|UnknownHostException e) {
 			ip = null;
 			port = -1;
 			throw new AddressException(e);

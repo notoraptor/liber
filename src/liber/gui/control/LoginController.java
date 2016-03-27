@@ -5,9 +5,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import liber.Libersaurus;
+import liber.card.LibercardReport;
 import liber.command.LoginCommand;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
+import liber.gui.form.ReportForm;
 import liber.gui.form.ValidateCreationForm;
 import liber.gui.form.ValidateDeletionForm;
 import liber.gui.form.WorkForm;
@@ -37,7 +39,12 @@ public class LoginController {
 			} else if(Libersaurus.current.account().toDelete()) {
 				GUI.current.load(new ValidateDeletionForm(true));
 			} else {
-				GUI.current.load(new WorkForm());
+				LibercardReport report = Libersaurus.current.reportLibercard();
+				System.out.println("Report? " + report.isEmpty());
+				if(report.isEmpty())
+					GUI.current.load(new WorkForm());
+				else
+					GUI.current.load(new ReportForm(report));
 			}
 		}
 	}

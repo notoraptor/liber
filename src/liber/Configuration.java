@@ -47,8 +47,6 @@ public class Configuration {
 			}
 			reader.close();
 			loaded = true;
-			// debug
-			debug();
 		}
 	}
 	public boolean isLoaded() {
@@ -92,13 +90,5 @@ public class Configuration {
 			port = Integer.parseInt(configuration.get(Config.publicPort));
 		} catch(NumberFormatException ignored) {}
 		return port;
-	}
-	public void debug() {
-		for(Map.Entry<Config,String> entry: configuration.entrySet()) {
-			Config key = entry.getKey();
-			String value = entry.getValue();
-			if(value != null) value = '"' + value + '"';
-			System.err.println("configuration [" + key + " = " + value + "]");
-		}
 	}
 }

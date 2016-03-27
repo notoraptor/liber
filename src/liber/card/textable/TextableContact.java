@@ -8,12 +8,16 @@ import liber.data.UserInfo;
 import java.util.HashMap;
 
 public class TextableContact extends Textable<Contact> {
-	static private String liberaddress = "liberaddress";
-	static private String secret = "secret";
-	static private String firstname = "firstname";
-	static private String lastname = "lastname";
-	static private String photo = "photo";
-	static private String status = "status";
+	static private final String liberaddress = "liberaddress";
+	static private final String secret = "secret";
+	static private final String firstname = "firstname";
+	static private final String lastname = "lastname";
+	static private final String photo = "photo";
+	static private final String status = "status";
+	static private final String accountPhotoSent = "accountPhotoSent";
+	static private final String accountFirstnameSent = "accountFirstnameSent";
+	static private final String accountLastnameSent = "accountLastnameSent";
+	static private final String accountStatusSent = "accountStatusSent";
 	public TextableContact(Libercard libercard, Contact contact) {
 		super(libercard, contact);
 	}
@@ -23,7 +27,10 @@ public class TextableContact extends Textable<Contact> {
 	}
 	@Override
 	public String[] fields() {
-		return new String[]{liberaddress, secret, firstname, lastname, photo, status};
+		return new String[] {
+			liberaddress, secret, firstname, lastname, photo, status,
+			accountPhotoSent, accountFirstnameSent, accountLastnameSent, accountStatusSent
+		};
 	}
 	@Override
 	public void toText(HashMap<String, String> map) {
@@ -33,12 +40,20 @@ public class TextableContact extends Textable<Contact> {
 		map.put(lastname, get().info().lastname());
 		map.put(photo, get().info().photo());
 		map.put(status, get().info().status());
+		map.put(accountFirstnameSent, String.valueOf(get().accountFirstnameSent));
+		map.put(accountLastnameSent, String.valueOf(get().accountLastnameSent));
+		map.put(accountPhotoSent, String.valueOf(get().accountPhotoSent));
+		map.put(accountStatusSent, String.valueOf(get().accountStatusSent));
 	}
 	@Override
 	public Contact fromText(HashMap<String, String> map) throws Exception {
 		if (map.get(secret) == null) throw new Exception();
 		Contact contact = new Contact(new Liberaddress(map.get(liberaddress)), map.get(secret));
 		contact.update(new UserInfo(map.get(firstname), map.get(lastname), map.get(photo), map.get(status)));
+		contact.accountFirstnameSent = Boolean.parseBoolean(map.get(accountFirstnameSent));
+		contact.accountLastnameSent = Boolean.parseBoolean(map.get(accountLastnameSent));
+		contact.accountPhotoSent = Boolean.parseBoolean(map.get(accountPhotoSent));
+		contact.accountStatusSent = Boolean.parseBoolean(map.get(accountStatusSent));
 		return contact;
 	}
 }

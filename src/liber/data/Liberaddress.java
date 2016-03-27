@@ -18,8 +18,8 @@ public class Liberaddress {
 		++first;
 		if(last - first + 1 > 0)
 			liberserver = liberserver.substring(0, first);
-		if (!Utils.usernameIsValid(username)) throw new UsernameException(username);
-		if (!Utils.urlIsValid(liberserver)) liberserver = "http://" + liberserver;
+		if (Utils.usernameIsInvalid(username)) throw new UsernameException(username);
+		if (Utils.urlIsInvalid(liberserver)) liberserver = "http://" + liberserver;
 		if (liberserver.endsWith(Liberserver.end))
 			liberserver = liberserver.substring(0, liberserver.length() - Liberserver.end.length());
 		this.liberserver = new Liberserver(liberserver + Liberserver.end);
@@ -27,21 +27,21 @@ public class Liberaddress {
 		this.liberaddress = liberserver + '/' + username;
 	}
 	public Liberaddress(String liberaddress) throws UsernameException, RecipientAddressException {
-		if (!Utils.urlIsValid(liberaddress)) liberaddress = "http://" + liberaddress;
+		if (Utils.urlIsInvalid(liberaddress)) liberaddress = "http://" + liberaddress;
 		int indexOfSeparator = liberaddress.lastIndexOf('/');
 		this.liberserver = new Liberserver(liberaddress.substring(0, indexOfSeparator) + Liberserver.end);
 		this.username = liberaddress.substring(indexOfSeparator + 1);
 		this.liberaddress = liberaddress;
-		if (!Utils.usernameIsValid(username)) throw new UsernameException(username);
+		if (Utils.usernameIsInvalid(username)) throw new UsernameException(username);
 	}
 	static public Liberaddress build(String liberaddress) {
 		Liberaddress la = null;
 		try {
 			la = new Liberaddress(liberaddress);
 		} catch (UsernameException e) {
-			Notification.bad("Bad username");
+			Notification.bad("Mauvais nom d'utilisateur.");
 		} catch (RecipientAddressException e) {
-			Notification.bad("Bad user liberserver.");
+			Notification.bad("Mauvaise adresse de liber-serveur.");
 		}
 		return la;
 	}

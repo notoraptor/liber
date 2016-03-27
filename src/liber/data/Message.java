@@ -33,7 +33,7 @@ public abstract class Message {
 	}
 	public String timeString() {
 		Date date = new Date(microtime()/1000);
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE dd LLL yyyy - HH 'h' mm 'min' ss 'sec'");
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE dd LLL yyyy - HH ':' mm ':' ss");
 		return sdf.format(date);
 	}
 	abstract public long microtime();

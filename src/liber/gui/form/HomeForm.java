@@ -1,6 +1,8 @@
 package liber.gui.form;
 
+import javafx.fxml.FXMLLoader;
 import liber.Libersaurus;
+import liber.gui.control.HomeController;
 
 public class HomeForm extends Form {
 	private Libersaurus context;
@@ -14,7 +16,13 @@ public class HomeForm extends Form {
 		return context;
 	}
 	@Override
-	protected String name() {
-		return "home";
+	protected FormName name() {
+		return FormName.home;
+	}
+	@Override
+	protected boolean control(FXMLLoader loader) {
+		HomeController controller = loader.getController();
+		controller.init(this);
+		return true;
 	}
 }

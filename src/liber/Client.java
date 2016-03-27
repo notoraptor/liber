@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Client extends Thread {
-	private Socket client;
+	final private Socket client;
 	public Client(Socket clientSocket) {
 		client = clientSocket;
 	}

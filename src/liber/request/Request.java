@@ -2,7 +2,6 @@ package liber.request;
 
 import liber.Internet;
 import liber.Libersaurus;
-import liber.Utils;
 import liber.data.Liberaddress;
 import liber.enumeration.Field;
 import liber.exception.RecipientException;
@@ -47,6 +46,8 @@ abstract public class Request {
 					if(message != null) Notification.bad(message);
 				} else {
 					System.err.println("Not connected.");
+					// TODO Il faut vérifier que la recherche de la connexion Internet fonctionne bien
+					// (ex. en déconnectant le PC pendant l'exécution du logiciel).
 					Libersaurus.current.lookupInternet(request.recipientServerAddress());
 					if(message != null) Notification.bad(message);
 				}

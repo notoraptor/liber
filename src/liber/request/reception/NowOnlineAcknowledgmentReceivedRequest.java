@@ -11,6 +11,6 @@ public class NowOnlineAcknowledgmentReceivedRequest extends ReceivedRequest {
 	}
 	@Override
 	public void manage() {
-		Libersaurus.current.setContactWatchMe(this);
+		Libersaurus.current.setContactWatchMe(sender(), secret(), get(Field.waitingMessages));
 	}
 }

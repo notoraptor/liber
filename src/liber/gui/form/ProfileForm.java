@@ -1,7 +1,9 @@
 package liber.gui.form;
 
+import javafx.fxml.FXMLLoader;
 import liber.Libersaurus;
 import liber.data.Account;
+import liber.gui.control.ProfileController;
 
 public class ProfileForm extends Form {
 	public ProfileForm() {
@@ -11,7 +13,13 @@ public class ProfileForm extends Form {
 		return Libersaurus.current.account();
 	}
 	@Override
-	protected String name() {
-		return "profile";
+	protected FormName name() {
+		return FormName.profile;
+	}
+	@Override
+	protected boolean control(FXMLLoader loader) {
+		ProfileController controller = loader.getController();
+		controller.init(this);
+		return true;
 	}
 }

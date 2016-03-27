@@ -1,6 +1,8 @@
 package liber.gui.form;
 
+import javafx.fxml.FXMLLoader;
 import liber.Libersaurus;
+import liber.gui.control.WorkController;
 
 public class WorkForm extends Form {
 	static public final int CONTACTS = 0;
@@ -22,7 +24,13 @@ public class WorkForm extends Form {
 		this(CONTACTS);
 	}
 	@Override
-	protected String name() {
-		return "work";
+	protected FormName name() {
+		return FormName.work;
+	}
+	@Override
+	protected boolean control(FXMLLoader loader) throws Exception {
+		WorkController controller = loader.getController();
+		controller.init(this);
+		return true;
 	}
 }

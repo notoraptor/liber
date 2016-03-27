@@ -4,7 +4,7 @@ import liber.data.Contact;
 import liber.data.Liberaddress;
 import liber.enumeration.ContactData;
 import liber.enumeration.Field;
-import liber.exception.LibercardException;
+import liber.exception.*;
 import liber.notification.Notification;
 import liber.request.Request;
 import liber.request.Response;
@@ -84,29 +84,32 @@ public class Features {
 		}
 	}
 	public void login(String theLiberaddress, String password) {
-		Liberaddress liberaddress = Liberaddress.build(theLiberaddress);
-		if (liberaddress != null) try {
+		try {
+			Liberaddress liberaddress = new Liberaddress(theLiberaddress);
 			Response response = new LoginRequest(liberaddress, password).justSend();
-			if (response != null) if (response.good()) {
-				liber.login(liberaddress, password);
-			} else switch (response.status()) {
+			switch (response.status()) {
+				case "OK":
+					liber.login(liberaddress, password);
+					break;
 				case "ERROR_ACCOUNT_TO_DELETE":
-					Notification.good("liber.Account must be deleted."); // " Use \"validateDeletion\" command.");
+					Notification.good("Ce compte doit être supprimé.");
 					liber.loginToDelete(liberaddress, password);
 					break;
 				case "ERROR_ACCOUNT_TO_CONFIRM":
-					Notification.good("liber.Account must be confirmed."); // " Use \"validateCreation\" command."
+					Notification.good("Ce compte doit être confirmé.");
 					liber.loginToConfirm(liberaddress, password);
 					break;
 				default:
-					Notification.bad("Unable to login\n(" + response.status() + ").");
+					Notification.bad("Impossible de se connecter\n(" + response.status() + ").");
 					break;
 			}
+		} catch (UsernameException|RecipientAddressException e) {
+			Notification.bad(e.getMessage());
+		} catch(RecipientException|RequestException e) {
+			Notification.bad("Impossible de se connecter. Êtes-vous connecté à Internet ?");
 		} catch (LibercardException e) {
 			Notification.bad("Impossible de charger la libercarte.");
 			e.printStackTrace();
-		} catch(Exception e) {
-			Notification.bad("Impossible de se connecter. Êtes-vous connecté à Internet ?");
 		}
 	}
 	public void logout() {

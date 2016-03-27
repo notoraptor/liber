@@ -5,6 +5,7 @@ import liber.Utils;
 import liber.card.textable.*;
 import liber.data.*;
 import liber.exception.LibercardException;
+import liber.notification.Notification;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,9 +13,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Libercard {
-	static public final String lcfoldername = "libercards";
+	static public final String libercardFoldername = "libercards";
+	static public final String historiesFoldername = "histories";
 	public Account account;
 	public Contacts contacts;
 	public Outlinks outlinks;
@@ -32,7 +35,7 @@ public class Libercard {
 	}
 	static public Libercard load(Liberaddress accountLiberaddress) throws Exception {
 		Libercard libercard = null;
-		File file = new File(Libersaurus.current.getDirectory(), lcfoldername + '/' + getFilename(accountLiberaddress));
+		File file = new File(Libersaurus.current.getDirectory(), libercardFoldername + '/' + getFilename(accountLiberaddress));
 		if (file.exists() && file.isFile()) {
 			libercard = new Libercard();
 			BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
@@ -56,12 +59,12 @@ public class Libercard {
 		return Utils.hash(liberaddress.toString()) + ".libercard";
 	}
 	public void save() throws Exception {
-		File directory = new File(Libersaurus.current.getDirectory(), lcfoldername);
+		File directory = new File(Libersaurus.current.getDirectory(), libercardFoldername);
 		if (!directory.exists()) {
 			if (!directory.mkdir())
-				throw new Exception("Unable to create \"" + lcfoldername + "\" directory.");
+				throw new Exception("Unable to create \"" + libercardFoldername + "\" directory.");
 		} else if (!directory.isDirectory())
-			throw new Exception("Unable to use \"" + lcfoldername + "\" as directory (it is a file) to store libercards.");
+			throw new Exception("Unable to use \"" + libercardFoldername + "\" as directory (it is a file) to store libercards.");
 		File filename = new File(directory, getFilename(account.liberaddress()));
 		///
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename.getAbsolutePath()));
@@ -97,7 +100,7 @@ public class Libercard {
 	}
 	public void delete() throws LibercardException {
 		try {
-			File file = new File(Libersaurus.current.getDirectory(), lcfoldername + '/' + getFilename(account.liberaddress()));
+			File file = new File(Libersaurus.current.getDirectory(), libercardFoldername + '/' + getFilename(account.liberaddress()));
 			if (file.exists() && file.isFile()) {
 				if (!file.delete())
 					throw new Exception("Unable to delete libercard \"" + file.getAbsolutePath() + "\".");
@@ -110,14 +113,45 @@ public class Libercard {
 	public void deleteContact(Contact contact) {
 		if (contacts.has(contact)) {
 			contacts.remove(contact);
-			contact.saveHistory();
+			try {
+				String historyFilename = contact.saveHistory();
+				Notification.good("L'historique de vos échanges avec " +
+					contact.appellation() + " a été sauvegardé dans le fichier: " + historyFilename + '\n' +
+					"Vous pouvez récupérer ou supprimer ce fichier selon vos besoins.");
+			} catch (Exception e) {
+				Notification.bad("Impossible de sauvegarder l'historique de vos échanges avec " +
+					contact.appellation() + '.');
+				e.printStackTrace();
+			}
 		}
 	}
-	public void print() {
-		// Pour débuggage ...
-		if (!contacts.isEmpty()) System.out.println(">> " + contacts.size() + " contacts.");
-		if (!inlinks.isEmpty()) System.out.println(">> " + inlinks.size() + " inlinks.");
-		if (!outlinks.isEmpty()) System.out.println(">> " + outlinks.size() + " outlinks.");
+	public LibercardReport report() {
+		LibercardReport report = new LibercardReport();
+		Iterator<Contact> contactIterator = contacts.list().iterator();
+		while (contactIterator.hasNext()) {
+			Contact contact = contactIterator.next();
+			if(!contact.exists()) {
+				contactIterator.remove();
+				report.add(contact);
+			}
+		}
+		Iterator<InMessage> inMessageIterator = inlinks.invitations().iterator();
+		while (inMessageIterator.hasNext()) {
+			InMessage inlink = inMessageIterator.next();
+			if(!inlink.sender().exists()) {
+				inMessageIterator.remove();
+				report.add(inlink);
+			}
+		}
+		Iterator<OutMessage> outMessageIterator = outlinks.invitations().iterator();
+		while (outMessageIterator.hasNext()) {
+			OutMessage outlink = outMessageIterator.next();
+			if(!outlink.recipient().exists()) {
+				outMessageIterator.remove();
+				report.add(outlink);
+			}
+		}
+		return report;
 	}
 	/* TODO URGENT ! GESTION DES ERREURS PENDANT LA LECTURE DE LA LIBERCARTE.
 	Pendant la lecture de la libercarte, il se peut qu'on remarque que des contacts

@@ -25,8 +25,8 @@ public class Server extends ServerInterface {
 		privatePort = server.getLocalPort();
 		System.err.println("private port = " + privatePort);
 		makePublic();
-		System.out.println("PRIVATE: " + privateIP + ":" + privatePort);
-		System.out.println("PUBLIC:  " + publicIP + ":" + publicPort);
+		System.out.println("PRIVATE: " + privateIP + ':' + privatePort);
+		System.out.println("PUBLIC:  " + publicIP + ':' + publicPort);
 	}
 	public Server(int thePrivatePort, int thePublicPort) throws Exception {
 		// server
@@ -43,8 +43,8 @@ public class Server extends ServerInterface {
 			makePublic();
 		else
 			makePublic(thePublicPort);
-		System.out.println("PRIVATE: " + privateIP + ":" + privatePort);
-		System.out.println("PUBLIC:  " + publicIP + ":" + publicPort);
+		System.out.println("PRIVATE: " + privateIP + ':' + privatePort);
+		System.out.println("PUBLIC:  " + publicIP + ':' + publicPort);
 	}
 	@Override
 	public void run() {

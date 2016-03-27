@@ -69,7 +69,7 @@ public class RequestException extends Exception {
 		this(error_code, null);
 	}
 	public RequestException(ErrorCode error_code, String info) {
-		super(error_code.toString() + (info == null ? "" : "(" + info + ")"));
+		super(error_code.toString() + (info == null ? "" : '(' + info + ')'));
 		errorCode = error_code;
 	}
 	static public RequestException REQUEST_ERROR_FIELD_MISSING(Field field) {

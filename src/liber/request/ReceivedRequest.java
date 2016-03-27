@@ -1,7 +1,6 @@
 package liber.request;
 
 import liber.Libersaurus;
-import liber.Utils;
 import liber.data.Liberaddress;
 import liber.enumeration.Field;
 import liber.exception.RequestException;
@@ -36,8 +35,7 @@ public abstract class ReceivedRequest {
 		try {
 			RequestName requestName = RequestName.valueOf(content.get(Field.request));
 			ReceivedRequestConstructor constructor = parsers.get(requestName);
-			ReceivedRequest receivedRequest = constructor == null ? null : constructor.get();
-			return receivedRequest;
+			return constructor == null ? null : constructor.get();
 		} catch (Exception e) {
 			return null;
 		}

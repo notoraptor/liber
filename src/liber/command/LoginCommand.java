@@ -13,9 +13,9 @@ public class LoginCommand extends CommandForOffline {
 	public boolean checkCommandLine() {
 		if (!super.checkCommandLine()) return false;
 		String s = get(CommandField.liberaddress);
-		if (s == null || s.isEmpty()) return Notification.bad("Please enter a liberaddress.");
+		if (s == null || s.isEmpty()) return Notification.bad("Veuillez entrer une liber-adresse.");
 		s = get(CommandField.password);
-		return !(s == null || s.isEmpty()) || Notification.bad("Please enter a password.");
+		return !(s == null || s.isEmpty()) || Notification.bad("Veuillez entrer un mot de passe.");
 	}
 	@Override
 	public void execute() {

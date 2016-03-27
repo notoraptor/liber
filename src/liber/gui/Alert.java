@@ -9,9 +9,8 @@ import javafx.stage.Stage;
 import liber.gui.form.AlertForm;
 
 public class Alert {
-	private Stage dialogStage;
 	public Alert(String title, String message, String buttonTitle) throws Exception {
-		dialogStage = new Stage();
+		Stage dialogStage = new Stage();
 		dialogStage.initModality(Modality.WINDOW_MODAL);
 		Parent root = new AlertForm().root();
 		Label titleLabel = (Label)root.lookup("#title");

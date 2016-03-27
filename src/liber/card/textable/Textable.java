@@ -26,7 +26,7 @@ abstract class Textable<T> {
 	}
 	public StringBuilder toText() {
 		StringBuilder s = new StringBuilder();
-		s.append(name()).append("\t");
+		s.append(name()).append('\t');
 		HashMap<String, String> map = new HashMap<>();
 		toText(map);
 		Utils.implode(map, s);
