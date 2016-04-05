@@ -1,6 +1,6 @@
 package liber.recipient;
 
-import liber.request.Request;
+import liber.request.requestSent.Request;
 import liber.request.Response;
 
 public interface Recipient {
@@ -10,5 +10,5 @@ public interface Recipient {
 	default boolean updatable() {
 		return false;
 	}
-	default void update() {}
+	default void update() throws Exception {}
 }

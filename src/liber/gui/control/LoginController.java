@@ -34,10 +34,11 @@ public class LoginController {
 		command.put(CommandField.password, passwordField.getText().trim());
 		passwordField.clear();
 		if(command.run()) {
+			GUI.current.updateTitle();
 			if(Libersaurus.current.account().toConfirm()) {
-				GUI.current.load(new ValidateCreationForm(true));
+				GUI.current.load(ValidateCreationForm.fromConnexion());
 			} else if(Libersaurus.current.account().toDelete()) {
-				GUI.current.load(new ValidateDeletionForm(true));
+				GUI.current.load(ValidateDeletionForm.fromConnexion());
 			} else {
 				LibercardReport report = Libersaurus.current.reportLibercard();
 				System.out.println("Report? " + report.isEmpty());

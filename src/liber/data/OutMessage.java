@@ -1,5 +1,6 @@
 package liber.data;
 
+import liber.enumeration.Encoding;
 import liber.enumeration.MessageState;
 import liber.notification.Notification;
 import liber.notification.info.OutMessageUpdated;
@@ -8,12 +9,12 @@ public class OutMessage extends Message {
 	private long microtime;
 	private MessageState state;
 	public OutMessage(Contact recipient, String message) {
-		super(recipient, message, false);
+		super(recipient, message, Encoding.DECODED);
 		this.microtime = System.currentTimeMillis() * 1000L;
 		this.state = MessageState.LOCATION_WAITING;
 	}
 	public OutMessage(Contact recipient, long microtime, String message) {
-		super(recipient, message, true);
+		super(recipient, message, Encoding.ENCODED);
 		this.microtime = microtime;
 		this.state = MessageState.LOCATION_WAITING;
 	}

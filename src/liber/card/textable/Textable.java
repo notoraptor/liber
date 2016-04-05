@@ -29,7 +29,7 @@ abstract class Textable<T> {
 		s.append(name()).append('\t');
 		HashMap<String, String> map = new HashMap<>();
 		toText(map);
-		Utils.implode(map, s);
+		Utils.implodeForLibercard(map, s);
 		return s;
 	}
 	abstract public String name();

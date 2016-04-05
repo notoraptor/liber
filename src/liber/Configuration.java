@@ -15,7 +15,7 @@ public class Configuration {
 	static private final String filename = "config.tsv";
 	private EnumMap<Config, String> configuration;
 	private File file;
-	public boolean loaded;
+	private boolean loaded;
 	public Configuration(File directory) throws Exception {
 		loaded = false;
 		file = new File(directory, filename);

@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import liber.Libersaurus;
+import liber.Features;
 import liber.command.ValidateDeletionCommand;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
@@ -32,7 +32,7 @@ public class ValidateDeletionController {
 		if(command.run()) {
 			GUI.current.fullBack();
 		} else {
-			byte[] data = Libersaurus.current.features().getCaptchaImageForDeletion();
+			byte[] data = Features.getCaptchaImageForDeletion();
 			if(data != null) {
 				imageLabel.setImage(new Image(new ByteArrayInputStream(data)));
 			} else imageLabel.setImage(null);
@@ -43,7 +43,7 @@ public class ValidateDeletionController {
 		if(form.isFromConnexion()) {
 			infoLabel.setText("Votre compte est en attente de suppression.");
 		}
-		byte[] data = Libersaurus.current.features().getCaptchaImageForDeletion();
+		byte[] data = Features.getCaptchaImageForDeletion();
 		if(data != null) {
 			imageLabel.setImage(new Image(new ByteArrayInputStream(data)));
 		}

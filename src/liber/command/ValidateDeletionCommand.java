@@ -1,17 +1,18 @@
 package liber.command;
 
+import liber.Features;
 import liber.Libersaurus;
 import liber.notification.Notification;
 import liber.enumeration.CommandField;
 import liber.enumeration.Field;
 import liber.request.Response;
-import liber.request.server.GetCaptchaImageForDeletionRequest;
+import liber.request.requestSent.server.GetCaptchaImageForDeletionRequest;
 
 import java.io.IOException;
 
 public class ValidateDeletionCommand extends CommandForLoaded {
-	private String captchaImage;
-	private String imageType;
+	private StringBuilder captchaImage;
+	private StringBuilder imageType;
 	public ValidateDeletionCommand() {
 		super();
 	}
@@ -31,7 +32,7 @@ public class ValidateDeletionCommand extends CommandForLoaded {
 		}
 	}
 	private void generateCaptchaImage() throws IOException {
-		Libersaurus.current.features().generateCaptchaImageForDeletion(captchaImage, imageType);
+		Features.generateCaptchaImageForDeletion(captchaImage, imageType);
 	}
 	@Override
 	public CommandField[] fields() {

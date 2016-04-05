@@ -1,17 +1,18 @@
 package liber.command;
 
+import liber.Features;
 import liber.Libersaurus;
 import liber.notification.Notification;
 import liber.enumeration.CommandField;
 import liber.enumeration.Field;
 import liber.request.Response;
-import liber.request.server.GetCaptchaImageForCreationRequest;
+import liber.request.requestSent.server.GetCaptchaImageForCreationRequest;
 
 import java.io.IOException;
 
 public class ValidateCreationCommand extends CommandForLoaded {
-	private String captchaImage;
-	private String imageType;
+	private StringBuilder captchaImage;
+	private StringBuilder imageType;
 	public ValidateCreationCommand() {
 		super();
 	}
@@ -29,7 +30,7 @@ public class ValidateCreationCommand extends CommandForLoaded {
 		}
 	}
 	private void generateCaptchaImage() throws IOException {
-		Libersaurus.current.features().generateCaptchaImageForCreation(captchaImage, imageType);
+		Features.generateCaptchaImageForCreation(captchaImage, imageType);
 	}
 	@Override
 	public CommandField[] fields() {

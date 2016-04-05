@@ -1,5 +1,6 @@
 package liber.data;
 
+import liber.enumeration.Encoding;
 import liber.exception.HashException;
 
 import java.text.SimpleDateFormat;
@@ -8,10 +9,10 @@ import java.util.Date;
 public abstract class Message {
 	private Contact protagonist;
 	private MessageContent content;
-	public Message(Contact contact, String messageContent, boolean messageContentIsEncoded) {
+	public Message(Contact contact, String messageContent, Encoding encoding) {
 		assert contact != null && messageContent != null;
 		protagonist = contact;
-		content = new MessageContent(messageContent, messageContentIsEncoded);
+		content = new MessageContent(messageContent, encoding);
 	}
 	public Contact protagonist() {
 		return protagonist;

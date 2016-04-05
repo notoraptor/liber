@@ -1,10 +1,11 @@
 package liber.card.textable;
 
+import liber.Utils;
 import liber.card.Libercard;
 import liber.data.Account;
 import liber.data.Liberaddress;
-import liber.data.UserInfo;
 import liber.enumeration.AccountState;
+import liber.enumeration.ContactData;
 
 import java.util.HashMap;
 
@@ -15,6 +16,8 @@ public class TextableAccount extends Textable<Account> {
 	static private String lastname = "lastname";
 	static private String photo = "photo";
 	static private String status = "status";
+	static private String publicKey = "publicKey";
+	static private String privateKey = "privateKey";
 	public TextableAccount(Libercard libercard, Account account) {
 		super(libercard, account);
 	}
@@ -34,11 +37,23 @@ public class TextableAccount extends Textable<Account> {
 		map.put(lastname, get().info().lastname());
 		map.put(photo, get().info().photo());
 		map.put(status, get().info().status());
+		map.put(privateKey, Utils.encodeString(get().privateKeyToString()));
+		map.put(publicKey, Utils.encodeString(get().publicKeyToString()));
 	}
 	@Override
 	public Account fromText(HashMap<String, String> map) throws Exception {
-		Account account = new Account(new Liberaddress(map.get(liberaddress)), AccountState.valueOf(map.get(state)));
-		account.update(new UserInfo(map.get(firstname), map.get(lastname), map.get(photo), map.get(status)));
+		String pub = map.get(publicKey);
+		String priv = map.get(privateKey);
+		Account account = new Account(
+			new Liberaddress(map.get(liberaddress)),
+			AccountState.valueOf(map.get(state)),
+			Utils.decodeString(priv),
+			Utils.decodeString(pub)
+		);
+		account.update(ContactData.firstname, map.get(firstname));
+		account.update(ContactData.lastname, map.get(lastname));
+		account.update(ContactData.photo, map.get(photo));
+		account.update(ContactData.status, map.get(status));
 		return account;
 	}
 }

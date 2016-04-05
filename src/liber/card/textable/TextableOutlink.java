@@ -32,7 +32,7 @@ public class TextableOutlink extends Textable<OutMessage> {
 	}
 	@Override
 	public OutMessage fromText(HashMap<String, String> map) throws Exception {
-		Contact contact = new Contact(new Liberaddress(map.get(liberaddress)), map.get(secret));
+		Contact contact = new Contact(new Liberaddress(map.get(liberaddress)), map.get(secret), null);
 		return new OutMessage(contact, Long.parseLong(map.get(microtime)), map.get(encodedContent));
 	}
 }

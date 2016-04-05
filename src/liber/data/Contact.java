@@ -1,22 +1,18 @@
 package liber.data;
 
-import liber.Internet;
 import liber.Libersaurus;
 import liber.card.Libercard;
 import liber.card.textable.TextableContact;
 import liber.card.textable.TextableInMessage;
 import liber.card.textable.TextableOutMessage;
-import liber.exception.InternetException;
 import liber.notification.Notification;
-import liber.exception.AddressException;
 import liber.notification.info.MessageCreated;
 import liber.notification.info.MessageReceived;
-import liber.request.Request;
+import liber.request.requestSent.Request;
 import liber.request.Response;
-import liber.request.client.MessageAcknowledgmentRequest;
-import liber.request.client.MessageRequest;
-import liber.request.server.CheckPostedMessageRequest;
-import liber.request.server.PostMessageRequest;
+import liber.request.requestSent.client.MessageAcknowledgmentRequest;
+import liber.request.requestSent.client.MessageRequest;
+import liber.request.requestSent.server.PostMessageRequest;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,11 +20,6 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-/*
-* TODO IMPORTANT: À PROPOS DES IDENTIFIANTS DES MESSAGES D'UN CONTACT.
-* Théoriquement, deux InMessage (ou OutMessage) pour un même contact ne peuvent pas avoir le même horodatage,
-* donc, ils ne peuvent avoir le même MessageID.
-*/
 public class Contact extends User implements KnownUser {
 	public boolean accountPhotoSent;
 	public boolean accountFirstnameSent;
@@ -43,12 +34,12 @@ public class Contact extends User implements KnownUser {
 	private TreeSet<MessageID> confirmationWaiting;
 	private TreeSet<MessageID> notSent;
 	private TreeSet<MessageID> sent;
-	public Contact(Liberaddress liberaddress) {
+	public Contact(Liberaddress liberaddress) throws Exception {
 		super(liberaddress);
 		init();
 	}
-	public Contact(Liberaddress liberaddress, String theSecret) {
-		super(liberaddress, theSecret);
+	public Contact(Liberaddress liberaddress, String theSecret, String pub) throws Exception {
+		super(liberaddress, theSecret, pub);
 		init();
 	}
 	private void init() {
@@ -77,14 +68,17 @@ public class Contact extends User implements KnownUser {
 		online = false;
 		updateAddress();
 	}
-	public void addMessage(InMessage message, boolean inform) {
+	private void registerMessage(InMessage message) {
 		history.put(message.id(), message);
 		if(message.toBeAcknowledged())
 			acknowledgeLater.add(message.id());
-		if(inform) Notification.info(new MessageReceived(message));
+	}
+	public void addNotInformedMessage(InMessage message) {
+		registerMessage(message);
 	}
 	public void addMessage(InMessage message) {
-		addMessage(message, true);
+		registerMessage(message);
+		Notification.info(new MessageReceived(message));
 	}
 	public void addMessage(OutMessage message) {
 		MessageID id = message.id();
@@ -142,15 +136,8 @@ public class Contact extends User implements KnownUser {
 	public OutMessage getOutMessage(long microtime) {
 		return (OutMessage) history.get(MessageID.forOut(microtime));
 	}
-	public OutMessage getLastOutMessage() {
-		OutMessage message = null;
-		for (Message m : history.descendingMap().values()) {
-			if (m instanceof OutMessage) {
-				message = (OutMessage) m;
-				break;
-			}
-		}
-		return message;
+	public InMessage getInMessage(long microtime) {
+		return (InMessage) history.get(MessageID.forIn(microtime));
 	}
 	public void clearHistory() {
 		locationWaiting.clear();
@@ -159,22 +146,6 @@ public class Contact extends User implements KnownUser {
 		notSent.clear();
 		sent.clear();
 		history.clear();
-	}
-	public void checkLiberserverWaitingMessages() throws InternetException {
-		TreeSet<MessageID> copy = new TreeSet<>(liberserverWaiting);
-		for (MessageID id : copy) {
-			OutMessage message = (OutMessage) history.get(id);
-			Response response = Request.sendRequest(new CheckPostedMessageRequest(message));
-			if(response == null) {
-				if (Internet.isConnected())
-					break;
-				else
-					throw new InternetException();
-			}
-			if (response.status().equals("NO_MESSAGE")) {
-				message.setConfirmationWaiting();
-			}
-		}
 	}
 	public void convertLocationWaitingToNotSent() {
 		HashSet<MessageID> copy = new HashSet<>(locationWaiting);

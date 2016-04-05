@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import liber.Utils;
 import liber.command.UpdateInfoCommand;
 import liber.data.Account;
 import liber.enumeration.CommandField;
@@ -16,7 +17,6 @@ import liber.gui.form.ProfileForm;
 import liber.notification.Notification;
 
 import java.io.*;
-import java.util.Base64;
 
 public class ProfileController {
 	static public ImageView instanciateImageView(Image image, int size) {
@@ -76,7 +76,7 @@ public class ProfileController {
 					read = fis.read(buffer);
 					if(read != -1) baos.write(buffer, 0, read);
 				} while(read != -1);
-				photoContent = new StringBuilder(Base64.getEncoder().encodeToString(baos.toByteArray()));
+				photoContent = new StringBuilder(Utils.encodeBytes(baos.toByteArray()));
 				Image image = new Image(new ByteArrayInputStream(baos.toByteArray()));
 				ImageView imageView = instanciateImageView(image);
 				photoLabel.setText(null);

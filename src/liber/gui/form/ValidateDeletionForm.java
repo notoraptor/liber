@@ -1,19 +1,23 @@
 package liber.gui.form;
 
 import javafx.fxml.FXMLLoader;
+import liber.enumeration.AccountProcess;
 import liber.gui.control.ValidateDeletionController;
 
 public class ValidateDeletionForm extends Form {
-	private boolean fromConnexion;
-	public ValidateDeletionForm() {
+	private AccountProcess accountProcess;
+	private ValidateDeletionForm(AccountProcess accountProcess) {
 		super("Valider la suppression du compte");
+		this.accountProcess = accountProcess;
 	}
-	public ValidateDeletionForm(boolean fromConnexion) {
-		this();
-		this.fromConnexion = fromConnexion;
+	static public ValidateDeletionForm fromDeletion() {
+		return new ValidateDeletionForm(AccountProcess.NOT_CONNECTING);
+	}
+	static public ValidateDeletionForm fromConnexion() {
+		return new ValidateDeletionForm(AccountProcess.CONNECTING);
 	}
 	public boolean isFromConnexion() {
-		return fromConnexion;
+		return accountProcess == AccountProcess.CONNECTING;
 	}
 	@Override
 	protected FormName name() {

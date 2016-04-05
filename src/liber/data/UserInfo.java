@@ -1,8 +1,7 @@
 package liber.data;
 
+import liber.Utils;
 import liber.enumeration.ContactData;
-
-import java.util.Base64;
 
 public class UserInfo {
 	private String firstname;
@@ -73,7 +72,7 @@ public class UserInfo {
 	}
 	public byte[] photoBytes() {
 		byte[] data = null;
-		if(hasPhoto()) data = Base64.getDecoder().decode(photo.getBytes());
+		if(hasPhoto()) data = Utils.decodeToBytes(photo);
 		return data;
 	}
 	public void setPhoto(StringBuilder photoContent) {

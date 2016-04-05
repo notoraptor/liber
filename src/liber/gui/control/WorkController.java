@@ -55,23 +55,23 @@ public class WorkController {
 							symbol.setText("\ud83d\ude09");
 						}
 					}
-					if(cu.complete() || cu.firstname() || cu.lastname()) {
-						TextFlow tf = new TextFlow();
-						Text t1 = new Text();
-						if(contact.online()) {
-							t1.setText(DiscussionController.onlineString);
-							t1.setFill(Color.GREEN);
-						} else {
-							t1.setText(DiscussionController.offlineString);
-							t1.setFill(Color.RED);
-						}
-						Text t2 = new Text(' ' + contact.appellation());
-						tf.getChildren().addAll(t1, t2);
-						//tf.setStyle("-fx-font-size:15");
-						//tf.setStyle("-fx-font-weight:bold");
-						username.setText(null);
-						username.setGraphic(tf);
+					//
+					TextFlow tf = new TextFlow();
+					Text t1 = new Text();
+					if(contact.online()) {
+						t1.setText(DiscussionController.onlineString);
+						t1.setFill(Color.GREEN);
+					} else {
+						t1.setText(DiscussionController.offlineString);
+						t1.setFill(Color.RED);
 					}
+					Text t2 = new Text(' ' + contact.appellation());
+					tf.getChildren().addAll(t1, t2);
+					//tf.setStyle("-fx-font-size:15");
+					//tf.setStyle("-fx-font-weight:bold");
+					username.setText(null);
+					username.setGraphic(tf);
+					//
 					liberaddress.setText(contact.liberaddress().toString());
 					if(cu.complete() || cu.status())
 						invitation.setText(contact.info().status());
@@ -290,7 +290,7 @@ public class WorkController {
 		question.setTitle("Déconnexion");
 		question.setQuestion("Voulez-vous vraiment vous déconnecter ?");
 		question.setPositiveLabel("Se déconnecter");
-		question.setAction(() -> {
+		question.setPositiveAction(() -> {
 			LogoutCommand command = new LogoutCommand();
 			if(command.run()) {
 				GUI.current.fullBack();
@@ -305,13 +305,18 @@ public class WorkController {
 		question.setTitle("Suppression du compte.");
 		question.setQuestion("Voulez-vous vraiment supprimer ce compte ?\nCette action est irréversibe !");
 		question.setPositiveLabel("Supprimer définitivement le compte");
-		question.setAction(() -> {
+		question.setPositiveAction(() -> {
 			DeleteAccountCommand command = new DeleteAccountCommand();
 			if(command.run()) {
-				GUI.current.load(new ValidateDeletionForm());
+				GUI.current.load(ValidateDeletionForm.fromDeletion());
 			}
 		});
 		question.show();
+	}
+
+	@FXML
+	void confirmQuitLibersaurus(ActionEvent event) {
+		GUI.current.showQuitQuestion();
 	}
 
 	@FXML

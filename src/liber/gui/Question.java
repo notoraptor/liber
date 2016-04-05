@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import liber.Action;
 import liber.gui.form.QuestionForm;
 
 public class Question {
@@ -14,7 +13,8 @@ public class Question {
 	private String question;
 	private String positiveLabel;
 	private String negativeLabel;
-	private Action action;
+	private Action positiveAction;
+	private Action negativeAction;
 	public Question() {
 		title = "Question";
 		positiveLabel = "Oui";
@@ -32,8 +32,11 @@ public class Question {
 	public void setNegativeLabel(String theLabel) {
 		negativeLabel = theLabel;
 	}
-	public void setAction(Action theAction) {
-		action = theAction;
+	public void setPositiveAction(Action theAction) {
+		positiveAction = theAction;
+	}
+	public void setNegativeAction(Action theAction) {
+		negativeAction = theAction;
 	}
 	public void show() throws Exception {
 		Stage dialogStage = new Stage();
@@ -47,14 +50,23 @@ public class Question {
 		detailsLabel.setText(question);
 		cancelButton.setText(negativeLabel);
 		okButton.setText(positiveLabel);
-		cancelButton.setOnAction((event) -> dialogStage.close());
+		cancelButton.setOnAction(event -> {
+			dialogStage.close();
+			if(negativeAction != null) {
+				try {
+					negativeAction.execute();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		okButton.setOnAction(event -> {
 			dialogStage.close();
-			if(action != null) {
+			if(positiveAction != null) {
 				try {
-					action.execute();
+					positiveAction.execute();
 				} catch(Exception e) {
-					e.printStackTrace(System.err);
+					e.printStackTrace();
 				}
 			}
 		});

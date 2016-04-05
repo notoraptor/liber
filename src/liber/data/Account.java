@@ -3,21 +3,46 @@ package liber.data;
 import liber.enumeration.AccountState;
 import liber.enumeration.ContactData;
 import liber.request.Response;
-import liber.request.client.ContactDataUpdatedRequest;
+import liber.request.requestSent.client.ContactDataUpdatedRequest;
+import liber.security.AsymmetricEncryption;
 
 public class Account extends BasicUser implements KnownUser {
 	private UserInfo info;
 	private AccountState state;
-	public Account(Liberaddress liberaddress) {
+	private AsymmetricEncryption asymmetricEncryption;
+	// Création.
+	public Account(Liberaddress liberaddress) throws Exception {
 		super(liberaddress);
 		info = new UserInfo();
 		state = AccountState.TO_CONFIRM;
+		asymmetricEncryption = new AsymmetricEncryption();
 	}
-	public Account(Liberaddress liberaddress, AccountState accountState) {
+	// Chargement.
+	public Account(Liberaddress liberaddress, AccountState accountState, String priv, String pub) throws Exception {
 		super(liberaddress);
 		assert accountState != null;
 		info = new UserInfo();
 		state = accountState;
+		if(priv != null && pub != null) {
+			asymmetricEncryption = new AsymmetricEncryption(priv, pub);
+		} else {
+			asymmetricEncryption = new AsymmetricEncryption();
+		}
+	}
+	public boolean keysAreGenerated() {
+		return asymmetricEncryption.keysAreGenerated();
+	}
+	public StringBuilder decrypt(StringBuilder content) throws Exception {
+		return asymmetricEncryption.decrypt(content);
+	}
+	public byte[] publicKeyStringBytes() {
+		return asymmetricEncryption.publicKeyStringBytes();
+	}
+	public String publicKeyToString() {
+		return asymmetricEncryption.publicKeyToString();
+	}
+	public String privateKeyToString() {
+		return asymmetricEncryption.privateKeyToString();
 	}
 	@Override
 	public UserInfo info() {
@@ -60,10 +85,12 @@ public class Account extends BasicUser implements KnownUser {
 			if(response.good())
 				contact.accountStatusSent = true;
 		} catch (Exception ignored) {}
-		if(!contact.accountPhotoSent) try {
-			Response response = new ContactDataUpdatedRequest(contact, ContactData.photo, info.photo()).justSend();
-			if(response.good())
-				contact.accountPhotoSent = true;
-		} catch (Exception ignored) {}
+		new Thread(() -> {
+			if(!contact.accountPhotoSent) try {
+				Response response = new ContactDataUpdatedRequest(contact, ContactData.photo, info.photo()).justSend();
+				if(response.good())
+					contact.accountPhotoSent = true;
+			} catch (Exception ignored) {}
+		}).start();
 	}
 }

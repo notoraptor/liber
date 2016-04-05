@@ -1,21 +1,20 @@
 package liber.data;
 
 import liber.Utils;
+import liber.enumeration.Encoding;
 import liber.exception.HashException;
-
-import java.util.Base64;
 
 public class MessageContent {
 	private String base64content;
-	public MessageContent(String content, boolean isEncoded) {
-		assert content != null;
-		base64content = isEncoded ? content : Base64.getEncoder().encodeToString(content.getBytes());
-	}
-	public MessageContent(String content) {
-		this(content, false);
+	public MessageContent(String content, Encoding encoding) {
+		assert content != null && encoding != null;
+		if(encoding == Encoding.ENCODED)
+			base64content = content;
+		else
+			base64content = Utils.encodeText(content);
 	}
 	public String decode() {
-		return new String(Base64.getDecoder().decode(base64content));
+		return Utils.decodeText(base64content);
 	}
 	public String getHash() throws HashException {
 		try {

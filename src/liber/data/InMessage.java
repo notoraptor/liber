@@ -1,10 +1,12 @@
 package liber.data;
 
+import liber.enumeration.Encoding;
+
 public class InMessage extends Message {
 	private long microtime;
 	private boolean acknowledgeLater;
 	public InMessage(Contact sender, long microtime, String message) {
-		super(sender, message, true);
+		super(sender, message, Encoding.ENCODED);
 		this.microtime = microtime;
 	}
 	public Contact sender() {

@@ -5,11 +5,11 @@ import liber.enumeration.ContactData;
 import liber.notification.Info;
 
 public class ContactUpdated extends Info<Contact> {
-	boolean firstname;
-	boolean lastname;
-	boolean photo;
-	boolean status;
-	boolean complete;
+	private boolean firstname;
+	private boolean lastname;
+	private boolean photo;
+	private boolean status;
+	private boolean complete;
 	public ContactUpdated(Contact contact, ContactData ... updated) {
 		super(contact);
 		if(updated.length == 0)

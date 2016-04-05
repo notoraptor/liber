@@ -1,5 +1,6 @@
 package liber.card.textable;
 
+import liber.Utils;
 import liber.card.Libercard;
 import liber.data.Contact;
 import liber.data.Liberaddress;
@@ -18,6 +19,7 @@ public class TextableContact extends Textable<Contact> {
 	static private final String accountFirstnameSent = "accountFirstnameSent";
 	static private final String accountLastnameSent = "accountLastnameSent";
 	static private final String accountStatusSent = "accountStatusSent";
+	static private final String publicKey = "publicKey";
 	public TextableContact(Libercard libercard, Contact contact) {
 		super(libercard, contact);
 	}
@@ -44,11 +46,16 @@ public class TextableContact extends Textable<Contact> {
 		map.put(accountLastnameSent, String.valueOf(get().accountLastnameSent));
 		map.put(accountPhotoSent, String.valueOf(get().accountPhotoSent));
 		map.put(accountStatusSent, String.valueOf(get().accountStatusSent));
+		map.put(publicKey, Utils.encodeString(get().encryption().publicKeyToString()));
 	}
 	@Override
 	public Contact fromText(HashMap<String, String> map) throws Exception {
 		if (map.get(secret) == null) throw new Exception();
-		Contact contact = new Contact(new Liberaddress(map.get(liberaddress)), map.get(secret));
+		Contact contact = new Contact(
+			new Liberaddress(map.get(liberaddress)),
+			map.get(secret),
+			Utils.decodeString(map.get(publicKey))
+		);
 		contact.update(new UserInfo(map.get(firstname), map.get(lastname), map.get(photo), map.get(status)));
 		contact.accountFirstnameSent = Boolean.parseBoolean(map.get(accountFirstnameSent));
 		contact.accountLastnameSent = Boolean.parseBoolean(map.get(accountLastnameSent));

@@ -1,32 +1,33 @@
 package liber.request;
 
-import liber.enumeration.ErrorCode;
 import liber.enumeration.Field;
 import liber.exception.RequestException;
 
 import java.io.BufferedReader;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Response {
-	private HashMap<String, String> content;
+	private EnumMap<Field, StringBuilder> content;
 	public Response(String status) {
-		content = new HashMap<>();
-		content.put("status", status);
+		content = new EnumMap<>(Field.class);
+		content.put(Field.status, new StringBuilder(status));
 	}
 	public Response() {
-		this("OK");
+		content = new EnumMap<>(Field.class);
+		content.put(Field.status, new StringBuilder("OK"));
 	}
-	public Response(ErrorCode error) {
-		this(error.toString());
-	}
-	public Response(HashMap<String, String> responseContent) throws RequestException {
-		content = responseContent;
-		if (!content.containsKey("status"))
+	public Response(HashMap<String, StringBuilder> responseContent) throws RequestException {
+		content = new EnumMap<>(Field.class);
+		for(Map.Entry<String, StringBuilder> entry: responseContent.entrySet()) {
+			content.put(Field.valueOf(entry.getKey()), entry.getValue());
+		}
+		if (!content.containsKey(Field.status))
 			throw RequestException.RESPONSE_ERROR_MISSING_STATUS();
 	}
 	static public Response parse(BufferedReader in) throws Exception {
-		HashMap<String, String> content = new HashMap<>();
+		HashMap<String, StringBuilder> content = new HashMap<>();
 		String line;
 		while ((line = in.readLine()) != null) {
 			line = line.trim();
@@ -36,31 +37,19 @@ public class Response {
 				if (pieces.length != 2)
 					content.put(pieces[0].trim(), null);
 				else
-					content.put(pieces[0].trim(), pieces[1].trim());
+					content.put(pieces[0].trim(), new StringBuilder(pieces[1].trim()));
 			}
 		}
 		return new Response(content);
 	}
-	public void add(String key, String value) {
-		content.put(key, value);
-	}
-	public void add(Field field, String value) {
-		content.put(field.toString(), value);
-	}
-	public boolean has(String key) {
-		return content.containsKey(key);
-	}
 	public boolean has(Field field) {
-		return content.containsKey(field.toString());
+		return content.containsKey(field);
 	}
-	public String get(String key) {
-		return content.get(key);
-	}
-	public String get(Field field) {
-		return content.get(field.toString());
+	public StringBuilder get(Field field) {
+		return content.get(field);
 	}
 	public String status() {
-		return content.get("status");
+		return content.get(Field.status).toString();
 	}
 	public boolean good() {
 		return status().equals("OK");
@@ -71,9 +60,9 @@ public class Response {
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		for (Map.Entry<String, String> entry : content.entrySet()) {
-			String value = entry.getValue();
-			if(value == null) value = "";
+		for (Map.Entry<Field, StringBuilder> entry : content.entrySet()) {
+			StringBuilder value = entry.getValue();
+			if(value == null) value = new StringBuilder();
 			s.append(entry.getKey()).append('\t').append(value).append("\r\n");
 		}
 		s.append("end\r\n");

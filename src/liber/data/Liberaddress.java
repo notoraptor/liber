@@ -11,25 +11,17 @@ public class Liberaddress {
 	private String username;
 	private String liberaddress;
 	public Liberaddress(String liberserver, String username) throws UsernameException, RecipientAddressException {
-		// Suppression des "/" en fin d'adresse.
-		int last = liberserver.length()-1;
-		int first;
-		for(first = last; first >= 0 && liberserver.charAt(first) == '/'; --first);
-		++first;
-		if(last - first + 1 > 0)
-			liberserver = liberserver.substring(0, first);
+		if (!liberserver.endsWith("/")) liberserver += '/';
 		if (Utils.usernameIsInvalid(username)) throw new UsernameException(username);
 		if (Utils.urlIsInvalid(liberserver)) liberserver = "http://" + liberserver;
-		if (liberserver.endsWith(Liberserver.end))
-			liberserver = liberserver.substring(0, liberserver.length() - Liberserver.end.length());
-		this.liberserver = new Liberserver(liberserver + Liberserver.end);
+		this.liberserver = new Liberserver(liberserver);
 		this.username = username;
-		this.liberaddress = liberserver + '/' + username;
+		this.liberaddress = liberserver + username;
 	}
 	public Liberaddress(String liberaddress) throws UsernameException, RecipientAddressException {
 		if (Utils.urlIsInvalid(liberaddress)) liberaddress = "http://" + liberaddress;
 		int indexOfSeparator = liberaddress.lastIndexOf('/');
-		this.liberserver = new Liberserver(liberaddress.substring(0, indexOfSeparator) + Liberserver.end);
+		this.liberserver = new Liberserver(liberaddress.substring(0, indexOfSeparator));
 		this.username = liberaddress.substring(indexOfSeparator + 1);
 		this.liberaddress = liberaddress;
 		if (Utils.usernameIsInvalid(username)) throw new UsernameException(username);

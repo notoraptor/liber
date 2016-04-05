@@ -32,7 +32,7 @@ public class TextableInlink extends Textable<InMessage> {
 	}
 	@Override
 	public InMessage fromText(HashMap<String, String> map) throws Exception {
-		Contact contact = new Contact(new Liberaddress(map.get(liberaddress)), map.get(secret));
+		Contact contact = new Contact(new Liberaddress(map.get(liberaddress)), map.get(secret), null);
 		return new InMessage(contact, Long.parseLong(map.get(microtime)), map.get(encodedContent));
 	}
 }

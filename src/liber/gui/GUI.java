@@ -1,6 +1,7 @@
 package liber.gui;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import liber.Libersaurus;
@@ -10,14 +11,21 @@ import liber.gui.form.WorkForm;
 import liber.notification.Notification;
 import liber.notification.info.LibersaurusLoaded;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.LinkedList;
 
 public class GUI extends Application {
 	static public GUI current;
-	Libersaurus instance;
+	private Libersaurus instance;
 	private GuiNotifier notifier;
 	private LinkedList<Form> history;
 	private Stage stage;
+	private boolean firstTime;
+	private boolean messageDisplayed;
+	private TrayIcon trayIcon;
 	public GuiNotifier notifier() {
 		return notifier;
 	}
@@ -88,10 +96,20 @@ public class GUI extends Application {
 		stage.setMinHeight(500);
 		Notification.setManager(notifier);
 		loadFirst(new HomeForm());
+		/*
+		* L'utilisation d'un processus permet d'afficher l'interface graphique
+		* en attendant que le programme soit entièrement chargé.
+		* */
 		new Thread(() -> {
 			try {
 				instance = new Libersaurus();
 				Notification.info(new LibersaurusLoaded(instance));
+				try {
+					createTrayIcon(stage);
+				} catch (Throwable e) {
+					System.err.println("Impossible d'installer Libersaurus dans une barre de tâches.");
+					e.printStackTrace();
+				}
 			} catch (Exception e) {
 				System.err.println("Erreur pendant l'instanciation de Libersaurus.");
 				e.printStackTrace();
@@ -101,8 +119,138 @@ public class GUI extends Application {
 	}
 	@Override
 	public void stop() throws Exception {
-		if(instance != null)
+		if(instance != null) {
 			instance.close();
+			instance = null;
+		}
 		super.stop();
+	}
+	public void updateTitle() {
+		if(trayIcon != null && instance != null && instance.loaded()) {
+			String title = instance.account().appellation() + " - Libersaurus";
+			trayIcon.setToolTip(title);
+		}
+	}
+	public void showQuitQuestion() {
+		Question quitQuestion = new Question();
+		quitQuestion.setTitle("Quitter Libersaurus");
+		quitQuestion.setQuestion("Voulez-vous quitter Libersaurus ?");
+		quitQuestion.setPositiveLabel("Quitter (vous serez déconnecté)");
+		quitQuestion.setPositiveAction(() -> {
+			forceEnd();
+		});
+		quitQuestion.setNegativeLabel("Réduire dans la barre des tâches");
+		quitQuestion.setNegativeAction(() -> {
+			if (stage.isShowing())
+				stage.hide();
+			else {
+				if (!messageDisplayed)
+					stage.show();
+				messageDisplayed = false;
+			}
+		});
+		try {
+			quitQuestion.show();
+		} catch (Exception e) {
+			forceEnd();
+		}
+	}
+	private void closeSystemTray() {
+		if(SystemTray.isSupported() && trayIcon != null) {
+			SystemTray.getSystemTray().remove(trayIcon);
+		}
+	}
+	private void forceEnd() {
+		stage.hide();
+		closeSystemTray();
+		try {
+			stop();
+		} catch (Exception ignored) {}
+		Platform.exit();
+		//System.exit(0);
+	}
+	private void createTrayIcon(final Stage stage) throws Throwable {
+		if (SystemTray.isSupported()) {
+			// load an image
+			URL url = getClass().getResource("/liber/resource/image/libericon.png");
+			java.awt.Image image = ImageIO.read(url);
+			// create a action listener to listen for default action executed on the tray icon
+			final ActionListener closeListener = (actionEvent) -> {
+				Question question = new Question();
+				question.setTitle("Quitter Libersaurus");
+				question.setQuestion("Voulez-vous vraiment quitter Libersaurus?\nVous serez automatiquement déconnecté.");
+				question.setPositiveLabel("Quitter Libersaurus");
+				question.setPositiveAction(() -> {
+					forceEnd();
+				});
+				Platform.runLater(() -> {
+					if(!instance.loaded())
+						forceEnd();
+					else try {
+						question.show();
+					} catch (Exception e) {
+						e.printStackTrace();
+						forceEnd();
+					}
+				});
+			};
+			final ActionListener showListener = (actionEvent) -> Platform.runLater(() -> stage.show());
+			// create a popup menu
+			PopupMenu popup = new PopupMenu();
+			MenuItem showItem = new MenuItem("Afficher Libersaurus");
+			MenuItem closeItem = new MenuItem("Quitter Libersaurus");
+			showItem.addActionListener(showListener);
+			closeItem.addActionListener(closeListener);
+			popup.add(showItem);
+			popup.add(closeItem);
+			/// ... add other items
+			// construct a TrayIcon
+			trayIcon = new TrayIcon(image, "Libersaurus", popup);
+			// set the TrayIcon properties
+			trayIcon.addActionListener((actionEvent) -> {
+				Platform.runLater(() -> {
+					if(stage.isShowing())
+						stage.hide();
+					else {
+						if(!messageDisplayed)
+							stage.show();
+						messageDisplayed = false;
+					}
+				});
+			});
+			// ...
+			// add the tray image
+			firstTime = true;
+			try {
+				Platform.setImplicitExit(false);
+				SystemTray.getSystemTray().add(trayIcon);
+				stage.setOnCloseRequest((windowEvent) -> hide(stage));
+			} catch (AWTException e) {
+				Platform.setImplicitExit(true);
+				throw e;
+			}
+			// ...
+		}
+	}
+	private void hide(final Stage stage) {
+		Platform.runLater(() -> {
+			if (SystemTray.isSupported()) {
+				stage.hide();
+				showProgramIsMinimizedMsg();
+			} else {
+				closeSystemTray();
+				Platform.exit();
+				//System.exit(0);
+			}
+		});
+	}
+	private void showProgramIsMinimizedMsg() {
+		if (firstTime) {
+			trayIcon.displayMessage("Libersaurus",
+					"Libersaurus est réduit dans la barre des tâches.",
+					TrayIcon.MessageType.INFO);
+			messageDisplayed = true;
+			firstTime = false;
+		}
 	}
 }

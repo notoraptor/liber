@@ -2,6 +2,8 @@ package liber;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.HashMap;
@@ -9,26 +11,75 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Utils {
+	// Transformation Base64 formel -> Base64 adapté pour les URLs.
+	// + -> -
+	// / -> _
+	// = -> # (transformation totale Base64 formel -> Base64 adapté pour les URLs)
+	static final public Charset UTF8 = StandardCharsets.UTF_8;
 	static final private Pattern urlPattern = Pattern.compile("^[A-Za-z]+://[A-Za-z0-9/_\\.\\$#-]+$");
 	static final private Pattern usernamePattern = Pattern.compile("^[A-Za-z0-9_\\.-]+$");
 	static public boolean urlIsValid(String url) {
 		return url != null && urlPattern.matcher(url).find();
 	}
-	static public boolean urlIsInvalid(String url) {
-		return url == null || !urlPattern.matcher(url).find();
-	}
 	static public boolean usernameIsValid(String un) {
 		return un != null && usernamePattern.matcher(un).find();
+	}
+	static public boolean urlIsInvalid(String url) {
+		return url == null || !urlPattern.matcher(url).find();
 	}
 	static public boolean usernameIsInvalid(String un) {
 		return un == null || !usernamePattern.matcher(un).find();
 	}
-	static public String hash(String message) throws Exception {
-		MessageDigest md = MessageDigest.getInstance("SHA");
-		byte[] hash = md.digest(message.getBytes());
-		return display(hash);
+	static public byte[] decodeFromURLToBytes(String encoded) {
+		encoded = encoded.replace('-', '+');
+		encoded = encoded.replace('_', '/');
+		return Base64.getDecoder().decode(encoded);
 	}
-	static private String display(byte[] array) {
+	static public byte[] decodeFromURLToBytes(StringBuilder content) {
+		String encoded = content.toString().replace('-', '+');
+		encoded = encoded.replace('_', '/');
+		return Base64.getDecoder().decode(encoded);
+	}
+	static public byte[] decodeToBytes(String encoded) {
+		return Base64.getDecoder().decode(encoded.getBytes());
+	}
+	static public byte[] decodeToBytes(StringBuilder encoded) {
+		return Base64.getDecoder().decode(encoded.toString().getBytes());
+	}
+	static public String decodeString(String encoded) {
+		return encoded == null ? null : new String(Base64.getDecoder().decode(encoded));
+	}
+	static public String decodeText(String encoded) {
+		return encoded == null ? null : new String(Base64.getDecoder().decode(encoded), UTF8);
+	}
+	static public String encodeFullyForURL(byte[] bytes) {
+		String encoded = Base64.getEncoder().encodeToString(bytes);
+		encoded = encoded.replace('+', '-');
+		encoded = encoded.replace('/', '_');
+		encoded = encoded.replace('=', '#');
+		return encoded;
+	}
+	static public String encodeForURL(byte[] bytes) {
+		String encoded = Base64.getEncoder().encodeToString(bytes);
+		encoded = encoded.replace('+', '-');
+		encoded = encoded.replace('/', '_');
+		return encoded;
+	}
+	static public String encodeBytes(byte[] bytes) {
+		return Base64.getEncoder().encodeToString(bytes);
+	}
+	static public String encodeString(String decoded) {
+		return Base64.getEncoder().encodeToString(decoded.getBytes());
+	}
+	static public String encodeText(String decoded) {
+		return Base64.getEncoder().encodeToString(decoded.getBytes(Utils.UTF8));
+	}
+	static public String hash(String message) throws Exception {
+		MessageDigest md = MessageDigest.getInstance("SHA-512");
+		byte[] hash = md.digest(message.getBytes(Utils.UTF8));
+		return encodeFullyForURL(hash);
+	}
+	static public String hexString(byte[] array) {
 		char[] val = new char[2 * array.length];
 		String hex = "0123456789ABCDEF";
 		for (int i = 0; i < array.length; i++) {
@@ -37,18 +88,6 @@ public class Utils {
 			val[2 * i + 1] = hex.charAt(b & 15);
 		}
 		return String.valueOf(val);
-	}
-	static public String encode(String decoded) {
-		return Base64.getEncoder().encodeToString(decoded.getBytes());
-	}
-	static public String encode(byte[] bytes) {
-		return Base64.getEncoder().encodeToString(bytes);
-	}
-	static public String decode(String encoded) {
-		return new String(Base64.getDecoder().decode(encoded));
-	}
-	static public byte[] decodeToBytes(String encoded) {
-		return Base64.getDecoder().decode(encoded);
 	}
 	static public <K, V> void implode(HashMap<K, V> from, StringBuilder to, String coupleJoiner, String entrySeparator) {
 		boolean written = false;
@@ -63,7 +102,7 @@ public class Utils {
 			}
 		}
 	}
-	static public <K, V> void implode(HashMap<K, V> from, StringBuilder to) {
+	static public <K, V> void implodeForLibercard(HashMap<K, V> from, StringBuilder to) {
 		implode(from, to, "=", "\t");
 	}
 	static public File workingDirectory() throws IOException {

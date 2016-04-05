@@ -43,7 +43,7 @@ public class ContactProfileController {
 		question.setQuestion("Voulez-vous vraiment supprimer le contact \n" + contact.appellation() + "?\n" +
 				"Il sera averti de la suppression de votre relation!");
 		question.setPositiveLabel("Supprimer le contact");
-		question.setAction(() -> {
+		question.setPositiveAction(() -> {
 			DeleteContactCommand command = new DeleteContactCommand();
 			command.put(CommandField.contactLiberaddress, contact.liberaddress().toString());
 			if(command.run()) {
@@ -58,7 +58,7 @@ public class ContactProfileController {
 		question.setTitle("Supprimer l'historique");
 		question.setQuestion("Voulez-vous vraiment supprimer l'historique de discussion avec\n" + contact.appellation() + '?');
 		question.setPositiveLabel("Supprimer l'historique");
-		question.setAction(() -> {
+		question.setPositiveAction(() -> {
 			contact.clearHistory();
 			Notification.good("Historique supprimé pour " + contact.appellation() + '.');
 		});
@@ -98,7 +98,7 @@ public class ContactProfileController {
 			photo.setText(WorkController.noUserPhotoString);
 		}
 	}
-	public void init(ContactProfileForm form) throws Exception {
+	public void init(ContactProfileForm form) {
 		contact = form.contact();
 		GUI.current.notifier().setInformer(new ContactProfileInformer());
 		GUI.current.notifier().setCurrentContact(contact);

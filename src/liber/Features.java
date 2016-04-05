@@ -6,24 +6,23 @@ import liber.enumeration.ContactData;
 import liber.enumeration.Field;
 import liber.exception.*;
 import liber.notification.Notification;
-import liber.request.Request;
+import liber.request.requestSent.Request;
 import liber.request.Response;
-import liber.request.client.ContactDataDeletedRequest;
-import liber.request.client.ContactDataUpdatedRequest;
-import liber.request.server.*;
+import liber.request.requestSent.client.ContactDataDeletedRequest;
+import liber.request.requestSent.client.ContactDataUpdatedRequest;
+import liber.request.requestSent.server.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
 
 // NOTE: Classe bien encapsulée (on n'utilise plus Libersaurus.current dans ce fichier).
 public class Features {
-	private Libersaurus liber;
+	private Libersaurus libersaurus;
 	public Features(Libersaurus libersaurus) {
-		liber = libersaurus;
+		this.libersaurus = libersaurus;
 	}
 	public Response createAccount(String liberserver, String username, String password) {
 		Response response = null;
@@ -35,7 +34,7 @@ public class Features {
 				Notification.bad("Aviez-vous déjà créé ce compte ? Si oui, essayez de vous connecter (avec la commande \"login\").");
 				response = null;
 			} else {
-				liber.create(liberaddress, password);
+				libersaurus.create(liberaddress, password);
 				Notification.good("Compte créé.");
 			}
 		} catch(Exception e) {
@@ -48,7 +47,7 @@ public class Features {
 			Response response = new CaptchaForCreationRequest(captcha).justSend();
 			if (response.bad()) Notification.bad("Mauvais code CAPTCHA (" + response.status() + ").");
 			else {
-				liber.account().confirm();
+				libersaurus.validateCreation();
 				Notification.good("Compte validé.");
 			}
 		} catch(Exception e) {
@@ -60,7 +59,7 @@ public class Features {
 				new DeleteAccountRequest(), "Impossible de supprimer le compte. Êtes-vous connecté à Internet ?");
 		if (response != null) {
 			if (response.good()) {
-				liber.account().setToDelete();
+				libersaurus.account().setToDelete();
 				// Notification.good("Deletion request sent.");
 			} else {
 				Notification.bad("Impossible de supprimer le compte (" + response.status() + ").");
@@ -74,7 +73,7 @@ public class Features {
 			Response response = new CaptchaForDeletionRequest(captcha).justSend();
 			if (response.bad()) Notification.bad("Mauvais code CAPTCHA (" + response.status() + ").");
 			else try {
-				liber.delete();
+				libersaurus.delete();
 				Notification.good("Compte supprimé.");
 			} catch (LibercardException e) {
 				Notification.bad("Impossible de supprimer la libercarte de ce compte.");
@@ -89,15 +88,15 @@ public class Features {
 			Response response = new LoginRequest(liberaddress, password).justSend();
 			switch (response.status()) {
 				case "OK":
-					liber.login(liberaddress, password);
+					libersaurus.login(liberaddress, password);
 					break;
 				case "ERROR_ACCOUNT_TO_DELETE":
 					Notification.good("Ce compte doit être supprimé.");
-					liber.loginToDelete(liberaddress, password);
+					libersaurus.loginToDelete(liberaddress, password);
 					break;
 				case "ERROR_ACCOUNT_TO_CONFIRM":
 					Notification.good("Ce compte doit être confirmé.");
-					liber.loginToConfirm(liberaddress, password);
+					libersaurus.loginToConfirm(liberaddress, password);
 					break;
 				default:
 					Notification.bad("Impossible de se connecter\n(" + response.status() + ").");
@@ -113,48 +112,56 @@ public class Features {
 		}
 	}
 	public void logout() {
-		liber.logout();
+		libersaurus.logout();
 	}
 	public void newContact(String liberaddress, String message) {
 		Liberaddress recipient = Liberaddress.build(liberaddress);
-		if (recipient != null) liber.createOutlink(recipient, message);
+		if (recipient != null) libersaurus.createOutlink(recipient, message);
 	}
 	public void cancelOutLink(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) liber.cancelOutlink(liberaddress);
+		if (liberaddress != null) libersaurus.cancelOutlink(liberaddress);
 	}
 	public void deleteContact(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) liber.deleteContact(liberaddress);
+		if (liberaddress != null) libersaurus.deleteContact(liberaddress);
 	}
 	public void clearHistory(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) liber.clearHistory(liberaddress);
+		if (liberaddress != null) libersaurus.clearHistory(liberaddress);
 	}
 	public void acceptInlink(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) liber.acceptInlink(liberaddress);
+		if (liberaddress != null) libersaurus.acceptInlink(liberaddress);
 	}
 	public void refuseInlink(String liberaddressString) {
 		Liberaddress liberaddress = Liberaddress.build(liberaddressString);
-		if (liberaddress != null) liber.refuseInlink(liberaddress);
+		if (liberaddress != null) libersaurus.refuseInlink(liberaddress);
 	}
 	public void newMessage(String theLiberaddress, String message) {
 		Liberaddress liberaddress = Liberaddress.build(theLiberaddress);
-		if (liberaddress != null) liber.newMessage(liberaddress, message);
+		if (liberaddress != null) libersaurus.newMessage(liberaddress, message);
 	}
 	public void updateInfo(ContactData data, String value) {
-		liber.updateInfo(data, value);
-		for (Contact contact : liber.contacts()) if(contact.online()) try {
-			new ContactDataUpdatedRequest(contact, data, value).justSend();
-		} catch (Exception ignored) {}
+		libersaurus.updateInfo(data, value);
+		new Thread(() -> {
+			for (Contact contact : libersaurus.contacts()) if(contact.online()) try {
+				new ContactDataUpdatedRequest(contact, data, value).justSend();
+				/*
+				TODO: Ne vaut-il pas mieux distribuer (dans un autre processus)
+				la mise à jour lorsque la donnée modifiée est une photo ?
+				*/
+			} catch (Exception ignored) {}
+		}).start();
 		Notification.good(data + " updated.");
 	}
 	public void deleteInfo(ContactData data) {
-		liber.deleteInfo(data);
-		for (Contact contact : liber.contacts()) if(contact.online()) try {
-			new ContactDataDeletedRequest(contact, data).justSend();
-		} catch (Exception ignored) {}
+		libersaurus.deleteInfo(data);
+		new Thread(() -> {
+			for (Contact contact : libersaurus.contacts()) if(contact.online()) try {
+				new ContactDataDeletedRequest(contact, data).justSend();
+			} catch (Exception ignored) {}
+		}).start();
 		Notification.good(data + " deleted.");
 	}
 	public static byte[] getCaptchaImageForCreation() {
@@ -183,20 +190,22 @@ public class Features {
 		}
 		return null;
 	}
-	private static byte[] getCaptchaImage(String captchaImage) {
-		return Base64.getDecoder().decode(captchaImage);
+	private static byte[] getCaptchaImage(StringBuilder captchaImage) {
+		return Utils.decodeToBytes(captchaImage);
 	}
-	public static void generateCaptchaImageForCreation(String captchaImage, String imageType) throws IOException {
+	public static void generateCaptchaImageForCreation(StringBuilder captchaImage, StringBuilder imageType) throws IOException {
 		generateCaptchaImage(captchaImage, imageType, "Creation");
 	}
-	public static void generateCaptchaImageForDeletion(String captchaImage, String imageType) throws IOException {
+	public static void generateCaptchaImageForDeletion(StringBuilder captchaImage, StringBuilder imageType)
+			throws IOException {
 		generateCaptchaImage(captchaImage, imageType, "Deletion");
 	}
-	private static void generateCaptchaImage(String captchaImage, String imageType, String imageName) throws IOException {
-		byte[] buffer = Base64.getDecoder().decode(captchaImage);
+	private static void generateCaptchaImage(StringBuilder captchaImage, StringBuilder imageType, String imageName)
+			throws IOException {
+		byte[] buffer = Utils.decodeToBytes(captchaImage);
 		BufferedImage image = ImageIO.read(new ByteArrayInputStream(buffer));
 		File file = new File("captchaImageFor" + imageName + '.' + imageType);
-		ImageIO.write(image, imageType, file);
-		System.out.println("[L'image CAPTCHA est dans le fichier \"" + file.getAbsolutePath() + "\"].");
+		ImageIO.write(image, imageType.toString(), file);
+		System.out.println("L'image CAPTCHA est dans le fichier " + file.getAbsolutePath());
 	}
 }

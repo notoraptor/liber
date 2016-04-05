@@ -1,6 +1,7 @@
 package liber.data;
 
 import liber.exception.AddressException;
+import liber.security.AsymmetricPublicKey;
 
 import java.net.InetAddress;
 import java.util.Random;
@@ -9,30 +10,34 @@ public class User extends BasicUser {
 	private boolean userAccountExists;
 	private Address address;
 	private String secret;
-	public User(Liberaddress liberaddress) {
+	private AsymmetricPublicKey asymmetricPublicKey;
+	// Création.
+	public User(Liberaddress liberaddress) throws Exception {
 		super(liberaddress);
 		generateSecret();
+		initAddress();
+		asymmetricPublicKey = new AsymmetricPublicKey(this);
+	}
+	// Chargement.
+	public User(Liberaddress liberaddress, String theSecret, String pub) throws Exception {
+		super(liberaddress);
+		assert theSecret != null;
+		secret = theSecret;
+		initAddress();
+		asymmetricPublicKey = pub == null ? new AsymmetricPublicKey(this) : new AsymmetricPublicKey(pub);
+	}
+	private void initAddress() {
 		userAccountExists = true;
 		try {
-			address = new Address(liberaddress);
+			address = new Address(liberaddress());
 		} catch (AddressException e) {
 			if(e.responseIsErrorUsername())
 				userAccountExists = false;
 			address = new Address();
 		}
 	}
-	public User(Liberaddress liberaddress, String theSecret) {
-		super(liberaddress);
-		assert theSecret != null;
-		secret = theSecret;
-		userAccountExists = true;
-		try {
-			address = new Address(liberaddress);
-		} catch (AddressException e) {
-			if(e.responseIsErrorUsername())
-				userAccountExists = false;
-			address = new Address();
-		}
+	public AsymmetricPublicKey encryption() {
+		return asymmetricPublicKey;
 	}
 	public boolean exists() {
 		return userAccountExists;
@@ -75,5 +80,8 @@ public class User extends BasicUser {
 			s.append(value);
 		}
 		secret = s.toString();
+	}
+	public void updateEncryption() throws Exception {
+		asymmetricPublicKey = new AsymmetricPublicKey(this);
 	}
 }

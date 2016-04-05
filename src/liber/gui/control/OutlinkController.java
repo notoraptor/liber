@@ -73,7 +73,7 @@ public class OutlinkController {
 		question.setTitle("Annuler la demande");
 		question.setQuestion("Voulez-vous vraimment annuler la demande envoyée à\n" + liberaddress.getText() + " ?");
 		question.setPositiveLabel("Annuler la demande");
-		question.setAction(() -> {
+		question.setPositiveAction(() -> {
 			CancelOutlinkCommand command = new CancelOutlinkCommand();
 			command.put(CommandField.userLiberaddress, liberaddress.getText());
 			if(command.run()) {

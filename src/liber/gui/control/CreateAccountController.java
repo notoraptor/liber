@@ -37,8 +37,10 @@ public class CreateAccountController {
 		command.put(CommandField.passwordAgain, passwordAgain.getText().trim());
 		password.clear();
 		passwordAgain.clear();
-		if(command.run())
-			GUI.current.load(new ValidateCreationForm());
+		if(command.run()) {
+			GUI.current.updateTitle();
+			GUI.current.load(ValidateCreationForm.fromCreation());
+		}
 	}
 
 }

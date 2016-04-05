@@ -7,15 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libraries/weupnp-0.1.5-SNAPSHOT.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" exported="" name="weupnp-0.1.5-SNAPSHOT" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -101,6 +93,16 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libraries/jna-platform-4.1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" exported="" name="bcprov-jdk15on-154" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libraries/bcpkix-jdk15on-154.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

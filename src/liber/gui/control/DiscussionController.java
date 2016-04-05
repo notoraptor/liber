@@ -102,13 +102,8 @@ public class DiscussionController {
 				command.put(CommandField.message, content);
 				if(command.run()) {
 					message.setText(null);
-					/* Actuellement inutile (un MessageCreated est émis pendant la commande).
-					OutMessage message = Libersaurus.current.getContact(liberaddress.getText()).getLastOutMessage();
-					Parent root = new OutMessageForm(message).root();
-					history.getChildren().add(root);
-					*/
 					// TODO Beaucoup de travail à faire ici.
-					// TODO Pas sûr que command.run == true si le message reste en attente.
+					// TODO Pas sûr que command.run() == true si le message reste en attente.
 				}
 			}
 		}
@@ -116,7 +111,6 @@ public class DiscussionController {
 	@FXML
 	void showContactProfile(ActionEvent event) throws Exception {
 		GUI.current.load(new ContactProfileForm(contact));
-		// TODO ...
 	}
 
 	private Contact contact;

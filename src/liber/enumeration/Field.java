@@ -15,5 +15,5 @@ public enum Field {
 	request,
 	secret,
 	sender,
-	username, firstname, lastname, photo, status, contactStatus, waitingMessages, body,
+	username, firstname, lastname, photo, status, contactStatus, waitingMessages, body, publicKey, requestBody,
 }

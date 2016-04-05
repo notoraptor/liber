@@ -2,10 +2,10 @@ package liber.recipient;
 
 import liber.data.User;
 import liber.exception.OfflineLocationException;
-import liber.request.Request;
-import liber.request.RequestToLiberaddress;
+import liber.request.requestSent.Request;
+import liber.request.requestSent.RequestToLiberaddress;
 import liber.request.Response;
-import liber.request.server.PostLaterRequest;
+import liber.request.requestSent.server.PostLaterRequest;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -27,8 +27,9 @@ public class Location implements Recipient {
 		return true;
 	}
 	@Override
-	public void update() {
+	public void update() throws Exception {
 		user.updateAddress();
+		user.updateEncryption();
 	}
 	@Override
 	public String address() {
@@ -53,7 +54,9 @@ public class Location implements Recipient {
 			PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 			BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()))
 		) {
-			out.print(request.toString());
+			//out.print(request.toString());
+			out.print("requestBody\t");
+			out.print(user.encryption().encrypt(request));
 			out.flush();
 			return Response.parse(in);
 		}

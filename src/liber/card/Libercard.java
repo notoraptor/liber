@@ -12,6 +12,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -22,12 +24,14 @@ public class Libercard {
 	public Contacts contacts;
 	public Outlinks outlinks;
 	public Inlinks inlinks;
+	private PrivateKey privateKey;
+	private PublicKey publicKey;
 	public Libercard() {
 		contacts = new Contacts();
 		outlinks = new Outlinks();
 		inlinks = new Inlinks();
 	}
-	public Libercard(Liberaddress liberaddress) {
+	public Libercard(Liberaddress liberaddress) throws Exception {
 		account = new Account(liberaddress);
 		contacts = new Contacts();
 		outlinks = new Outlinks();
@@ -42,9 +46,9 @@ public class Libercard {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				line = line.trim();
-				if (!line.isEmpty()) try {
+				if (!line.isEmpty()) {
 					libercard.fromText(line);
-				} catch(Exception ignored) {}
+				}
 			}
 			reader.close();
 			if (libercard.account == null) {
@@ -153,15 +157,6 @@ public class Libercard {
 		}
 		return report;
 	}
-	/* TODO URGENT ! GESTION DES ERREURS PENDANT LA LECTURE DE LA LIBERCARTE.
-	Pendant la lecture de la libercarte, il se peut qu'on remarque que des contacts
-	ou des utilisateurs associés à des demandes sont devenus indisponibles.
-	Cela implique généralement qu'ils ont supprimé leurs comptes.
-	Dans ces cas, pendant la lecture de la liber-carte, il faut lister ces utilisateurs
-	et informer l'utilisateur courant que ces utilisateurs ne sont plus du tout joignables.
-	TODO Si des contacts sont parmi ces utilisateurs:
-	Il faut proposer une option permettant de sauvegarder TOUS les historiques de discussion dans un dossier de sortie.
-	* */
 	private void fromText(String line) throws Exception {
 		String[] pieces = line.split("\t");
 		if (pieces.length > 1) {

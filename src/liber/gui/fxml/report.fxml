@@ -24,13 +24,12 @@
       <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#done" text="OK" BorderPane.alignment="CENTER" />
    </bottom>
    <center>
-      <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
-         <content>
-            <VBox fx:id="content" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-         </content>
+      <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                  BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="10.0" />
+            <Insets bottom="10.0"/>
          </BorderPane.margin>
+         <VBox fx:id="content" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"/>
       </ScrollPane>
    </center>
    <padding>

@@ -51,7 +51,7 @@ public class InlinkController {
 		question.setTitle("Accepter la demande");
 		question.setQuestion("Accepter la demande de\n" + liberaddress.getText() + " ?");
 		question.setPositiveLabel("Accepter la demande");
-		question.setAction(() -> {
+		question.setPositiveAction(() -> {
 			AcceptInlinkCommand command = new AcceptInlinkCommand();
 			command.put(CommandField.userLiberaddress, liberaddress.getText());
 			if(command.run()) {
@@ -84,7 +84,7 @@ public class InlinkController {
 		question.setTitle("Rejeter la demande.");
 		question.setQuestion("Voulez-vous vraiment rejeter la demande de\n" + liberaddress.getText() + " ?");
 		question.setPositiveLabel("Rejeter la demande");
-		question.setAction(() -> {
+		question.setPositiveAction(() -> {
 			RefuseInlinkCommand command = new RefuseInlinkCommand();
 			command.put(CommandField.userLiberaddress, liberaddress.getText());
 			if(command.run()) {

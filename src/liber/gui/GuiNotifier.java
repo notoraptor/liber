@@ -21,8 +21,8 @@ public class GuiNotifier implements Notifier {
 		defaultNotifier = new DefaultNotifier();
 		informer = null;
 		currentContact = null;
-		hiddenRing = new AudioClip(getClass().getResource("/liber/songs/hidden.mp3").toString());
-		visibleRing = new AudioClip(getClass().getResource("/liber/songs/visible.mp3").toString());
+		hiddenRing = new AudioClip(getClass().getResource("/liber/resource/song/hidden.mp3").toString());
+		visibleRing = new AudioClip(getClass().getResource("/liber/resource/song/visible.mp3").toString());
 	}
 	public void setInformer(Informer im) {
 		synchronized (synchronizer) {

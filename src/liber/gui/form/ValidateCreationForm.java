@@ -1,19 +1,23 @@
 package liber.gui.form;
 
 import javafx.fxml.FXMLLoader;
+import liber.enumeration.AccountProcess;
 import liber.gui.control.ValidateCreationController;
 
 public class ValidateCreationForm extends Form {
-	private boolean fromConnexion;
-	public ValidateCreationForm() {
+	private AccountProcess accountProcess;
+	private ValidateCreationForm(AccountProcess accountProcess) {
 		super("Valider la création du compte");
+		this.accountProcess = accountProcess;
 	}
-	public ValidateCreationForm(boolean fromConnexion) {
-		this();
-		this.fromConnexion = fromConnexion;
+	static public ValidateCreationForm fromCreation() {
+		return new ValidateCreationForm(AccountProcess.NOT_CONNECTING);
+	}
+	static public ValidateCreationForm fromConnexion() {
+		return new ValidateCreationForm(AccountProcess.CONNECTING);
 	}
 	public boolean isFromConnexion() {
-		return fromConnexion;
+		return accountProcess == AccountProcess.CONNECTING;
 	}
 	@Override
 	protected FormName name() {
