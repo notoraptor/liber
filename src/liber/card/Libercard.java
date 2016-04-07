@@ -6,51 +6,52 @@ import liber.card.textable.*;
 import liber.data.*;
 import liber.exception.LibercardException;
 import liber.notification.Notification;
+import liber.security.cvr.CVRInput;
+import liber.security.cvr.CVRLineReader;
+import liber.security.cvr.CVROutput;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Iterator;
 
 public class Libercard {
 	static public final String libercardFoldername = "libercards";
 	static public final String historiesFoldername = "histories";
+	public String password;
 	public Account account;
 	public Contacts contacts;
 	public Outlinks outlinks;
 	public Inlinks inlinks;
-	private PrivateKey privateKey;
-	private PublicKey publicKey;
-	public Libercard() {
+	public Libercard(String thePassword) {
+		password = thePassword;
+		// account non initialisé.
 		contacts = new Contacts();
 		outlinks = new Outlinks();
 		inlinks = new Inlinks();
 	}
-	public Libercard(Liberaddress liberaddress) throws Exception {
+	public Libercard(Liberaddress liberaddress, String thePassword) throws Exception {
+		password = thePassword;
 		account = new Account(liberaddress);
 		contacts = new Contacts();
 		outlinks = new Outlinks();
 		inlinks = new Inlinks();
 	}
-	static public Libercard load(Liberaddress accountLiberaddress) throws Exception {
+	static public Libercard load(Liberaddress accountLiberaddress, String accountPassword) throws Exception {
 		Libercard libercard = null;
 		File file = new File(Libersaurus.current.getDirectory(), libercardFoldername + '/' + getFilename(accountLiberaddress));
 		if (file.exists() && file.isFile()) {
-			libercard = new Libercard();
-			BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				line = line.trim();
-				if (!line.isEmpty()) {
-					libercard.fromText(line);
+			libercard = new Libercard(accountPassword);
+			// Lecture.
+			try ( CVRInput cvrInput = new CVRInput(file, accountPassword) ) {
+				CVRLineReader reader = new CVRLineReader(cvrInput);
+				String line;
+				while ((line = reader.readLine()) != null) {
+					line = line.trim();
+					if (!line.isEmpty()) {
+						libercard.fromText(line);
+					}
 				}
 			}
-			reader.close();
 			if (libercard.account == null) {
 				throw new Exception("No account defined in libercard file.");
 			} else if (!libercard.account.liberaddress().equals(accountLiberaddress)) {
@@ -70,35 +71,34 @@ public class Libercard {
 		} else if (!directory.isDirectory())
 			throw new Exception("Unable to use \"" + libercardFoldername + "\" as directory (it is a file) to store libercards.");
 		File filename = new File(directory, getFilename(account.liberaddress()));
-		///
-		BufferedWriter writer = new BufferedWriter(new FileWriter(filename.getAbsolutePath()));
-		StringBuilder s = new TextableAccount(this, account).toText();
-		writer.write(s.toString());
-		writer.newLine();
-		for (Contact contact : contacts.list()) {
-			s = new TextableContact(this, contact).toText();
+		try( CVROutput writer = new CVROutput(filename, password) ) {
+			StringBuilder s = new TextableAccount(this, account).toText();
 			writer.write(s.toString());
 			writer.newLine();
-			for (Message message : contact.messages()) {
-				if (message instanceof InMessage)
-					s = new TextableInMessage(this, (InMessage) message).toText();
-				else
-					s = new TextableOutMessage(this, (OutMessage) message).toText();
+			for (Contact contact : contacts.list()) {
+				s = new TextableContact(this, contact).toText();
+				writer.write(s.toString());
+				writer.newLine();
+				for (Message message : contact.messages()) {
+					if (message instanceof InMessage)
+						s = new TextableInMessage(this, (InMessage) message).toText();
+					else
+						s = new TextableOutMessage(this, (OutMessage) message).toText();
+					writer.write(s.toString());
+					writer.newLine();
+				}
+			}
+			for (InMessage invitation : inlinks.invitations()) {
+				s = new TextableInlink(this, invitation).toText();
+				writer.write(s.toString());
+				writer.newLine();
+			}
+			for (OutMessage invitation : outlinks.invitations()) {
+				s = new TextableOutlink(this, invitation).toText();
 				writer.write(s.toString());
 				writer.newLine();
 			}
 		}
-		for (InMessage invitation : inlinks.invitations()) {
-			s = new TextableInlink(this, invitation).toText();
-			writer.write(s.toString());
-			writer.newLine();
-		}
-		for (OutMessage invitation : outlinks.invitations()) {
-			s = new TextableOutlink(this, invitation).toText();
-			writer.write(s.toString());
-			writer.newLine();
-		}
-		writer.close();
 		///
 		System.err.println("[Libercarte sauvegardee.]");
 	}

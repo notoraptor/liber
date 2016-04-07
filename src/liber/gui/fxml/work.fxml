@@ -60,19 +60,19 @@
           </Button>
         </right>
     </BorderPane>
-    <TabPane fx:id="tabs" maxHeight="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+    <TabPane fx:id="tabs" maxHeight="1.7976931348623157E308" minHeight="-Infinity" tabClosingPolicy="UNAVAILABLE">
         <Tab fx:id="contactsTab" text="Contacts">
-            <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                <VBox fx:id="contactsContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
+                <VBox fx:id="contactsContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
             </ScrollPane>
         </Tab>
         <Tab fx:id="inlinksTab" text="Demandes reçues">
-            <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
                 <VBox fx:id="inlinksContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
             </ScrollPane>
         </Tab>
         <Tab fx:id="outlinksTab" text="Demandes envoyées">
-            <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
                 <VBox fx:id="outlinksContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
             </ScrollPane>
         </Tab>

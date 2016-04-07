@@ -126,9 +126,11 @@ public class GUI extends Application {
 		super.stop();
 	}
 	public void updateTitle() {
-		if(trayIcon != null && instance != null && instance.loaded()) {
+		if(trayIcon != null) if(instance != null && instance.loaded()) {
 			String title = instance.account().appellation() + " - Libersaurus";
 			trayIcon.setToolTip(title);
+		} else {
+			trayIcon.setToolTip("Libersaurus");
 		}
 	}
 	public void showQuitQuestion() {

@@ -145,13 +145,16 @@ public class Features {
 	public void updateInfo(ContactData data, String value) {
 		libersaurus.updateInfo(data, value);
 		new Thread(() -> {
-			for (Contact contact : libersaurus.contacts()) if(contact.online()) try {
-				new ContactDataUpdatedRequest(contact, data, value).justSend();
+			for (Contact contact : libersaurus.contacts()) {
+				contact.setDataToSent(data);
+				if (contact.online()) try {
+					new ContactDataUpdatedRequest(contact, data, value).justSend();
 				/*
 				TODO: Ne vaut-il pas mieux distribuer (dans un autre processus)
 				la mise à jour lorsque la donnée modifiée est une photo ?
 				*/
-			} catch (Exception ignored) {}
+				} catch (Exception ignored) {}
+			}
 		}).start();
 		Notification.good(data + " updated.");
 	}

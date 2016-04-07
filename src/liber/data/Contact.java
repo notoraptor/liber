@@ -5,6 +5,7 @@ import liber.card.Libercard;
 import liber.card.textable.TextableContact;
 import liber.card.textable.TextableInMessage;
 import liber.card.textable.TextableOutMessage;
+import liber.enumeration.ContactData;
 import liber.notification.Notification;
 import liber.notification.info.MessageCreated;
 import liber.notification.info.MessageReceived;
@@ -252,5 +253,22 @@ public class Contact extends User implements KnownUser {
 		}
 		writer.close();
 		return filename.getAbsolutePath();
+	}
+	public void setDataToSent(ContactData data) {
+		switch (data) {
+			case firstname:
+				accountFirstnameSent = false;
+				break;
+			case lastname:
+				accountLastnameSent = false;
+				break;
+			case photo:
+				accountPhotoSent = false;
+				break;
+			case status:
+			case contactStatus:
+				accountStatusSent = false;
+				break;
+		}
 	}
 }

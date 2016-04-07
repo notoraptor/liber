@@ -45,6 +45,7 @@ public class HomeController {
 			createButton.setDisable(false);
 			loginButton.setDisable(false);
 		}
+		GUI.current.updateTitle();
 	}
 	@FXML
 	void createAccount(ActionEvent event) throws Exception {

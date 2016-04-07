@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="libraries">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libraries/bcpkix-jdk15on-154.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/bcprov-jdk15on-154.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/commons-codec-1.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/commons-logging-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/fluent-hc-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/httpclient-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/httpclient-cache-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/httpclient-win-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/httpcore-4.4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/httpmime-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/jna-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/jna-platform-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/weupnp-0.1.5-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

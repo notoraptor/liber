@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact name="liber">
+    <output-path>$PROJECT_DIR$/out/artifacts/liber</output-path>
+    <root id="root">
+      <element id="archive" name="liber.jar">
+        <element id="module-output" name="liber" />
+      </element>
+      <element id="library" level="project" name="libraries" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/README.txt" />
+    </root>
+  </artifact>
+</component>

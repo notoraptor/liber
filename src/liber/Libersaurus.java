@@ -49,7 +49,6 @@ public class Libersaurus implements Closeable, InternetDependant {
 	private ServerInterface server;
 	private Features features;
 	private Libercard libercard;
-	private String password;
 	private InternetLookup internetLookup;
 	public Libersaurus() throws Exception {
 		Secure.init();
@@ -72,7 +71,6 @@ public class Libersaurus implements Closeable, InternetDependant {
 		/**/
 		server.start();
 		libercard = null;
-		password = null;
 		internetLookup = null;
 		features = new Features(this);
 		current = this;
@@ -81,7 +79,6 @@ public class Libersaurus implements Closeable, InternetDependant {
 		if(libercard != null) {
 			libercard.save();
 			libercard = null;
-			password = null;
 		}
 	}
 	@Override
@@ -144,13 +141,12 @@ public class Libersaurus implements Closeable, InternetDependant {
 	private void reLogin() {
 		finalizeLogin();
 	}
-	private void load(Liberaddress liberaddress, String accountPassword) throws LibercardException {
+	private void load(Liberaddress liberaddress, String password) throws LibercardException {
 		try {
-			libercard = Libercard.load(liberaddress);
+			libercard = Libercard.load(liberaddress, password);
 			if (libercard == null) {
-				create(liberaddress, accountPassword);
+				create(liberaddress, password);
 			} else {
-				password = accountPassword;
 				System.err.println("[Libercarte chargée.]");
 			}
 		} catch (Exception e) {
@@ -251,7 +247,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 		return libercard.account;
 	}
 	public String password() {
-		return password;
+		return libercard.password;
 	}
 	public Features features() {
 		return features;
@@ -426,9 +422,8 @@ public class Libersaurus implements Closeable, InternetDependant {
 		Notification.info(new ContactDeleted(contact));
 	}
 	// Action.
-	public void create(Liberaddress liberaddress, String accountPassword) throws Exception {
-		password = accountPassword;
-		libercard = new Libercard(liberaddress);
+	public void create(Liberaddress liberaddress, String password) throws Exception {
+		libercard = new Libercard(liberaddress, password);
 		Notification.good("Libercarte créée.");
 	}
 	public void login(Liberaddress liberaddress, String password) throws LibercardException {
@@ -490,7 +485,6 @@ public class Libersaurus implements Closeable, InternetDependant {
 			} catch(Exception ignored) {}
 			libercard.delete();
 			libercard = null;
-			password = null;
 		}
 	}
 	public void cancelOutlink(Liberaddress liberaddress) {
