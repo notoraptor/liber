@@ -39,7 +39,9 @@ public class WorkController {
 			if(info instanceof ContactUpdated) {
 				ContactUpdated cu = (ContactUpdated)info;
 				Contact contact = cu.get();
-				Node form = contactsContent.lookup("#" + contact.id());
+				Node form = contact.isIgnored() ?
+							ignoredContactsContent.lookup("#" + contact.id()) :
+							contactsContent.lookup("#" + contact.id());
 				if(form != null) {
 					Label symbol = (Label) form.lookup("#symbol");
 					Label username = (Label) form.lookup("#username");
@@ -93,9 +95,17 @@ public class WorkController {
 				return;
 			}
 			if(info instanceof ContactDeleted) {
-				clearContacts();
-				showContacts();
-				tabs.getSelectionModel().select(WorkForm.CONTACTS);
+				ContactDeleted cd = (ContactDeleted)info;
+				Contact contact = cd.get();
+				if(contact.isIgnored()) {
+					clearIgnoredContacts();
+					showIgnoredContacts();
+					tabs.getSelectionModel().select(WorkForm.IGNORED_CONTACTS);
+				} else {
+					clearContacts();
+					showContacts();
+					tabs.getSelectionModel().select(WorkForm.CONTACTS);
+				}
 				return;
 			}
 			if(info instanceof OutlinkDeleted) {
@@ -130,6 +140,10 @@ public class WorkController {
 	private Tab outlinksTab;
 	@FXML
 	private VBox outlinksContent;
+	@FXML
+	private Tab ignoredContactsTab;
+	@FXML
+	private VBox ignoredContactsContent;
 
 	private Label getHelp() {
 		Text text1 = new Text("Votre liber-adresse est:\n\n");
@@ -149,6 +163,9 @@ public class WorkController {
 	private void clearContacts() {
 		contactsContent.getChildren().clear();
 	}
+	private void clearIgnoredContacts() {
+		ignoredContactsContent.getChildren().clear();
+	}
 	private void clearInlinks() {
 		inlinksContent.getChildren().clear();
 	}
@@ -156,9 +173,9 @@ public class WorkController {
 		outlinksContent.getChildren().clear();
 	}
 	private void showContacts() throws Exception {
-		if(Libersaurus.current.contacts().isEmpty())
-			contactsContent.getChildren().add(getHelp());
-		else for(Contact contact: Libersaurus.current.contacts()) {
+		int showed = 0;
+		for(Contact contact: Libersaurus.current.contacts()) if(!contact.isIgnored()) {
+			++showed;
 			Parent form = new LinkForm().root();
 			Label symbol = (Label) form.lookup("#symbol");
 			Label username = (Label) form.lookup("#username");
@@ -200,6 +217,56 @@ public class WorkController {
 			contactsContent.getChildren().add(button);
 			button.setMaxWidth(Double.MAX_VALUE);
 		}
+		if(showed == 0)
+			contactsContent.getChildren().add(getHelp());
+	}
+	private void showIgnoredContacts() throws Exception {
+		int showed = 0;
+		for(Contact contact: Libersaurus.current.contacts()) if(contact.isIgnored()) {
+			++showed;
+			Parent form = new LinkForm().root();
+			Label symbol = (Label) form.lookup("#symbol");
+			Label username = (Label) form.lookup("#username");
+			Label liberaddress = (Label) form.lookup("#liberaddress");
+			Label invitation = (Label) form.lookup("#invitation");
+			if(contact.info().hasPhoto()) {
+				symbol.setText(null);
+				symbol.setGraphic(ProfileController.instanciateImageView(
+						new Image(new ByteArrayInputStream(contact.info().photoBytes())), 40
+				));
+			} else {
+				symbol.setText("\ud83d\ude09");
+			}
+			TextFlow tf = new TextFlow();
+			Text t1 = new Text();
+			if(contact.online()) {
+				t1.setText(DiscussionController.onlineString);
+				t1.setFill(Color.GREEN);
+			} else {
+				t1.setText(DiscussionController.offlineString);
+				t1.setFill(Color.RED);
+			}
+			Text t2 = new Text(' ' + contact.appellation());
+			tf.getChildren().addAll(t1, t2);
+			username.setText(null);
+			username.setGraphic(tf);
+			liberaddress.setText(contact.liberaddress().toString());
+			invitation.setText(contact.info().status());
+			Button button = new Button();
+			form.setId(String.valueOf(contact.id()));
+			button.setGraphic(form);
+			button.setOnAction((event) -> {
+				try {
+					GUI.current.load(new DiscussionForm(contact));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			ignoredContactsContent.getChildren().add(button);
+			button.setMaxWidth(Double.MAX_VALUE);
+		}
+		if(showed == 0)
+			ignoredContactsContent.getChildren().add(getHelp());
 	}
 	private void showInlinks() throws Exception {
 		if(Libersaurus.current.inlinks().isEmpty())
@@ -254,10 +321,9 @@ public class WorkController {
 		}
 	}
 	public void init(WorkForm form) throws Exception {
-		int tabIndex = form.getTabIndex();
 		GUI.current.notifier().setInformer(new WorkInformer());
 		Account account = Libersaurus.current.account();
-		tabs.getSelectionModel().select(tabIndex);
+		tabs.getSelectionModel().select(form.getTabIndex());
 		appellation.setText(account.appellation());
 		info.setText(account.liberaddress().toString());
 		if(account.info().hasPhoto()) {
@@ -272,6 +338,8 @@ public class WorkController {
 		showInlinks();
 		// Outlinks.
 		showOutlinks();
+		// Ignored contacts.
+		showIgnoredContacts();
 	}
 
 	@FXML

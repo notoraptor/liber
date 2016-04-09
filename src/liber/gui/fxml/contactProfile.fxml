@@ -14,6 +14,7 @@
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
         <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
       <ColumnConstraints />
     </columnConstraints>
     <rowConstraints>
@@ -24,7 +25,7 @@
         <RowConstraints vgrow="SOMETIMES" />
         <RowConstraints vgrow="SOMETIMES" />
     </rowConstraints>
-   <BorderPane style="-fx-background-color: white;" GridPane.columnSpan="2">
+   <BorderPane style="-fx-background-color: white;" GridPane.columnSpan="3">
       <left>
           <Button mnemonicParsing="false" onAction="#cancel" text="←" textAlignment="CENTER" BorderPane.alignment="CENTER">
             <font>
@@ -49,7 +50,7 @@
          <DropShadow />
       </effect>
    </BorderPane>
-    <Label fx:id="appellation" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Appellation" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+    <Label fx:id="appellation" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Appellation" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="1">
         <font>
           <Font name="System Bold" size="21.0" />
         </font>
@@ -60,7 +61,7 @@
          <Insets top="5.0" />
       </padding>
     </Label>
-    <Label fx:id="liberaddress" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Liber-adresse" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+    <Label fx:id="liberaddress" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Liber-adresse" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="2">
         <font>
           <Font name="System Bold Italic" size="16.0" />
         </font>
@@ -68,11 +69,11 @@
          <Insets left="5.0" right="5.0" />
       </GridPane.margin>
     </Label>
-    <Button fx:id="photo" mnemonicParsing="false" prefHeight="300.0" prefWidth="300.0" text="Photo" textAlignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+    <Button fx:id="photo" mnemonicParsing="false" prefHeight="300.0" prefWidth="300.0" text="Photo" textAlignment="CENTER" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="3">
       <GridPane.margin>
          <Insets left="5.0" right="5.0" />
       </GridPane.margin></Button>
-    <Label fx:id="status" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Statut" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+    <Label fx:id="status" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Statut" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="4">
         <effect>
           <DropShadow />
         </effect>
@@ -87,13 +88,18 @@
       <GridPane.margin>
          <Insets />
       </GridPane.margin></Button>
-    <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#confirmContactDeletion" text="❌ contact" textFill="RED" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+    <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#confirmContactDeletion" text="❌ contact" textFill="RED" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
       <font>
          <Font name="System Bold Italic" size="12.0" />
       </font>
       <GridPane.margin>
          <Insets />
       </GridPane.margin></Button>
+   <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#confirmIgnoreContact" text="⛔ contact" textFill="#ff5800" GridPane.columnIndex="1" GridPane.rowIndex="5">
+      <font>
+         <Font name="System Bold Italic" size="12.0" />
+      </font>
+   </Button>
    <padding>
       <Insets bottom="10.0" />
    </padding>

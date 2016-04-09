@@ -53,6 +53,24 @@ public class ContactProfileController {
 		question.show();
 	}
 	@FXML
+	void confirmIgnoreContact(ActionEvent event) throws Exception {
+		Question question = new Question();
+		if(contact.isIgnored()) {
+			question.setTitle("Débloquer le contact");
+			question.setQuestion("Débloquer " + contact.appellation() + " ?");
+			question.setPositiveLabel("Débloquer le contact");
+		} else {
+			question.setTitle("Bloquer le contact");
+			question.setQuestion("Bloquer " + contact.appellation() + " ?");
+			question.setPositiveLabel("Bloquer le contact");
+		}
+		question.setPositiveAction(() -> {
+			contact.setIgnored(!contact.isIgnored());
+			backToWork();
+		});
+		question.show();
+	}
+	@FXML
 	void deleteHistory(ActionEvent event) throws Exception {
 		Question question = new Question();
 		question.setTitle("Supprimer l'historique");
@@ -83,7 +101,7 @@ public class ContactProfileController {
 	private Contact contact;
 	private void backToWork() throws Exception {
 		WorkForm form = GUI.current.findWorkForm();
-		form.setTabIndex(WorkForm.CONTACTS);
+		form.setTabIndex(contact.isIgnored() ? WorkForm.IGNORED_CONTACTS : WorkForm.CONTACTS);
 		GUI.current.load(form);
 	}
 	private void updateContact() {
@@ -102,7 +120,7 @@ public class ContactProfileController {
 		contact = form.contact();
 		GUI.current.notifier().setInformer(new ContactProfileInformer());
 		GUI.current.notifier().setCurrentContact(contact);
-		title.setText("Profil de " + contact.username());
+		title.setText((contact.isIgnored() ? "(\u26d4) " : "") + "Profil de " + contact.username());
 		liberaddress.setText(contact.liberaddress().toString());
 		updateContact();
 	}

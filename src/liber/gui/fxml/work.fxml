@@ -14,34 +14,37 @@
 
 <VBox xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="liber.gui.control.WorkController">
     <BorderPane maxHeight="80.0">
-        <left>
+        <center>
+            <VBox alignment="CENTER" BorderPane.alignment="CENTER">
+                <Label fx:id="appellation" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Label" textAlignment="RIGHT">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+                <Label fx:id="info" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Label" textAlignment="RIGHT">
+                    <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                    </font>
+                </Label>
+            <BorderPane.margin>
+               <Insets left="5.0" right="10.0" />
+            </BorderPane.margin>
+            </VBox>
+        </center>
+        <padding>
+          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+        </padding>
+      <right>
           <Label fx:id="thumbnail" text="😉" BorderPane.alignment="CENTER">
               <BorderPane.margin>
-                  <Insets right="10.0" />
+                  <Insets />
               </BorderPane.margin>
               <font>
                   <Font size="30.0" />
               </font>
           </Label>
-        </left>
-        <center>
-            <VBox alignment="CENTER" BorderPane.alignment="CENTER">
-                <Label fx:id="appellation" maxWidth="1.7976931348623157E308" text="Label">
-                    <font>
-                        <Font name="System Bold" size="20.0" />
-                    </font>
-                </Label>
-                <Label fx:id="info" maxWidth="1.7976931348623157E308" text="Label">
-                    <font>
-                        <Font name="System Bold Italic" size="12.0" />
-                    </font>
-                </Label>
-            </VBox>
-        </center>
-        <padding>
-          <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-        </padding>
-        <right>
+      </right>
+      <left>
           <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menu" text="☰" BorderPane.alignment="CENTER">
               <font>
                   <Font size="20.0" />
@@ -58,22 +61,27 @@
                   </ContextMenu>
               </contextMenu>
           </Button>
-        </right>
+      </left>
     </BorderPane>
-    <TabPane fx:id="tabs" maxHeight="1.7976931348623157E308" minHeight="-Infinity" tabClosingPolicy="UNAVAILABLE">
-        <Tab fx:id="contactsTab" text="Contacts">
+    <TabPane fx:id="tabs" maxHeight="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+        <Tab fx:id="contactsTab" style="-fx-font-weight: bold;" text="Contacts">
             <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
                 <VBox fx:id="contactsContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
             </ScrollPane>
         </Tab>
-        <Tab fx:id="inlinksTab" text="Demandes reçues">
+        <Tab fx:id="inlinksTab" style="-fx-font-style: italic;" text="Demandes reçues">
             <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
-                <VBox fx:id="inlinksContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
+                <VBox fx:id="inlinksContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
             </ScrollPane>
         </Tab>
-        <Tab fx:id="outlinksTab" text="Demandes envoyées">
+        <Tab fx:id="outlinksTab" style="-fx-font-style: italic;" text="Demandes envoyées">
             <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
-                <VBox fx:id="outlinksContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
+                <VBox fx:id="outlinksContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            </ScrollPane>
+        </Tab>
+        <Tab fx:id="ignoredContactsTab" style="-fx-font-weight: bold;" text="⛔ Contacts">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
+                <VBox fx:id="ignoredContactsContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
             </ScrollPane>
         </Tab>
     </TabPane>

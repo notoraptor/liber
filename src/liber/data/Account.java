@@ -70,26 +70,26 @@ public class Account extends BasicUser implements KnownUser {
 		return state == AccountState.TO_CONFIRM;
 	}
 	public void sentInfosToContact(Contact contact) {
-		if(!contact.accountFirstnameSent) try {
+		if(!contact.accountFirstnameSent()) try {
 			Response response = new ContactDataUpdatedRequest(contact, ContactData.firstname, info.firstname()).justSend();
 			if(response.good())
-				contact.accountFirstnameSent = true;
+				contact.setAccountFirstnameSent(true);
 		} catch (Exception ignored) {}
-		if(!contact.accountLastnameSent) try {
+		if(!contact.accountLastnameSent()) try {
 			Response response = new ContactDataUpdatedRequest(contact, ContactData.lastname, info.lastname()).justSend();
 			if(response.good())
-				contact.accountLastnameSent = true;
+				contact.setAccountLastnameSent(true);
 		} catch (Exception ignored) {}
-		if(!contact.accountStatusSent) try {
+		if(!contact.accountStatusSent()) try {
 			Response response = new ContactDataUpdatedRequest(contact, ContactData.status, info.status()).justSend();
 			if(response.good())
-				contact.accountStatusSent = true;
+				contact.setAccountStatusSent(true);
 		} catch (Exception ignored) {}
 		new Thread(() -> {
-			if(!contact.accountPhotoSent) try {
+			if(!contact.accountPhotoSent()) try {
 				Response response = new ContactDataUpdatedRequest(contact, ContactData.photo, info.photo()).justSend();
 				if(response.good())
-					contact.accountPhotoSent = true;
+					contact.setAccountPhotoSent(true);
 			} catch (Exception ignored) {}
 		}).start();
 	}

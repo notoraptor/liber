@@ -22,11 +22,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Contact extends User implements KnownUser {
-	public boolean accountPhotoSent;
-	public boolean accountFirstnameSent;
-	public boolean accountLastnameSent;
-	public boolean accountStatusSent;
+	private boolean accountPhotoSent;
+	private boolean accountFirstnameSent;
+	private boolean accountLastnameSent;
+	private boolean accountStatusSent;
 	private boolean online;
+	private boolean ignored;
 	private UserInfo info;
 	private TreeMap<MessageID, Message> history;
 	private TreeSet<MessageID> acknowledgeLater;
@@ -53,6 +54,36 @@ public class Contact extends User implements KnownUser {
 		confirmationWaiting = new TreeSet<>();
 		notSent = new TreeSet<>();
 		sent = new TreeSet<>();
+	}
+	public boolean accountPhotoSent() {
+		return accountPhotoSent;
+	}
+	public boolean accountFirstnameSent() {
+		return accountFirstnameSent;
+	}
+	public boolean accountLastnameSent() {
+		return accountLastnameSent;
+	}
+	public boolean accountStatusSent() {
+		return accountStatusSent;
+	}
+	public void setAccountPhotoSent(boolean b) {
+		accountPhotoSent = b;
+	}
+	public void setAccountFirstnameSent(boolean b) {
+		accountFirstnameSent = b;
+	}
+	public void setAccountLastnameSent(boolean b) {
+		accountLastnameSent = b;
+	}
+	public void setAccountStatusSent(boolean b) {
+		accountStatusSent = b;
+	}
+	public boolean isIgnored() {
+		return ignored;
+	}
+	public void setIgnored(boolean b) {
+		ignored = b;
 	}
 	@Override
 	public UserInfo info() {
@@ -223,8 +254,8 @@ public class Contact extends User implements KnownUser {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return "Discussion-(" + username() + ")-(" + sdf.format(date) + ").history";
 	}
-	// TODO: Il faut sauver l'historique dans un format lisible pour un humain (préférer HTML).
 	private File createHistoriesDirectory() throws Exception {
+		// TODO: Il faut sauver l'historique dans un format lisible pour un humain (préférer HTML).
 		File directory = new File(Libersaurus.current.getDirectory(), Libercard.historiesFoldername);
 		if (!directory.exists()) {
 			if (!directory.mkdir())

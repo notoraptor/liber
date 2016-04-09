@@ -11,18 +11,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import liber.command.NewMessageCommand;
 import liber.data.*;
 import liber.enumeration.CommandField;
 import liber.gui.GUI;
-import liber.gui.form.ContactProfileForm;
-import liber.gui.form.DiscussionForm;
-import liber.gui.form.InMessageForm;
-import liber.gui.form.OutMessageForm;
+import liber.gui.form.*;
 import liber.notification.Info;
 import liber.notification.Informer;
+import liber.notification.Notification;
 import liber.notification.info.*;
 
 import java.io.ByteArrayInputStream;
@@ -83,16 +82,27 @@ public class DiscussionController {
 	@FXML
 	private Label online;
 	@FXML
+	private BorderPane messageForm;
+	@FXML
 	private TextArea message;
 	@FXML
 	private VBox history;
 
 	@FXML
 	void cancel(ActionEvent event) throws Exception {
-		GUI.current.back();
+		//GUI.current.back();
+		Form form = GUI.current.getBack();
+		if(form instanceof WorkForm) {
+			((WorkForm)form).setTabIndex(contact.isIgnored() ? WorkForm.IGNORED_CONTACTS : WorkForm.CONTACTS);
+		}
+		GUI.current.load(form);
 	}
 	@FXML
 	void send(ActionEvent event) {
+		if(contact.isIgnored()) {
+			Notification.bad("Vous ne pouvez pas envoyer de message à un contact que vous avez bloqué.");
+			return;
+		}
 		String content = message.getText();
 		if(content != null) {
 			content = content.trim();
@@ -190,5 +200,7 @@ public class DiscussionController {
 				addOutMessage((OutMessage)message);
 			}
 		}
+		if(contact.isIgnored())
+			messageForm.setDisable(true);
 	}
 }

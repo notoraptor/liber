@@ -41,7 +41,7 @@ public class LoginController {
 				GUI.current.load(ValidateDeletionForm.fromConnexion());
 			} else {
 				LibercardReport report = Libersaurus.current.reportLibercard();
-				System.out.println("Report? " + report.isEmpty());
+				System.out.println("Rapport vide? " + report.isEmpty());
 				if(report.isEmpty())
 					GUI.current.load(new WorkForm());
 				else

@@ -60,11 +60,14 @@ public class GuiNotifier implements Notifier {
 	public void info(Info info) {
 		if(info instanceof MessageReceived) {
 			MessageReceived mr = (MessageReceived) info;
+			Contact otherContact = mr.get().sender();
 			synchronized (synchronizer) {
-				if (currentContact != null && mr.get().liberaddress().equals(currentContact.liberaddress())) {
-					visibleRing.play();
-				} else {
-					hiddenRing.play();
+				if(!otherContact.isIgnored()) {
+					if (currentContact == otherContact) {
+						visibleRing.play();
+					} else {
+						hiddenRing.play();
+					}
 				}
 			}
 		}

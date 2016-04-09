@@ -178,9 +178,8 @@ public class Libersaurus implements Closeable, InternetDependant {
 						long microtime = Long.parseLong(receivedRequest.get(Field.microtime));
 						InMessage message = contact.getInMessage(microtime);
 						Response mar = Request.sendRequest(new MessageAcknowledgmentRequest(contact, microtime));
-						if (mar == null || mar.bad()) {
+						if (mar == null || mar.bad())
 							contact.addToAcknowledgeLater(message);
-						}
 						senders.add(contact);
 					}
 				}
@@ -190,14 +189,19 @@ public class Libersaurus implements Closeable, InternetDependant {
 		} while (true);
 		if(!senders.isEmpty()) {
 			int sendersCount = senders.size();
+			int taken = 0;
 			StringBuilder s = new StringBuilder();
 			for(Contact contact: senders) {
-				if(s.length() > 0)
-					s.append(sendersCount == 1 ? " et " : ", ");
-				s.append(contact.appellation());
+				if(!contact.isIgnored()) {
+					if (s.length() > 0)
+						s.append(sendersCount == 1 ? " et " : ", ");
+					s.append(contact.appellation());
+					++taken;
+				}
 				--sendersCount;
 			}
-			Notification.good("Vous avez reçu des messages de " + s + '.');
+			if(taken > 0)
+				Notification.good("Vous avez reçu des messages de " + s + '.');
 		}
 		// Déterminer pour chaque contact si la discussion est ouverte ou fermée.
 		for(Contact contact: contacts()) {
@@ -312,7 +316,7 @@ public class Libersaurus implements Closeable, InternetDependant {
 			contact.setOnline();
 			try {
 				Response r = new NowOnlineAcknowledgmentRequest(contact).justSend();
-				if(r.good()) libercard.account.sentInfosToContact(contact);
+				if (r.good()) libercard.account.sentInfosToContact(contact);
 			} catch (Throwable ignored) {}
 			contact.manageOnline();
 			//Notification.good("Le contact " + contact.appellation() + " est connecté.");

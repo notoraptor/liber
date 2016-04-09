@@ -20,6 +20,7 @@ public class TextableContact extends Textable<Contact> {
 	static private final String accountLastnameSent = "accountLastnameSent";
 	static private final String accountStatusSent = "accountStatusSent";
 	static private final String publicKey = "publicKey";
+	static private final String ignored = "ignored";
 	public TextableContact(Libercard libercard, Contact contact) {
 		super(libercard, contact);
 	}
@@ -31,7 +32,8 @@ public class TextableContact extends Textable<Contact> {
 	public String[] fields() {
 		return new String[] {
 			liberaddress, secret, firstname, lastname, photo, status,
-			accountPhotoSent, accountFirstnameSent, accountLastnameSent, accountStatusSent
+			accountPhotoSent, accountFirstnameSent, accountLastnameSent, accountStatusSent,
+			ignored
 		};
 	}
 	@Override
@@ -42,10 +44,11 @@ public class TextableContact extends Textable<Contact> {
 		map.put(lastname, get().info().lastname());
 		map.put(photo, get().info().photo());
 		map.put(status, get().info().status());
-		map.put(accountFirstnameSent, String.valueOf(get().accountFirstnameSent));
-		map.put(accountLastnameSent, String.valueOf(get().accountLastnameSent));
-		map.put(accountPhotoSent, String.valueOf(get().accountPhotoSent));
-		map.put(accountStatusSent, String.valueOf(get().accountStatusSent));
+		map.put(accountFirstnameSent, String.valueOf(get().accountFirstnameSent()));
+		map.put(accountLastnameSent, String.valueOf(get().accountLastnameSent()));
+		map.put(accountPhotoSent, String.valueOf(get().accountPhotoSent()));
+		map.put(accountStatusSent, String.valueOf(get().accountStatusSent()));
+		map.put(ignored, String.valueOf(get().isIgnored()));
 		map.put(publicKey, Utils.encodeString(get().encryption().publicKeyToString()));
 	}
 	@Override
@@ -57,10 +60,11 @@ public class TextableContact extends Textable<Contact> {
 			Utils.decodeString(map.get(publicKey))
 		);
 		contact.update(new UserInfo(map.get(firstname), map.get(lastname), map.get(photo), map.get(status)));
-		contact.accountFirstnameSent = Boolean.parseBoolean(map.get(accountFirstnameSent));
-		contact.accountLastnameSent = Boolean.parseBoolean(map.get(accountLastnameSent));
-		contact.accountPhotoSent = Boolean.parseBoolean(map.get(accountPhotoSent));
-		contact.accountStatusSent = Boolean.parseBoolean(map.get(accountStatusSent));
+		contact.setIgnored(Boolean.parseBoolean(map.get(ignored)));
+		contact.setAccountFirstnameSent(Boolean.parseBoolean(map.get(accountFirstnameSent)));
+		contact.setAccountLastnameSent(Boolean.parseBoolean(map.get(accountLastnameSent)));
+		contact.setAccountPhotoSent(Boolean.parseBoolean(map.get(accountPhotoSent)));
+		contact.setAccountStatusSent(Boolean.parseBoolean(map.get(accountStatusSent)));
 		return contact;
 	}
 }

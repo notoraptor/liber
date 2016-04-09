@@ -42,15 +42,15 @@
                               <VBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                                  <Label fx:id="appellation" text="Appellation">
                                     <font>
-                                       <Font name="System Bold" size="16.0"/>
+                                       <Font name="System Bold" size="16.0" />
                                     </font>
                                  </Label>
                                  <Label fx:id="liberaddress" text="Liber-adresse">
                                     <font>
-                                       <Font name="System Bold Italic" size="12.0"/>
+                                       <Font name="System Bold Italic" size="12.0" />
                                     </font>
                                  </Label>
-                                 <Label fx:id="status" text="Statut"/>
+                                 <Label fx:id="status" text="Statut" />
                               </VBox>
                            </center>
                            <right>
@@ -69,7 +69,7 @@
       </BorderPane>
    </top>
    <bottom>
-      <BorderPane BorderPane.alignment="CENTER">
+      <BorderPane fx:id="messageForm" BorderPane.alignment="CENTER">
          <right>
             <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#send" text="➤" BorderPane.alignment="CENTER">
                <BorderPane.margin>
@@ -94,7 +94,7 @@
    </bottom>
    <center>
       <ScrollPane fx:id="scrollPane" fitToWidth="true" vvalue="1.0" BorderPane.alignment="CENTER">
-         <VBox fx:id="history"/>
+         <VBox fx:id="history" />
       </ScrollPane>
    </center>
    <padding>
