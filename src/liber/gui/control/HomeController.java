@@ -36,7 +36,7 @@ public class HomeController {
 		homeForm = form;
 		Libersaurus context = homeForm.getContext();
 		if(context == null) {
-			GUI.current.notifier().setInformer(new HomeInformer());
+			GUI.current.setInformer(new HomeInformer());
 			loading.setText("Chargement en cours ...");
 			createButton.setDisable(true);
 			loginButton.setDisable(true);

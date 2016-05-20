@@ -321,7 +321,7 @@ public class WorkController {
 		}
 	}
 	public void init(WorkForm form) throws Exception {
-		GUI.current.notifier().setInformer(new WorkInformer());
+		GUI.current.setInformer(new WorkInformer());
 		Account account = Libersaurus.current.account();
 		tabs.getSelectionModel().select(form.getTabIndex());
 		appellation.setText(account.appellation());
@@ -331,6 +331,8 @@ public class WorkController {
 			ImageView imageView = ProfileController.instanciateImageView(image);
 			thumbnail.setText(null);
 			thumbnail.setGraphic(imageView);
+		} else {
+			thumbnail.setText(noUserPhotoString);
 		}
 		// Contacts.
 		showContacts();

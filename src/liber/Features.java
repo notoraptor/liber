@@ -85,30 +85,12 @@ public class Features {
 	public void login(String theLiberaddress, String password) {
 		try {
 			Liberaddress liberaddress = new Liberaddress(theLiberaddress);
-			Response response = new LoginRequest(liberaddress, password).justSend();
-			switch (response.status()) {
-				case "OK":
-					libersaurus.login(liberaddress, password);
-					break;
-				case "ERROR_ACCOUNT_TO_DELETE":
-					Notification.good("Ce compte doit être supprimé.");
-					libersaurus.loginToDelete(liberaddress, password);
-					break;
-				case "ERROR_ACCOUNT_TO_CONFIRM":
-					Notification.good("Ce compte doit être confirmé.");
-					libersaurus.loginToConfirm(liberaddress, password);
-					break;
-				default:
-					Notification.bad("Impossible de se connecter\n(" + response.status() + ").");
-					break;
-			}
+			libersaurus.requestLogin(liberaddress, password);
 		} catch (UsernameException|RecipientAddressException e) {
 			Notification.bad(e.getMessage());
-		} catch(RecipientException|RequestException e) {
-			Notification.bad("Impossible de se connecter. Êtes-vous connecté à Internet ?");
 		} catch (LibercardException e) {
-			Notification.bad("Impossible de charger la libercarte.");
-			e.printStackTrace();
+			Notification.bad("Impossible de charger la libercarte.\n" + e.getMessage());
+			//e.printStackTrace();
 		}
 	}
 	public void logout() {

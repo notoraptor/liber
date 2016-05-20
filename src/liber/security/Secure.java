@@ -37,8 +37,7 @@ public class Secure {
 				while ((o = parser.readObject()) != null) {
 					if (o instanceof SubjectPublicKeyInfo) {
 						JcaPEMKeyConverter myConverter = new JcaPEMKeyConverter();
-						RSAPublicKey myKey = (RSAPublicKey) myConverter.getPublicKey((SubjectPublicKeyInfo) o);
-						key = myKey;
+						key = (RSAPublicKey) myConverter.getPublicKey((SubjectPublicKeyInfo) o);
 						++keyCount;
 					}
 				}
@@ -58,8 +57,7 @@ public class Secure {
 				while ((o = parser.readObject()) != null) {
 					if (o instanceof PrivateKeyInfo) {
 						JcaPEMKeyConverter myConverter = new JcaPEMKeyConverter();
-						RSAPrivateKey myKey = (RSAPrivateKey) myConverter.getPrivateKey((PrivateKeyInfo) o);
-						key = myKey;
+						key = (RSAPrivateKey) myConverter.getPrivateKey((PrivateKeyInfo) o);
 						++keyCount;
 					}
 				}

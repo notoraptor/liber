@@ -1,0 +1,1 @@
+java -jar liber.jar > log.out 2> log.err

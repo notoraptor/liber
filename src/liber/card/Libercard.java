@@ -14,105 +14,121 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 
+/* TODO TESTS À FAIRE
+Tester une connexion à un compte depuis un ordinateur sur lequel la libercarte n'est pas présente.
+	La connexion doit échouer.
+Tester une connexion à un compte suivie d'une nouvelle connexion au même compte depuis le même ordinateur.
+	La deuxième connexion doit échouer.
+Tester:
+	Connexion 1 : fermer prématurément le programme (équivalent à Ctrl+C).
+	Connexion 2 :
+		Moins de 3 secondes après la connexion 1: la connexion doit échouer.
+		Au moins 3 secondes après la connexion 1: la connexion doit réussir.
+*/
 public class Libercard {
+	private enum From { CREATE, LOAD }
+	static public final From CREATE = From.	CREATE;
+	static public final From LOAD = From.LOAD;
+	static public final String libercardExtension = ".libercard";
 	static public final String libercardFoldername = "libercards";
 	static public final String historiesFoldername = "histories";
-	public String password;
 	public Account account;
-	public Contacts contacts;
-	public Outlinks outlinks;
-	public Inlinks inlinks;
-	public Libercard(String thePassword) {
+	final public String password;
+	final public Contacts contacts;
+	final public Outlinks outlinks;
+	final public Inlinks inlinks;
+	final private File file;
+	private LibercardLock libercardLock;
+	public Libercard(Liberaddress liberaddress, String thePassword, From from) throws Exception {
 		password = thePassword;
-		// account non initialisé.
 		contacts = new Contacts();
 		outlinks = new Outlinks();
 		inlinks = new Inlinks();
-	}
-	public Libercard(Liberaddress liberaddress, String thePassword) throws Exception {
-		password = thePassword;
-		account = new Account(liberaddress);
-		contacts = new Contacts();
-		outlinks = new Outlinks();
-		inlinks = new Inlinks();
-	}
-	static public Libercard load(Liberaddress accountLiberaddress, String accountPassword) throws Exception {
-		Libercard libercard = null;
-		File file = new File(Libersaurus.current.getDirectory(), libercardFoldername + '/' + getFilename(accountLiberaddress));
-		if (file.exists() && file.isFile()) {
-			libercard = new Libercard(accountPassword);
-			// Lecture.
-			try ( CVRInput cvrInput = new CVRInput(file, accountPassword) ) {
+		// account maintenant
+		if(from == From.CREATE) {
+			File directory = new File(Libersaurus.current.getDirectory(), libercardFoldername);
+			if (!directory.exists()) {
+				if (!directory.mkdir())
+					throw new LibercardException("Impossibler de créer le dossier " + libercardFoldername);
+			} else if (!directory.isDirectory())
+				throw new LibercardException("Impossible de sauver la libercarte vers le chemin \"" + libercardFoldername +
+						"\" car ce chemin ne mène pas vers un dossier.");
+			file = new File(directory, getFilename(liberaddress));
+			account = new Account(liberaddress);
+			libercardLock = new LibercardLock(file);
+			libercardLock.start();
+		} else {
+			file = new File(Libersaurus.current.getDirectory(), libercardFoldername + '/' + getFilename(liberaddress));
+			if(!file.exists())
+				throw new LibercardException("Impossible de trouver la libercarte pour la liber-adresse " + liberaddress);
+			if(!file.isFile())
+				throw new LibercardException("Le chemin vers la libercarte ne mène pas vers un fichier pour la liber-adresse " + liberaddress);
+			libercardLock = new LibercardLock(file);
+			libercardLock.start();
+			try ( CVRInput cvrInput = new CVRInput(file, password) ) {
 				CVRLineReader reader = new CVRLineReader(cvrInput);
 				String line;
 				while ((line = reader.readLine()) != null) {
 					line = line.trim();
 					if (!line.isEmpty()) {
-						libercard.fromText(line);
+						fromText(line);
 					}
 				}
 			}
-			if (libercard.account == null) {
-				throw new Exception("No account defined in libercard file.");
-			} else if (!libercard.account.liberaddress().equals(accountLiberaddress)) {
-				throw new Exception("liber.Liberaddress specified in libercard file does not match liberaddress ot account to be opened.");
-			}
+			if (account == null)
+				throw new LibercardException("Impossible de repérer un compte dans la libercarte de la liber-adresse " + liberaddress);
+			if (!account.liberaddress().equals(liberaddress))
+				throw new LibercardException("La liber-adresse spécifiée dans la libercarte ne correspond pas à au compte à charger pour la liber-adresse " + liberaddress);
 		}
-		return libercard;
 	}
-	static private String getFilename(Liberaddress liberaddress) throws Exception {
-		return Utils.hash(liberaddress.toString()) + ".libercard";
+	public String getPath() {
+		return file.getAbsolutePath();
 	}
 	public void save() throws Exception {
-		File directory = new File(Libersaurus.current.getDirectory(), libercardFoldername);
-		if (!directory.exists()) {
-			if (!directory.mkdir())
-				throw new Exception("Unable to create \"" + libercardFoldername + "\" directory.");
-		} else if (!directory.isDirectory())
-			throw new Exception("Unable to use \"" + libercardFoldername + "\" as directory (it is a file) to store libercards.");
-		File filename = new File(directory, getFilename(account.liberaddress()));
-		try( CVROutput writer = new CVROutput(filename, password) ) {
-			StringBuilder s = new TextableAccount(this, account).toText();
-			writer.write(s.toString());
-			writer.newLine();
-			for (Contact contact : contacts.list()) {
-				s = new TextableContact(this, contact).toText();
+		try {
+			try (CVROutput writer = new CVROutput(file, password)) {
+				StringBuilder s = new TextableAccount(this, account).toText();
 				writer.write(s.toString());
 				writer.newLine();
-				for (Message message : contact.messages()) {
-					if (message instanceof InMessage)
-						s = new TextableInMessage(this, (InMessage) message).toText();
-					else
-						s = new TextableOutMessage(this, (OutMessage) message).toText();
+				for (Contact contact : contacts.list()) {
+					s = new TextableContact(this, contact).toText();
+					writer.write(s.toString());
+					writer.newLine();
+					for (Message message : contact.messages()) {
+						if (message instanceof InMessage)
+							s = new TextableInMessage(this, (InMessage) message).toText();
+						else
+							s = new TextableOutMessage(this, (OutMessage) message).toText();
+						writer.write(s.toString());
+						writer.newLine();
+					}
+				}
+				for (InMessage invitation : inlinks.invitations()) {
+					s = new TextableInlink(this, invitation).toText();
+					writer.write(s.toString());
+					writer.newLine();
+				}
+				for (OutMessage invitation : outlinks.invitations()) {
+					s = new TextableOutlink(this, invitation).toText();
 					writer.write(s.toString());
 					writer.newLine();
 				}
 			}
-			for (InMessage invitation : inlinks.invitations()) {
-				s = new TextableInlink(this, invitation).toText();
-				writer.write(s.toString());
-				writer.newLine();
-			}
-			for (OutMessage invitation : outlinks.invitations()) {
-				s = new TextableOutlink(this, invitation).toText();
-				writer.write(s.toString());
-				writer.newLine();
-			}
+		} finally {
+			System.err.println("Fermeture en cours ...");
+			libercardLock.unlock();
+			libercardLock.interrupt();
+			try {
+				libercardLock.join();
+			} catch (InterruptedException ignored) {}
 		}
 		///
 		System.err.println("[Libercarte sauvegardee.]");
 	}
 	public void delete() throws LibercardException {
-		try {
-			File file = new File(Libersaurus.current.getDirectory(), libercardFoldername + '/' + getFilename(account.liberaddress()));
-			if (file.exists() && file.isFile()) {
-				if (!file.delete())
-					throw new Exception("Unable to delete libercard \"" + file.getAbsolutePath() + "\".");
-				System.err.println("[liber.Libercard deleted.]");
-			}
-		} catch (Exception e) {
-			throw new LibercardException(e);
-		}
+		if (!file.delete())
+			throw new LibercardException("Impossible de supprimer la liber-carte " + file.getAbsolutePath());
+		System.err.println("[Liber-carte supprimée.]");
 	}
 	public void deleteContact(Contact contact) {
 		if (contacts.has(contact)) {
@@ -211,5 +227,8 @@ public class Libercard {
 				}
 			}
 		}
+	}
+	static private String getFilename(Liberaddress liberaddress) throws Exception {
+		return Utils.hash(liberaddress.toString()) + libercardExtension;
 	}
 }

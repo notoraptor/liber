@@ -65,7 +65,7 @@ public class ProfileController {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Choose your photo profile ...");
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png","*.jpg","*.jpeg", "*.gif"));
-		File file = fileChooser.showOpenDialog(GUI.current.stage());
+		File file = GUI.current.getFile(fileChooser);
 		if(file != null) {
 			try {
 				FileInputStream fis = new FileInputStream(file);

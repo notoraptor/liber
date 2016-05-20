@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class Utils {
 	static public String encodeText(String decoded) {
 		return Base64.getEncoder().encodeToString(decoded.getBytes(Utils.UTF8));
 	}
-	static public String hash(String message) throws Exception {
+	static public String hash(String message) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-512");
 		byte[] hash = md.digest(message.getBytes(Utils.UTF8));
 		return encodeFullyForURL(hash);

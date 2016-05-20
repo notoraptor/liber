@@ -180,8 +180,8 @@ public class DiscussionController {
 	}
 	public void init(DiscussionForm form) throws Exception {
 		contact = form.contact();
-		GUI.current.notifier().setInformer(new DiscussionInformer());
-		GUI.current.notifier().setCurrentContact(contact);
+		GUI.current.setInformer(new DiscussionInformer());
+		GUI.current.setCurrentContact(contact);
 		history.getChildren().addListener((ListChangeListener<? super Node>) (changed) -> messageListModified = true);
 		scrollPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
 			if (messageListModified) {

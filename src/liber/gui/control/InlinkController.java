@@ -29,7 +29,7 @@ public class InlinkController {
 		}
 	}
 	public void init(InlinkForm form) {
-		GUI.current.notifier().setInformer(new InlinkInformer());
+		GUI.current.setInformer(new InlinkInformer());
 		InMessage inlink = form.inlink();
 		invitation.setText(inlink.decodedContent());
 		username.setText(inlink.sender().username());

@@ -118,8 +118,8 @@ public class ContactProfileController {
 	}
 	public void init(ContactProfileForm form) {
 		contact = form.contact();
-		GUI.current.notifier().setInformer(new ContactProfileInformer());
-		GUI.current.notifier().setCurrentContact(contact);
+		GUI.current.setInformer(new ContactProfileInformer());
+		GUI.current.setCurrentContact(contact);
 		title.setText((contact.isIgnored() ? "(\u26d4) " : "") + "Profil de " + contact.username());
 		liberaddress.setText(contact.liberaddress().toString());
 		updateContact();

@@ -23,17 +23,11 @@ import java.io.*;
 import java.util.Collection;
 import java.util.HashSet;
 
-/* TODO GÉNÉRAL
-TODO Contacts ignorés
-	(dans un 4ème onglet de la page de travail).
-	(pas de notifications sonores pour ces contacts).
+/*
 TODO Distinction messages lus / non lus (complexe à mettre en place).
 	Créer une nouvelle classe dans l'historique des contacts: messages non lus (HasMap<> unread ...).
 	Message reçu lu ssi:
 		Affiché au moins une fois à l'écran sur la page de discussion (visible dans le scrollpane).
-TODO Gestion de l'affichage de la discussion.
-	À la place du système actuel, il vaut peut-être mieux mettre à jour totalement la discussion à chaque nouveau message.
-	Se rappeler que les observable lists sont peut-être utilisables pour bien le faire.
 TODO Paramètres du programme.
 	Activer/Désactiver toutes les notifications sonores.
 	Activer/Désactiver l'utilisation des boîtes aux lettres (ne pas envoyer de messages en attente sur les serveurs).
@@ -143,14 +137,10 @@ public class Libersaurus implements Closeable, InternetDependant {
 	}
 	private void load(Liberaddress liberaddress, String password) throws LibercardException {
 		try {
-			libercard = Libercard.load(liberaddress, password);
-			if (libercard == null) {
-				create(liberaddress, password);
-			} else {
-				System.err.println("[Libercarte chargée.]");
-			}
+			libercard = new Libercard(liberaddress, password, Libercard.LOAD);
+			System.err.println("[Libercarte chargée.]");
 		} catch (Exception e) {
-			throw new LibercardException(e);
+			throw new LibercardException("Impossible de charger la libercarte de ce compte.\n" + e.getMessage());
 		}
 	}
 	private void finalizeLogin() {
@@ -427,11 +417,34 @@ public class Libersaurus implements Closeable, InternetDependant {
 	}
 	// Action.
 	public void create(Liberaddress liberaddress, String password) throws Exception {
-		libercard = new Libercard(liberaddress, password);
-		Notification.good("Libercarte créée.");
+		libercard = new Libercard(liberaddress, password, Libercard.CREATE);
+		Notification.good("[Libercarte créée.]");
 	}
-	public void login(Liberaddress liberaddress, String password) throws LibercardException {
+	public void requestLogin(Liberaddress liberaddress, String password) throws LibercardException {
 		load(liberaddress, password);
+		try {
+			Response response = new LoginRequest(liberaddress, password).justSend();
+			switch (response.status()) {
+				case "OK":
+					login();
+					break;
+				case "ERROR_ACCOUNT_TO_DELETE":
+					Notification.good("Ce compte doit être supprimé.");
+					loginToDelete();
+					break;
+				case "ERROR_ACCOUNT_TO_CONFIRM":
+					Notification.good("Ce compte doit être confirmé.");
+					loginToConfirm();
+					break;
+				default:
+					Notification.bad("Impossible de se connecter\n(" + response.status() + ").");
+					break;
+			}
+		} catch(RecipientException|RequestException e) {
+			Notification.bad("Impossible de se connecter. Êtes-vous connecté à Internet ?");
+		}
+	}
+	public void login() throws LibercardException {
 		libercard.account.confirm();
 		try {
 			if (libercard.account.keysAreGenerated()) {
@@ -445,12 +458,10 @@ public class Libersaurus implements Closeable, InternetDependant {
 		}
 		finalizeLogin();
 	}
-	public void loginToDelete(Liberaddress liberaddress, String password) throws LibercardException {
-		load(liberaddress, password);
+	public void loginToDelete() {
 		libercard.account.setToDelete();
 	}
-	public void loginToConfirm(Liberaddress liberaddress, String password) throws LibercardException {
-		load(liberaddress, password);
+	public void loginToConfirm() {
 		libercard.account.setToConfirm();
 	}
 	public void logout() {

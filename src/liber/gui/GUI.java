@@ -3,17 +3,21 @@ package liber.gui;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import liber.Libersaurus;
+import liber.data.Contact;
 import liber.gui.form.Form;
 import liber.gui.form.HomeForm;
 import liber.gui.form.WorkForm;
+import liber.notification.Informer;
 import liber.notification.Notification;
 import liber.notification.info.LibersaurusLoaded;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.net.URL;
 import java.util.LinkedList;
 
@@ -26,11 +30,14 @@ public class GUI extends Application {
 	private boolean firstTime;
 	private boolean messageDisplayed;
 	private TrayIcon trayIcon;
-	public GuiNotifier notifier() {
-		return notifier;
+	public void setInformer(Informer informer) {
+		notifier.setInformer(informer);
 	}
-	public Stage stage() {
-		return stage;
+	public void setCurrentContact(Contact contact) {
+		notifier.setCurrentContact(contact);
+	}
+	public File getFile(FileChooser fileChooser) {
+		return fileChooser.showOpenDialog(stage);
 	}
 	private void loadFirst(Form form) throws Exception {
 		Scene scene = new Scene(form.root());
@@ -120,6 +127,7 @@ public class GUI extends Application {
 	@Override
 	public void stop() throws Exception {
 		if(instance != null) {
+			System.err.println("Fermeture de Libersaurus.");
 			instance.close();
 			instance = null;
 		}
@@ -237,8 +245,13 @@ public class GUI extends Application {
 	private void hide(final Stage stage) {
 		Platform.runLater(() -> {
 			if (SystemTray.isSupported()) {
-				stage.hide();
-				showProgramIsMinimizedMsg();
+				if(instance.loaded()) {
+					stage.hide();
+					showProgramIsMinimizedMsg();
+				} else {
+					closeSystemTray();
+					Platform.exit();
+				}
 			} else {
 				closeSystemTray();
 				Platform.exit();

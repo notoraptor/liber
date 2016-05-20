@@ -40,7 +40,7 @@ public class OutlinkController {
 
 	@FXML
 	public void init(OutlinkForm form) {
-		GUI.current.notifier().setInformer(new OutlinkInformer());
+		GUI.current.setInformer(new OutlinkInformer());
 		OutMessage outlink = form.outlink();
 		invitation.setText(outlink.decodedContent());
 		username.setText(outlink.recipient().username());
